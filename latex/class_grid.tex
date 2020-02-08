@@ -1,0 +1,60 @@
+\hypertarget{class_grid}{}\doxysection{Grid Class Reference}
+\label{class_grid}\index{Grid@{Grid}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_grid_a928d54e68762b4a58714fa7278570c94}\label{class_grid_a928d54e68762b4a58714fa7278570c94}} 
+void {\bfseries init} ()
+\item 
+\mbox{\Hypertarget{class_grid_a7f207ef930e174914628868edb675c7f}\label{class_grid_a7f207ef930e174914628868edb675c7f}} 
+void {\bfseries update\+Grid\+Vel} ()
+\item 
+\mbox{\Hypertarget{class_grid_a1c9b816b0c80fb8202849cf69a157f5c}\label{class_grid_a1c9b816b0c80fb8202849cf69a157f5c}} 
+void {\bfseries collide\+With\+Body} ()
+\item 
+bool \mbox{\hyperlink{class_grid_a5133c59f98992061f3576510e1bbb3f1}{is\+Valid\+Idx}} (const Vec3i \&idx) const
+\item 
+\mbox{\hyperlink{struct_block}{Block}} $\ast$ \mbox{\hyperlink{class_grid_a96d47c1604100ed47fd14a1226e8d95a}{get\+Block\+At}} (const Vec3i \&idx)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_grid_a5401f27574bdf37d38a466229f619130}\label{class_grid_a5401f27574bdf37d38a466229f619130}} 
+Float {\bfseries spacing\+\_\+}
+\item 
+\mbox{\Hypertarget{class_grid_a5f47affb12e9574a70b12c87c5391a5e}\label{class_grid_a5f47affb12e9574a70b12c87c5391a5e}} 
+std\+::array$<$ int, 3 $>$ {\bfseries size\+\_\+}
+\item 
+\mbox{\Hypertarget{class_grid_adf1ab0ad7b7f084ff6d6bd615d246db2}\label{class_grid_adf1ab0ad7b7f084ff6d6bd615d246db2}} 
+std\+::vector$<$ u\+Ptr$<$ \mbox{\hyperlink{struct_block}{Block}} $>$ $>$ {\bfseries blocks\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_grid_a96d47c1604100ed47fd14a1226e8d95a}\label{class_grid_a96d47c1604100ed47fd14a1226e8d95a}} 
+\index{Grid@{Grid}!getBlockAt@{getBlockAt}}
+\index{getBlockAt@{getBlockAt}!Grid@{Grid}}
+\doxysubsubsection{\texorpdfstring{getBlockAt()}{getBlockAt()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_block}{Block}}$\ast$ Grid\+::get\+Block\+At (\begin{DoxyParamCaption}\item[{const Vec3i \&}]{idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Get block pointer at idx 
+\begin{DoxyParams}{Parameters}
+{\em idx} & block index \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_grid_a5133c59f98992061f3576510e1bbb3f1}\label{class_grid_a5133c59f98992061f3576510e1bbb3f1}} 
+\index{Grid@{Grid}!isValidIdx@{isValidIdx}}
+\index{isValidIdx@{isValidIdx}!Grid@{Grid}}
+\doxysubsubsection{\texorpdfstring{isValidIdx()}{isValidIdx()}}
+{\footnotesize\ttfamily bool Grid\+::is\+Valid\+Idx (\begin{DoxyParamCaption}\item[{const Vec3i \&}]{idx }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Check whether a given index is valid This function should be called before using get\+Block\+At 
+\begin{DoxyParams}{Parameters}
+{\em idx} & \mbox{\hyperlink{struct_block}{Block}} index \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/grid.\+h\end{DoxyCompactItemize}

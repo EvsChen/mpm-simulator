@@ -1,0 +1,52 @@
+\hypertarget{class_particle_list}{}\doxysection{Particle\+List Class Reference}
+\label{class_particle_list}\index{ParticleList@{ParticleList}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_particle_list_a19c7854fd7f520045f92ee9301c47b8c}\label{class_particle_list_a19c7854fd7f520045f92ee9301c47b8c}} 
+void {\bfseries init} ()
+\item 
+Vec3f \mbox{\hyperlink{class_particle_list_a1c2ab86effb09f90044252dbf95604e4}{get\+Grid\+Force}} (Vec3i idx) const
+\item 
+Vec3f \mbox{\hyperlink{class_particle_list_aa76c63e9b4d247261482955d27ad110c}{update\+Deform\+Grad}} (Vec3i idx)
+\item 
+\mbox{\Hypertarget{class_particle_list_a76e6ebe35763bcc797ac39ec7ca0e167}\label{class_particle_list_a76e6ebe35763bcc797ac39ec7ca0e167}} 
+void {\bfseries collide\+With\+Body} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_particle_list_a3bd246c523c512673d8e0f20b9729c88}\label{class_particle_list_a3bd246c523c512673d8e0f20b9729c88}} 
+std\+::vector$<$ u\+Ptr$<$ \mbox{\hyperlink{struct_particle}{Particle}} $>$ $>$ \mbox{\hyperlink{class_particle_list_a3bd246c523c512673d8e0f20b9729c88}{particles\+\_\+}}
+\begin{DoxyCompactList}\small\item\em List of unique pointer to particles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_particle_list_a1c2ab86effb09f90044252dbf95604e4}\label{class_particle_list_a1c2ab86effb09f90044252dbf95604e4}} 
+\index{ParticleList@{ParticleList}!getGridForce@{getGridForce}}
+\index{getGridForce@{getGridForce}!ParticleList@{ParticleList}}
+\doxysubsubsection{\texorpdfstring{getGridForce()}{getGridForce()}}
+{\footnotesize\ttfamily Vec3f Particle\+List\+::get\+Grid\+Force (\begin{DoxyParamCaption}\item[{Vec3i}]{idx }\end{DoxyParamCaption}) const}
+
+Get grid force to transfer to grid 
+\begin{DoxyParams}{Parameters}
+{\em idx} & grid index \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_particle_list_aa76c63e9b4d247261482955d27ad110c}\label{class_particle_list_aa76c63e9b4d247261482955d27ad110c}} 
+\index{ParticleList@{ParticleList}!updateDeformGrad@{updateDeformGrad}}
+\index{updateDeformGrad@{updateDeformGrad}!ParticleList@{ParticleList}}
+\doxysubsubsection{\texorpdfstring{updateDeformGrad()}{updateDeformGrad()}}
+{\footnotesize\ttfamily Vec3f Particle\+List\+::update\+Deform\+Grad (\begin{DoxyParamCaption}\item[{Vec3i}]{idx }\end{DoxyParamCaption})}
+
+Update deformation gradient 
+\begin{DoxyParams}{Parameters}
+{\em idx} & grid index \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/particle.\+h\item 
+src/particle.\+cpp\end{DoxyCompactItemize}
