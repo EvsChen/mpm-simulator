@@ -1,3 +1,5 @@
+#pragma once
+
 #include "global.h"
 #include "particle.h"
 #include "grid.h"
@@ -11,6 +13,6 @@ public:
    */
   void P2GTransfer();
 
-  uPtr<Grid> grid_;
+  Grid grid_;
   ParticleList particleList_;
 };

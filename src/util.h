@@ -1,20 +1,13 @@
+#pragma once
+
 #include "global.h"
 
 /**
- * Calculate the weight function of a particle on a block position
- * @param pos Particle position
- * @param blockPos Block index
- * @param h Grid spacing
+ * Get the 3x3 matrix representing the weight of a particle for its
+ * surrounding 27 cells.
+ * @param particlePosIdx the posIdx (pos / h) of particle
  */
-Float cubicWeight(const Vec3f &pos, const Vec3i &blockPos, Float h);
-
-/**
- * Calculate the grdient of weight function of a particle on a block position
- * @param pos Particle position
- * @param blockPos Block index
- * @param h Grid spacing
- */
-Vec3f cubicWeightGrad(const Vec3f &pos, const Vec3i &blockPos, Float h);
+Mat3f quadWeight(const Vec3f &particlePosIdx);
 
 /**
  * Cast a Vec3f to Vec3i by calculating the floor of each item

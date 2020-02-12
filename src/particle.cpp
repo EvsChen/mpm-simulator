@@ -1,10 +1,11 @@
 #include "particle.h"
 
-void ParticleList::init() {
+ParticleList::ParticleList() {
   int x0 = 47, y0 = 47, z0 = 47;
   int density = 10;
   int cubeLen = 6;
-  Float mass = 1e-3;
+  particles_ = new std::vector<Particle>();
+
   for (int x = x0; x < x0 + cubeLen; x++) {
     for (int y = y0; y < y0 + cubeLen; y++) {
       for (int z = z0; z < z0 + cubeLen; z++) {
@@ -12,7 +13,10 @@ void ParticleList::init() {
           Float xc = x0 + static_cast<Float>(rand()) / RAND_MAX,
                 yc = y0 + static_cast<Float>(rand()) / RAND_MAX,
                 zc = z0 + static_cast<Float>(rand()) / RAND_MAX;
-          particles_.push_back(mkU<Particle>(Vec3f(xc, yc, zc), mass));
+          Vec3f pos;
+          pos << xc, yc, zc;
+          pos *= GRID_SPACING;
+          (*particles_).push_back(Particle(pos, P_MASS));
         }
       }
     }
