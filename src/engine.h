@@ -13,6 +13,11 @@ public:
    */
   void P2GTransfer();
 
+  /**
+   * Calculate grid forces 
+   */
+  void computeGridForce();
+
   Grid grid_;
   ParticleList particleList_;
 };

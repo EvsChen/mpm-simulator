@@ -24,3 +24,20 @@ Mat3f quadWeight(const Vec3f &particlePosIdx) {
   }
   return result;
 }
+
+Mat3f quadWeightDeriv(const Vec3f &particlePosIdx) {
+  Vec3i basePos = floor(particlePosIdx - Vec3f::Constant(0.5f));
+  Mat3f result;
+  for (int i = 0; i < 3; i++) {
+    Float d = particlePosIdx[i] - basePos[i];
+    // 0.5 <= d < 1.5
+    result(i, 0) = d - 1.5f;
+    d -= 1.f;
+    // -0.5 <= d < 0.5
+    result(i, 1) = -2.f * d;
+    d -= 1.f;
+    // -0.5 <= d < 0.5
+    result(i, 2) = d + 1.5f;
+  }
+  return result;
+}

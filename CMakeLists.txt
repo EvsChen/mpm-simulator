@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
   ./src/util.cpp
   ./src/engine.cpp
   ./src/particle.cpp
+  ./src/SVD.cpp
   ./src/constitutiveModel.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC src)

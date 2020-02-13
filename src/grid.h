@@ -9,6 +9,8 @@
 struct Block {
   Float mass = 0.0;
   Vec3f vel = Vec3f::Constant(0.f);
+  /// Block force
+  Vec3f f = Vec3f::Constant(0.f);
 };
 
 class Grid {

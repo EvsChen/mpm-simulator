@@ -1,6 +1,7 @@
 #include "engine.h"
 
 #include "util.h"
+#include "constitutiveModel.h"
 
 const static bool USE_QUADRATIC_WEIGHT = true;
 
@@ -45,6 +46,33 @@ void Engine::P2GTransfer() {
     } else {
       block.mass = 0.f;
       block.vel = Vec3f::Constant(0.f);
+    }
+  }
+}
+
+void Engine::computeGridForce() {
+  for (const Particle &p : (*particleList_.particles_)) {
+    Mat3f piola = fixedCorotated(p);
+    Vec3f posIdx = p.pos / grid_.spacing_;
+    if (USE_QUADRATIC_WEIGHT) {
+        Mat3f weight = quadWeight(posIdx);
+        Mat3f dweight = quadWeightDeriv(posIdx);
+        Vec3i baseIdx = floor(posIdx - Vec3f::Constant(0.5f));
+        for (int i = 0; i < 3; i++) {
+          for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
+              Vec3f weightGrad;
+              weightGrad(0) = dweight(0, i) * weight(1, j) * weight(2, k);
+              weightGrad(1) = weight(0, i) * dweight(1, j) * weight(2, k);
+              weightGrad(2) = weight(0, i) * weight(1, j) * dweight(2, k);
+              weightGrad /= grid_.spacing_;
+              Vec3i t;
+              t << i, j, k;
+              Block &block = grid_.getBlockAt(baseIdx + t);
+              block.f += -p.volume * piola * p.F.transpose() * weightGrad;
+            }
+          }
+        }
     }
   }
 }

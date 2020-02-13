@@ -4,7 +4,8 @@
 #include <vector>
 
 struct Particle {
-  Particle(const Vec3f &p, Float m) : originalPos(p), pos(p), mass(m) {};
+  Particle(const Vec3f &p, Float m) :
+    originalPos(p), pos(p), mass(m), volume(m / P_DENSITY) {};
   /// Original position
   Vec3f originalPos;
   Vec3f pos;

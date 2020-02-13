@@ -1,3 +1,5 @@
+#pragma once
+
 #include "global.h"
 #include "particle.h"
 
@@ -6,4 +8,4 @@
  * @param p particle to be calculated
  * @return piola-kirchoff stress
  */
-Mat3f fixedCorotated(Particle *p);
+Mat3f fixedCorotated(const Particle &p);
