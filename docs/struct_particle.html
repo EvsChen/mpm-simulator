@@ -72,9 +72,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae0e25f3b3f38c444c4a869b692c28806"><td class="memItemLeft" align="right" valign="top"><a id="ae0e25f3b3f38c444c4a869b692c28806"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Particle</b> (Vec3f p, Float m)</td></tr>
-<tr class="separator:ae0e25f3b3f38c444c4a869b692c28806"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4fc7cdedefd9e55ccdd861540291e17"><td class="memItemLeft" align="right" valign="top"><a id="ac4fc7cdedefd9e55ccdd861540291e17"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Particle</b> (const Vec3f &amp;p, Float m)</td></tr>
+<tr class="separator:ac4fc7cdedefd9e55ccdd861540291e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -92,16 +92,24 @@ Float&#160;</td><td class="memItemRight" valign="bottom"><b>mass</b></td></tr>
 Float&#160;</td><td class="memItemRight" valign="bottom"><b>volume</b></td></tr>
 <tr class="separator:a98fe95894dd466b3c66de12953ee914f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdcdf97eaa58bfdfa94992f5af166b69"><td class="memItemLeft" align="right" valign="top"><a id="acdcdf97eaa58bfdfa94992f5af166b69"></a>
-Vec3f&#160;</td><td class="memItemRight" valign="bottom"><b>vel</b> = Vec3f(0.f)</td></tr>
+Vec3f&#160;</td><td class="memItemRight" valign="bottom"><b>vel</b> = Vec3f::Constant(0.f)</td></tr>
 <tr class="separator:acdcdf97eaa58bfdfa94992f5af166b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9551efd07c7568660d1559af28cab33d"><td class="memItemLeft" align="right" valign="top"><a id="a9551efd07c7568660d1559af28cab33d"></a>
-Mat3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_particle.html#a9551efd07c7568660d1559af28cab33d">deformGrad</a> = Mat3f(1.f)</td></tr>
-<tr class="memdesc:a9551efd07c7568660d1559af28cab33d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deformation Gradient. <br /></td></tr>
-<tr class="separator:a9551efd07c7568660d1559af28cab33d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25d819f88775efb83546c98160983214"><td class="memItemLeft" align="right" valign="top"><a id="a25d819f88775efb83546c98160983214"></a>
-Mat3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_particle.html#a25d819f88775efb83546c98160983214">affine</a> = Mat3f(0.f)</td></tr>
-<tr class="memdesc:a25d819f88775efb83546c98160983214"><td class="mdescLeft">&#160;</td><td class="mdescRight">The APIC Bp matrix. <br /></td></tr>
-<tr class="separator:a25d819f88775efb83546c98160983214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24afc21566370af452e10858e2645bd0"><td class="memItemLeft" align="right" valign="top"><a id="a24afc21566370af452e10858e2645bd0"></a>
+Mat3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_particle.html#a24afc21566370af452e10858e2645bd0">Bp</a> = Mat3f::Constant(0.f)</td></tr>
+<tr class="memdesc:a24afc21566370af452e10858e2645bd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The APIC Bp matrix. <br /></td></tr>
+<tr class="separator:a24afc21566370af452e10858e2645bd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4818757c1bf0128cd553e575af78ed7d"><td class="memItemLeft" align="right" valign="top"><a id="a4818757c1bf0128cd553e575af78ed7d"></a>
+Mat3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_particle.html#a4818757c1bf0128cd553e575af78ed7d">F</a> = Mat3f::Constant(1.f)</td></tr>
+<tr class="memdesc:a4818757c1bf0128cd553e575af78ed7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deformation gradient. <br /></td></tr>
+<tr class="separator:a4818757c1bf0128cd553e575af78ed7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f91fbe5483463c7a3d1515107ed3f89"><td class="memItemLeft" align="right" valign="top"><a id="a2f91fbe5483463c7a3d1515107ed3f89"></a>
+Mat3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_particle.html#a2f91fbe5483463c7a3d1515107ed3f89">Fe</a> = Mat3f::Constant(1.f)</td></tr>
+<tr class="memdesc:a2f91fbe5483463c7a3d1515107ed3f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elastic part of F. <br /></td></tr>
+<tr class="separator:a2f91fbe5483463c7a3d1515107ed3f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abda71ab58e977befb84d4d5fbcfa43a6"><td class="memItemLeft" align="right" valign="top"><a id="abda71ab58e977befb84d4d5fbcfa43a6"></a>
+Mat3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_particle.html#abda71ab58e977befb84d4d5fbcfa43a6">Fp</a> = Mat3f::Constant(1.f)</td></tr>
+<tr class="memdesc:abda71ab58e977befb84d4d5fbcfa43a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plastic part of F. <br /></td></tr>
+<tr class="separator:abda71ab58e977befb84d4d5fbcfa43a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="particle_8h_source.html">particle.h</a></li>

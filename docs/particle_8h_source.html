@@ -69,37 +69,47 @@ $(function() {
 <div class="title">particle.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;global.h&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="struct_particle.html">    4</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_particle.html">Particle</a> {</div>
-<div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">    5</a></span>&#160;  <a class="code" href="struct_particle.html">Particle</a>(Vec3f p, Float m) : <a class="code" href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">originalPos</a>(p), pos(p), mass(m) {};</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  Vec3f <a class="code" href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">originalPos</a>;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  Vec3f pos;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  Float mass;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  Float volume;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  Vec3f vel = Vec3f(0.f);</div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="struct_particle.html#a9551efd07c7568660d1559af28cab33d">   13</a></span>&#160;  Mat3f <a class="code" href="struct_particle.html#a9551efd07c7568660d1559af28cab33d">deformGrad</a> = Mat3f(1.f);</div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="struct_particle.html#a25d819f88775efb83546c98160983214">   15</a></span>&#160;  Mat3f <a class="code" href="struct_particle.html#a25d819f88775efb83546c98160983214">affine</a> = Mat3f(0.f);</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;};</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="class_particle_list.html">   18</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_particle_list.html">ParticleList</a> {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keywordtype">void</span> init();</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  Vec3f <a class="code" href="class_particle_list.html#a1c2ab86effb09f90044252dbf95604e4">getGridForce</a>(Vec3i idx) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  Vec3f <a class="code" href="class_particle_list.html#aa76c63e9b4d247261482955d27ad110c">updateDeformGrad</a>(Vec3i idx);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keywordtype">void</span> collideWithBody();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_particle_list.html#a3bd246c523c512673d8e0f20b9729c88">   34</a></span>&#160;  std::vector&lt;uPtr&lt;Particle&gt;&gt; <a class="code" href="class_particle_list.html#a3bd246c523c512673d8e0f20b9729c88">particles_</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;global.h&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment">// TODO: Come up with iterator function?</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="struct_particle.html">    9</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_particle.html">Particle</a> {</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  <a class="code" href="struct_particle.html">Particle</a>(<span class="keyword">const</span> Vec3f &amp;p, Float m) :</div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">   11</a></span>&#160;    <a class="code" href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">originalPos</a>(p), pos(p), mass(m), volume(m / P_DENSITY) {};</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  Vec3f <a class="code" href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">originalPos</a>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  Vec3f pos;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  Float mass;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  Float volume;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  Vec3f vel = Vec3f::Constant(0.f);</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="struct_particle.html#a24afc21566370af452e10858e2645bd0">   19</a></span>&#160;  Mat3f <a class="code" href="struct_particle.html#a24afc21566370af452e10858e2645bd0">Bp</a> = Mat3f::Constant(0.f);</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="struct_particle.html#a4818757c1bf0128cd553e575af78ed7d">   21</a></span>&#160;  Mat3f <a class="code" href="struct_particle.html#a4818757c1bf0128cd553e575af78ed7d">F</a> = Mat3f::Constant(1.f);</div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="struct_particle.html#a2f91fbe5483463c7a3d1515107ed3f89">   23</a></span>&#160;  Mat3f <a class="code" href="struct_particle.html#a2f91fbe5483463c7a3d1515107ed3f89">Fe</a> = Mat3f::Constant(1.f);</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="struct_particle.html#abda71ab58e977befb84d4d5fbcfa43a6">   25</a></span>&#160;  Mat3f <a class="code" href="struct_particle.html#abda71ab58e977befb84d4d5fbcfa43a6">Fp</a> = Mat3f::Constant(1.f);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;};</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="class_particle_list.html">   28</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_particle_list.html">ParticleList</a> {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <a class="code" href="class_particle_list.html">ParticleList</a>();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  Vec3f <a class="code" href="class_particle_list.html#a1c2ab86effb09f90044252dbf95604e4">getGridForce</a>(Vec3i idx) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  Vec3f <a class="code" href="class_particle_list.html#aa76c63e9b4d247261482955d27ad110c">updateDeformGrad</a>(Vec3i idx);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">void</span> collideWithBody();</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  </div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="class_particle_list.html#a8ba4f551c2e278c5cdf719878efdcdb1">   44</a></span>&#160;  std::vector&lt;Particle&gt; *<a class="code" href="class_particle_list.html#a8ba4f551c2e278c5cdf719878efdcdb1">particles_</a>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;};</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="astruct_particle_html_a25d819f88775efb83546c98160983214"><div class="ttname"><a href="struct_particle.html#a25d819f88775efb83546c98160983214">Particle::affine</a></div><div class="ttdeci">Mat3f affine</div><div class="ttdoc">The APIC Bp matrix.</div><div class="ttdef"><b>Definition:</b> particle.h:15</div></div>
-<div class="ttc" id="astruct_particle_html"><div class="ttname"><a href="struct_particle.html">Particle</a></div><div class="ttdef"><b>Definition:</b> particle.h:4</div></div>
-<div class="ttc" id="aclass_particle_list_html"><div class="ttname"><a href="class_particle_list.html">ParticleList</a></div><div class="ttdef"><b>Definition:</b> particle.h:18</div></div>
-<div class="ttc" id="aclass_particle_list_html_a3bd246c523c512673d8e0f20b9729c88"><div class="ttname"><a href="class_particle_list.html#a3bd246c523c512673d8e0f20b9729c88">ParticleList::particles_</a></div><div class="ttdeci">std::vector&lt; uPtr&lt; Particle &gt; &gt; particles_</div><div class="ttdoc">List of unique pointer to particles.</div><div class="ttdef"><b>Definition:</b> particle.h:34</div></div>
-<div class="ttc" id="astruct_particle_html_a9551efd07c7568660d1559af28cab33d"><div class="ttname"><a href="struct_particle.html#a9551efd07c7568660d1559af28cab33d">Particle::deformGrad</a></div><div class="ttdeci">Mat3f deformGrad</div><div class="ttdoc">Deformation Gradient.</div><div class="ttdef"><b>Definition:</b> particle.h:13</div></div>
-<div class="ttc" id="astruct_particle_html_a980b88b3593254bcead1b86ccb39c5df"><div class="ttname"><a href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">Particle::originalPos</a></div><div class="ttdeci">Vec3f originalPos</div><div class="ttdoc">Original position.</div><div class="ttdef"><b>Definition:</b> particle.h:5</div></div>
+<div class="ttc" id="astruct_particle_html_a2f91fbe5483463c7a3d1515107ed3f89"><div class="ttname"><a href="struct_particle.html#a2f91fbe5483463c7a3d1515107ed3f89">Particle::Fe</a></div><div class="ttdeci">Mat3f Fe</div><div class="ttdoc">Elastic part of F.</div><div class="ttdef"><b>Definition:</b> particle.h:23</div></div>
+<div class="ttc" id="astruct_particle_html_abda71ab58e977befb84d4d5fbcfa43a6"><div class="ttname"><a href="struct_particle.html#abda71ab58e977befb84d4d5fbcfa43a6">Particle::Fp</a></div><div class="ttdeci">Mat3f Fp</div><div class="ttdoc">Plastic part of F.</div><div class="ttdef"><b>Definition:</b> particle.h:25</div></div>
+<div class="ttc" id="astruct_particle_html"><div class="ttname"><a href="struct_particle.html">Particle</a></div><div class="ttdef"><b>Definition:</b> particle.h:9</div></div>
+<div class="ttc" id="aclass_particle_list_html_a8ba4f551c2e278c5cdf719878efdcdb1"><div class="ttname"><a href="class_particle_list.html#a8ba4f551c2e278c5cdf719878efdcdb1">ParticleList::particles_</a></div><div class="ttdeci">std::vector&lt; Particle &gt; * particles_</div><div class="ttdoc">List of unique pointer to particles.</div><div class="ttdef"><b>Definition:</b> particle.h:44</div></div>
+<div class="ttc" id="aclass_particle_list_html"><div class="ttname"><a href="class_particle_list.html">ParticleList</a></div><div class="ttdef"><b>Definition:</b> particle.h:28</div></div>
+<div class="ttc" id="astruct_particle_html_a24afc21566370af452e10858e2645bd0"><div class="ttname"><a href="struct_particle.html#a24afc21566370af452e10858e2645bd0">Particle::Bp</a></div><div class="ttdeci">Mat3f Bp</div><div class="ttdoc">The APIC Bp matrix.</div><div class="ttdef"><b>Definition:</b> particle.h:19</div></div>
+<div class="ttc" id="astruct_particle_html_a980b88b3593254bcead1b86ccb39c5df"><div class="ttname"><a href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">Particle::originalPos</a></div><div class="ttdeci">Vec3f originalPos</div><div class="ttdoc">Original position.</div><div class="ttdef"><b>Definition:</b> particle.h:11</div></div>
+<div class="ttc" id="astruct_particle_html_a4818757c1bf0128cd553e575af78ed7d"><div class="ttname"><a href="struct_particle.html#a4818757c1bf0128cd553e575af78ed7d">Particle::F</a></div><div class="ttdeci">Mat3f F</div><div class="ttdoc">Deformation gradient.</div><div class="ttdef"><b>Definition:</b> particle.h:21</div></div>
 <div class="ttc" id="aclass_particle_list_html_a1c2ab86effb09f90044252dbf95604e4"><div class="ttname"><a href="class_particle_list.html#a1c2ab86effb09f90044252dbf95604e4">ParticleList::getGridForce</a></div><div class="ttdeci">Vec3f getGridForce(Vec3i idx) const</div></div>
 <div class="ttc" id="aclass_particle_list_html_aa76c63e9b4d247261482955d27ad110c"><div class="ttname"><a href="class_particle_list.html#aa76c63e9b4d247261482955d27ad110c">ParticleList::updateDeformGrad</a></div><div class="ttdeci">Vec3f updateDeformGrad(Vec3i idx)</div></div>
 <!-- start footer part -->

@@ -8,15 +8,13 @@ class Engine {
 public:
   Engine();
   ~Engine();
-  /**
-   * Transfer the mass and velocity from particles to grid using APIC
-   */
+  /// Transfer the mass and velocity from particles to grid using APIC
   void P2GTransfer();
 
-  /**
-   * Calculate grid forces 
-   */
+  /// Calculate grid forces 
   void computeGridForce();
+
+  void updateDeformGrad();
 
   Grid grid_;
   ParticleList particleList_;

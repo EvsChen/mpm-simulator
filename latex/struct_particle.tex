@@ -3,8 +3,8 @@
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{struct_particle_ae0e25f3b3f38c444c4a869b692c28806}\label{struct_particle_ae0e25f3b3f38c444c4a869b692c28806}} 
-{\bfseries Particle} (Vec3f p, Float m)
+\mbox{\Hypertarget{struct_particle_ac4fc7cdedefd9e55ccdd861540291e17}\label{struct_particle_ac4fc7cdedefd9e55ccdd861540291e17}} 
+{\bfseries Particle} (const Vec3f \&p, Float m)
 \end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -22,14 +22,20 @@ Float {\bfseries mass}
 Float {\bfseries volume}
 \item 
 \mbox{\Hypertarget{struct_particle_acdcdf97eaa58bfdfa94992f5af166b69}\label{struct_particle_acdcdf97eaa58bfdfa94992f5af166b69}} 
-Vec3f {\bfseries vel} = Vec3f(0.f)
+Vec3f {\bfseries vel} = Vec3f\+::\+Constant(0.f)
 \item 
-\mbox{\Hypertarget{struct_particle_a9551efd07c7568660d1559af28cab33d}\label{struct_particle_a9551efd07c7568660d1559af28cab33d}} 
-Mat3f \mbox{\hyperlink{struct_particle_a9551efd07c7568660d1559af28cab33d}{deform\+Grad}} = Mat3f(1.f)
-\begin{DoxyCompactList}\small\item\em Deformation Gradient. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{struct_particle_a25d819f88775efb83546c98160983214}\label{struct_particle_a25d819f88775efb83546c98160983214}} 
-Mat3f \mbox{\hyperlink{struct_particle_a25d819f88775efb83546c98160983214}{affine}} = Mat3f(0.f)
-\begin{DoxyCompactList}\small\item\em The A\+P\+IC Bp matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\mbox{\Hypertarget{struct_particle_a24afc21566370af452e10858e2645bd0}\label{struct_particle_a24afc21566370af452e10858e2645bd0}} 
+Mat3f \mbox{\hyperlink{struct_particle_a24afc21566370af452e10858e2645bd0}{Bp}} = Mat3f\+::\+Constant(0.f)
+\begin{DoxyCompactList}\small\item\em The A\+P\+IC Bp matrix. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_particle_a4818757c1bf0128cd553e575af78ed7d}\label{struct_particle_a4818757c1bf0128cd553e575af78ed7d}} 
+Mat3f \mbox{\hyperlink{struct_particle_a4818757c1bf0128cd553e575af78ed7d}{F}} = Mat3f\+::\+Constant(1.f)
+\begin{DoxyCompactList}\small\item\em Deformation gradient. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_particle_a2f91fbe5483463c7a3d1515107ed3f89}\label{struct_particle_a2f91fbe5483463c7a3d1515107ed3f89}} 
+Mat3f \mbox{\hyperlink{struct_particle_a2f91fbe5483463c7a3d1515107ed3f89}{Fe}} = Mat3f\+::\+Constant(1.f)
+\begin{DoxyCompactList}\small\item\em Elastic part of F. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{struct_particle_abda71ab58e977befb84d4d5fbcfa43a6}\label{struct_particle_abda71ab58e977befb84d4d5fbcfa43a6}} 
+Mat3f \mbox{\hyperlink{struct_particle_abda71ab58e977befb84d4d5fbcfa43a6}{Fp}} = Mat3f\+::\+Constant(1.f)
+\begin{DoxyCompactList}\small\item\em Plastic part of F. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}

@@ -19,7 +19,13 @@ public:
   /// Default constructor
   Grid();
   ~Grid() {}
+  /// Update grid velocity for non-empty blocks
   void updateGridVel();
+
+  void addExternalForces();
+
+  void checkBoundaryVel();
+
   void collideWithBody();
 
   /**

@@ -3,18 +3,27 @@
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{class_grid_a928d54e68762b4a58714fa7278570c94}\label{class_grid_a928d54e68762b4a58714fa7278570c94}} 
-void {\bfseries init} ()
+\mbox{\Hypertarget{class_grid_ada77e4979e7de145a2a1f1ebde65bff0}\label{class_grid_ada77e4979e7de145a2a1f1ebde65bff0}} 
+{\bfseries Grid} (const Vec3i \&, Float)
 \item 
+\mbox{\Hypertarget{class_grid_a4ac9ff4f63552b4c61ff90fcb35ad66c}\label{class_grid_a4ac9ff4f63552b4c61ff90fcb35ad66c}} 
+\mbox{\hyperlink{class_grid_a4ac9ff4f63552b4c61ff90fcb35ad66c}{Grid}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_grid_a7f207ef930e174914628868edb675c7f}\label{class_grid_a7f207ef930e174914628868edb675c7f}} 
-void {\bfseries update\+Grid\+Vel} ()
+void \mbox{\hyperlink{class_grid_a7f207ef930e174914628868edb675c7f}{update\+Grid\+Vel}} ()
+\begin{DoxyCompactList}\small\item\em Update grid velocity for non-\/empty blocks. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_grid_ae3c2668213ec617b0b239f756a9200f5}\label{class_grid_ae3c2668213ec617b0b239f756a9200f5}} 
+void {\bfseries add\+External\+Forces} ()
+\item 
+\mbox{\Hypertarget{class_grid_ad372a1943dcfa438dc4ea9beee785087}\label{class_grid_ad372a1943dcfa438dc4ea9beee785087}} 
+void {\bfseries check\+Boundary\+Vel} ()
 \item 
 \mbox{\Hypertarget{class_grid_a1c9b816b0c80fb8202849cf69a157f5c}\label{class_grid_a1c9b816b0c80fb8202849cf69a157f5c}} 
 void {\bfseries collide\+With\+Body} ()
 \item 
 bool \mbox{\hyperlink{class_grid_a5133c59f98992061f3576510e1bbb3f1}{is\+Valid\+Idx}} (const Vec3i \&idx) const
 \item 
-\mbox{\hyperlink{struct_block}{Block}} $\ast$ \mbox{\hyperlink{class_grid_a96d47c1604100ed47fd14a1226e8d95a}{get\+Block\+At}} (const Vec3i \&idx)
+\mbox{\hyperlink{struct_block}{Block}} \& \mbox{\hyperlink{class_grid_a628698483e976f366577572219a63579}{get\+Block\+At}} (const Vec3i \&idx)
 \end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -22,11 +31,11 @@ bool \mbox{\hyperlink{class_grid_a5133c59f98992061f3576510e1bbb3f1}{is\+Valid\+I
 \mbox{\Hypertarget{class_grid_a5401f27574bdf37d38a466229f619130}\label{class_grid_a5401f27574bdf37d38a466229f619130}} 
 Float {\bfseries spacing\+\_\+}
 \item 
-\mbox{\Hypertarget{class_grid_a5f47affb12e9574a70b12c87c5391a5e}\label{class_grid_a5f47affb12e9574a70b12c87c5391a5e}} 
-std\+::array$<$ int, 3 $>$ {\bfseries size\+\_\+}
+\mbox{\Hypertarget{class_grid_a5dfa697f10d09339f3c9e64f6b1cba1d}\label{class_grid_a5dfa697f10d09339f3c9e64f6b1cba1d}} 
+Vec3i {\bfseries size\+\_\+}
 \item 
-\mbox{\Hypertarget{class_grid_adf1ab0ad7b7f084ff6d6bd615d246db2}\label{class_grid_adf1ab0ad7b7f084ff6d6bd615d246db2}} 
-std\+::vector$<$ u\+Ptr$<$ \mbox{\hyperlink{struct_block}{Block}} $>$ $>$ {\bfseries blocks\+\_\+}
+\mbox{\Hypertarget{class_grid_a22ca434c2b07d603f834f61ed039a3ec}\label{class_grid_a22ca434c2b07d603f834f61ed039a3ec}} 
+std\+::vector$<$ \mbox{\hyperlink{struct_block}{Block}} $>$ $\ast$ {\bfseries blocks\+\_\+}
 \item 
 \mbox{\Hypertarget{class_grid_ad8b22168d6bb887c8f6c9b6494465708}\label{class_grid_ad8b22168d6bb887c8f6c9b6494465708}} 
 std\+::vector$<$ int $>$ \mbox{\hyperlink{class_grid_ad8b22168d6bb887c8f6c9b6494465708}{non\+Empty\+Blocks\+\_\+}}
@@ -34,11 +43,11 @@ std\+::vector$<$ int $>$ \mbox{\hyperlink{class_grid_ad8b22168d6bb887c8f6c9b6494
 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{class_grid_a96d47c1604100ed47fd14a1226e8d95a}\label{class_grid_a96d47c1604100ed47fd14a1226e8d95a}} 
+\mbox{\Hypertarget{class_grid_a628698483e976f366577572219a63579}\label{class_grid_a628698483e976f366577572219a63579}} 
 \index{Grid@{Grid}!getBlockAt@{getBlockAt}}
 \index{getBlockAt@{getBlockAt}!Grid@{Grid}}
 \doxysubsubsection{\texorpdfstring{getBlockAt()}{getBlockAt()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{struct_block}{Block}}$\ast$ Grid\+::get\+Block\+At (\begin{DoxyParamCaption}\item[{const Vec3i \&}]{idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_block}{Block}}\& Grid\+::get\+Block\+At (\begin{DoxyParamCaption}\item[{const Vec3i \&}]{idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Get block pointer at idx 
 \begin{DoxyParams}{Parameters}
@@ -58,6 +67,7 @@ Check whether a given index is valid This function should be called before using
 \end{DoxyParams}
 
 
-The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-src/grid.\+h\end{DoxyCompactItemize}
+src/grid.\+h\item 
+src/grid.\+cpp\end{DoxyCompactItemize}

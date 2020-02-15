@@ -3,6 +3,9 @@
 #include "global.h"
 #include <vector>
 
+
+// TODO: Come up with iterator function?
+
 struct Particle {
   Particle(const Vec3f &p, Float m) :
     originalPos(p), pos(p), mass(m), volume(m / P_DENSITY) {};

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>mpm-simulator: Class Members</title>
+<title>mpm-simulator: SVDResult Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -45,7 +45,6 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
-</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -60,56 +59,44 @@ $(function() {
 </iframe>
 </div>
 
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="struct_s_v_d_result-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">SVDResult Struct Reference</div>  </div>
+</div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div><ul>
-<li>Bp
-: <a class="el" href="struct_particle.html#a24afc21566370af452e10858e2645bd0">Particle</a>
-</li>
-<li>computeGridForce()
-: <a class="el" href="class_engine.html#a7303c73002655d763d6ee37f38b2238a">Engine</a>
-</li>
-<li>f
-: <a class="el" href="struct_block.html#afd048f51162b032d76dfda70e5f9e9be">Block</a>
-</li>
-<li>F
-: <a class="el" href="struct_particle.html#a4818757c1bf0128cd553e575af78ed7d">Particle</a>
-</li>
-<li>Fe
-: <a class="el" href="struct_particle.html#a2f91fbe5483463c7a3d1515107ed3f89">Particle</a>
-</li>
-<li>Fp
-: <a class="el" href="struct_particle.html#abda71ab58e977befb84d4d5fbcfa43a6">Particle</a>
-</li>
-<li>getBlockAt()
-: <a class="el" href="class_grid.html#a628698483e976f366577572219a63579">Grid</a>
-</li>
-<li>getGridForce()
-: <a class="el" href="class_particle_list.html#a1c2ab86effb09f90044252dbf95604e4">ParticleList</a>
-</li>
-<li>Grid()
-: <a class="el" href="class_grid.html#a4ac9ff4f63552b4c61ff90fcb35ad66c">Grid</a>
-</li>
-<li>isValidIdx()
-: <a class="el" href="class_grid.html#a5133c59f98992061f3576510e1bbb3f1">Grid</a>
-</li>
-<li>nonEmptyBlocks_
-: <a class="el" href="class_grid.html#ad8b22168d6bb887c8f6c9b6494465708">Grid</a>
-</li>
-<li>originalPos
-: <a class="el" href="struct_particle.html#a980b88b3593254bcead1b86ccb39c5df">Particle</a>
-</li>
-<li>P2GTransfer()
-: <a class="el" href="class_engine.html#addb64d367456dd74c79566bc857522d5">Engine</a>
-</li>
-<li>particles_
-: <a class="el" href="class_particle_list.html#a8ba4f551c2e278c5cdf719878efdcdb1">ParticleList</a>
-</li>
-<li>updateDeformGrad()
-: <a class="el" href="class_particle_list.html#aa76c63e9b4d247261482955d27ad110c">ParticleList</a>
-</li>
-<li>updateGridVel()
-: <a class="el" href="class_grid.html#a7f207ef930e174914628868edb675c7f">Grid</a>
-</li>
+
+<p>struct for SVD decomposition results  
+ <a href="struct_s_v_d_result.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_s_v_d_8h_source.html">SVD.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:ab9c535e6b72b813fdad232139023d801"><td class="memItemLeft" align="right" valign="top"><a id="ab9c535e6b72b813fdad232139023d801"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SVDResult</b> (Mat3f U, Mat3f Sigma, Mat3f V)</td></tr>
+<tr class="separator:ab9c535e6b72b813fdad232139023d801"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a5b78950029d8096842642053d1197c0c"><td class="memItemLeft" align="right" valign="top"><a id="a5b78950029d8096842642053d1197c0c"></a>
+Mat3f&#160;</td><td class="memItemRight" valign="bottom"><b>U</b></td></tr>
+<tr class="separator:a5b78950029d8096842642053d1197c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19dc3a43f3b09c5063a0f7df77e459f4"><td class="memItemLeft" align="right" valign="top"><a id="a19dc3a43f3b09c5063a0f7df77e459f4"></a>
+Mat3f&#160;</td><td class="memItemRight" valign="bottom"><b>Sigma</b></td></tr>
+<tr class="separator:a19dc3a43f3b09c5063a0f7df77e459f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ba27aa1ca3940c1a6bfc067dca4ed16"><td class="memItemLeft" align="right" valign="top"><a id="a4ba27aa1ca3940c1a6bfc067dca4ed16"></a>
+Mat3f&#160;</td><td class="memItemRight" valign="bottom"><b>V</b></td></tr>
+<tr class="separator:a4ba27aa1ca3940c1a6bfc067dca4ed16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>struct for SVD decomposition results </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/<a class="el" href="_s_v_d_8h_source.html">SVD.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
