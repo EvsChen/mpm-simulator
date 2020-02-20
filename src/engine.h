@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstring>
+
 #include "global.h"
 #include "particle.h"
 #include "grid.h"
@@ -15,6 +17,8 @@ public:
   void computeGridForce();
 
   void updateDeformGrad();
+
+  void visualize(const std::string &fileName);
 
   Grid grid_;
   ParticleList particleList_;

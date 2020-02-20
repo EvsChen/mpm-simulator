@@ -1,5 +1,8 @@
 #include "engine.h"
 
+#include <fstream>
+#include <iostream>
+
 #include "util.h"
 #include "constitutiveModel.h"
 
@@ -101,4 +104,34 @@ void Engine::updateDeformGrad() {
       }
     }
   }
+}
+
+void Engine::visualize(const std::string &fileName) {
+  int imgSize = 400;
+  Vec3f black = Vec3f::Constant(0.f);
+  Float gridWidth = grid_.size_[0] * grid_.spacing_ ,
+        gridHeight = grid_.size_[1] * grid_.spacing_;
+  std::vector<int> output(imgSize * imgSize, 0);
+  int maxParticles = 0;
+  for (const Particle &p : (*particleList_.particles_)) {
+    int gridX = p.pos(0) / gridWidth * imgSize;
+    int gridY = p.pos(1) / gridHeight * imgSize;
+    output[gridX + gridY * imgSize]++;
+    maxParticles = std::max(maxParticles, output[gridX + gridY * imgSize]);
+  }
+  std::ofstream outFile;
+  outFile.open(fileName);
+  Vec3f baseCol = Vec3f::Constant(255);
+  Vec3f maxCol; maxCol << 255, 77, 98;
+  if (outFile.is_open()) {
+    outFile << "P3\n" << imgSize << " " << imgSize << "\n255\n";
+    for (int i = 0; i < imgSize * imgSize; i ++) {
+      Float frac = ((Float) output[i] / maxParticles); 
+      Vec3f col = frac * maxCol + (1 - frac) * baseCol;
+      outFile << (int)col(0) << " " << (int)col(1) << " " << (int)col(2) << std::endl;
+    }
+    outFile.close();
+  } else {
+    std::cout << "Open file failed" << std::endl;
+  }    
 }

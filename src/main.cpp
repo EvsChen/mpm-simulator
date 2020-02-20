@@ -1,4 +1,5 @@
 #include "engine.h"
+#include <cstring>
 
 // TODO: timer
 
@@ -14,6 +15,7 @@ int main() {
     engine.grid_.checkBoundaryVel();
     engine.updateDeformGrad();
 
+    engine.visualize("time" + std::to_string(time) + ".ppm");
     time += TIME_STEP;
   }
 }
