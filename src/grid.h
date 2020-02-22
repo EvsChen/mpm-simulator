@@ -3,6 +3,8 @@
 #include <array>
 #include <stdexcept>
 #include <vector>
+#include <unordered_set>
+#include <iostream>
 
 #include "global.h"
 
@@ -19,6 +21,7 @@ public:
   /// Default constructor
   Grid();
   ~Grid() {}
+
   /// Update grid velocity for non-empty blocks
   void updateGridVel();
 
@@ -27,6 +30,11 @@ public:
   void checkBoundaryVel();
 
   void collideWithBody();
+
+  Vec3f calcMomentum() const;
+
+  /// Clear grid force, mass and velocity
+  void reset();
 
   /**
    * Check whether a given index is valid
@@ -46,6 +54,7 @@ public:
   Block &getBlockAt(const Vec3i &idx) {
 #ifdef NDEBUG
     if (!isValidIdx(idx)) {
+      std::cerr << "Idx: " << idx << std::endl;
       throw std::invalid_argument("Index of out range");
     }
 #endif
@@ -56,5 +65,5 @@ public:
   Vec3i size_;
   std::vector<Block>* blocks_;
   /// The node with non-zero mass
-  std::vector<int> nonEmptyBlocks_;
+  std::unordered_set<int> nonEmptyBlocks_;
 };

@@ -2,9 +2,9 @@
 #include "SVD.h"
 
 /// Young's modulus
-const static float E = 50.f;
+const static float E = 10.f;
 /// Poisson's ratio
-const static float vu = 0.2;
+const static float vu = 0.3;
 /// Shear modulus
 const static float mu = E / 2.f / (1 + vu);
 /// Lame's first parameter

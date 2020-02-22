@@ -18,11 +18,11 @@ struct Particle {
   /// The APIC Bp matrix
   Mat3f Bp = Mat3f::Constant(0.f);
   /// Deformation gradient
-  Mat3f F = Mat3f::Constant(1.f);
+  Mat3f F = Mat3f::Identity();
   /// Elastic part of F
-  Mat3f Fe = Mat3f::Constant(1.f);
+  Mat3f Fe = Mat3f::Identity();
   /// Plastic part of F
-  Mat3f Fp = Mat3f::Constant(1.f);
+  Mat3f Fp = Mat3f::Identity();
 };
 
 class ParticleList {
@@ -38,7 +38,11 @@ public:
    * @param idx grid index
    */
   Vec3f updateDeformGrad(Vec3i idx);
-  void collideWithBody();
+
+  Vec3f calcMomentum() const;
+
+  /// Update particle velocity
+  void advection();
   
   /// List of unique pointer to particles 
   std::vector<Particle> *particles_;

@@ -9,7 +9,7 @@ Grid::Grid() : Grid(Vec3i::Constant(GRID_SIZE), GRID_SPACING) {}
 
 void Grid::addExternalForces() {
   Vec3f g;
-  g << 0, 0, 9.8f;
+  g << 0, 9.8f, 0;
   for (int idx : nonEmptyBlocks_) {
     Block &block = (*blocks_)[idx];
     block.f += block.mass * g;
@@ -21,6 +21,25 @@ void Grid::updateGridVel() {
     Block &block = (*blocks_)[idx];
     block.vel += block.f * TIME_STEP / block.mass;
   }
+}
+
+Vec3f Grid::calcMomentum() const {
+  Vec3f momentum = Vec3f::Constant(0.f);
+  for (int idx : nonEmptyBlocks_) {
+    const Block &block = (*blocks_)[idx];
+    momentum += block.vel * block.mass;
+  }
+  return momentum;
+}
+
+void Grid::reset() {
+  for (int idx : nonEmptyBlocks_) {
+    Block &block = (*blocks_)[idx];
+    block.mass = 0.f;
+    block.vel = Vec3f::Constant(0.f);
+    block.f = Vec3f::Constant(0.f);
+  }
+  nonEmptyBlocks_.clear();
 }
 
 void Grid::checkBoundaryVel() {

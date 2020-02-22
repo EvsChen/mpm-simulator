@@ -1,7 +1,7 @@
 #include "particle.h"
 
 ParticleList::ParticleList() {
-  int x0 = 7, y0 = 7, z0 = 7;
+  int x0 = 7, y0 = 10, z0 = 7;
   int density = 10;
   int cubeLen = 6;
   particles_ = new std::vector<Particle>();
@@ -19,5 +19,19 @@ ParticleList::ParticleList() {
         }
       }
     }
+  }
+}
+
+Vec3f ParticleList::calcMomentum() const {
+  Vec3f momentum = Vec3f::Constant(0.f);
+  for (const Particle &p : (*particles_)) {
+    momentum += p.mass * p.vel;
+  }
+  return momentum;
+}
+
+void ParticleList::advection() {
+  for (Particle &p : *particles_) {
+    p.pos += p.vel * TIME_STEP;
   }
 }

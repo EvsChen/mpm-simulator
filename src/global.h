@@ -23,5 +23,5 @@ typedef Eigen::Matrix4f Mat4f;
 #define GRID_SPACING 1e-2
 #define P_MASS 1e-2
 #define P_DENSITY 1.f
-#define TIME_STEP 0.1
+#define TIME_STEP 1e-3
 #define GRID_SIZE 20
