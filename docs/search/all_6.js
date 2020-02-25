@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nonemptyblocks_5f_11',['nonEmptyBlocks_',['../class_grid.html#ad8b22168d6bb887c8f6c9b6494465708',1,'Grid']]]
+  ['isvalididx_13',['isValidIdx',['../class_grid.html#a5133c59f98992061f3576510e1bbb3f1',1,'Grid']]]
 ];

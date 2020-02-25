@@ -6,11 +6,19 @@
 \mbox{\Hypertarget{class_engine_addb64d367456dd74c79566bc857522d5}\label{class_engine_addb64d367456dd74c79566bc857522d5}} 
 void \mbox{\hyperlink{class_engine_addb64d367456dd74c79566bc857522d5}{P2\+G\+Transfer}} ()
 \begin{DoxyCompactList}\small\item\em Transfer the mass and velocity from particles to grid using A\+P\+IC. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_engine_ad1d6ff103c676c5f5aba0707dd6ee7f4}\label{class_engine_ad1d6ff103c676c5f5aba0707dd6ee7f4}} 
+void \mbox{\hyperlink{class_engine_ad1d6ff103c676c5f5aba0707dd6ee7f4}{G2\+P\+Transfer}} ()
+\begin{DoxyCompactList}\small\item\em Transfer from grid to particles. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_engine_a87e5278b5eec2a4f626293b6ac6f83de}{check\+Mass}} ()
+\item 
 \mbox{\Hypertarget{class_engine_a7303c73002655d763d6ee37f38b2238a}\label{class_engine_a7303c73002655d763d6ee37f38b2238a}} 
 void \mbox{\hyperlink{class_engine_a7303c73002655d763d6ee37f38b2238a}{compute\+Grid\+Force}} ()
 \begin{DoxyCompactList}\small\item\em Calculate grid forces. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_engine_a3d161fa7da89d7c8d1275c79361150bc}\label{class_engine_a3d161fa7da89d7c8d1275c79361150bc}} 
 void {\bfseries update\+Deform\+Grad} ()
+\item 
+\mbox{\Hypertarget{class_engine_a26a35a57983cb56d342b56b16daf8913}\label{class_engine_a26a35a57983cb56d342b56b16daf8913}} 
+void {\bfseries visualize} (const std\+::string \&prefix, int idx)
 \end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -22,6 +30,15 @@ void {\bfseries update\+Deform\+Grad} ()
 \mbox{\hyperlink{class_particle_list}{Particle\+List}} {\bfseries particle\+List\+\_\+}
 \end{DoxyCompactItemize}
 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_engine_a87e5278b5eec2a4f626293b6ac6f83de}\label{class_engine_a87e5278b5eec2a4f626293b6ac6f83de}} 
+\index{Engine@{Engine}!checkMass@{checkMass}}
+\index{checkMass@{checkMass}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{checkMass()}{checkMass()}}
+{\footnotesize\ttfamily void Engine\+::check\+Mass (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Check mass of particles \& grids Only for debug purpose 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

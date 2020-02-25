@@ -71,29 +71,39 @@ $(function() {
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;global.h&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;particle.h&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;grid.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="class_engine.html">    7</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_engine.html">Engine</a> {</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  <a class="code" href="class_engine.html">Engine</a>();</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;  ~<a class="code" href="class_engine.html">Engine</a>();</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_engine.html#addb64d367456dd74c79566bc857522d5">P2GTransfer</a>();</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_engine.html#a7303c73002655d763d6ee37f38b2238a">computeGridForce</a>();</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keywordtype">void</span> updateDeformGrad();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <a class="code" href="class_grid.html">Grid</a> grid_;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <a class="code" href="class_particle_list.html">ParticleList</a> particleList_;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;};</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;global.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;particle.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;grid.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="class_engine.html">    9</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_engine.html">Engine</a> {</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  <a class="code" href="class_engine.html">Engine</a>();</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;  ~<a class="code" href="class_engine.html">Engine</a>();</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_engine.html#addb64d367456dd74c79566bc857522d5">P2GTransfer</a>();</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_engine.html#ad1d6ff103c676c5f5aba0707dd6ee7f4">G2PTransfer</a>();</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_engine.html#a87e5278b5eec2a4f626293b6ac6f83de">checkMass</a>();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_engine.html#a7303c73002655d763d6ee37f38b2238a">computeGridForce</a>();</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keywordtype">void</span> updateDeformGrad();</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordtype">void</span> visualize(<span class="keyword">const</span> std::string &amp;prefix, <span class="keywordtype">int</span> idx);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <a class="code" href="class_grid.html">Grid</a> grid_;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <a class="code" href="class_particle_list.html">ParticleList</a> particleList_;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_engine_html"><div class="ttname"><a href="class_engine.html">Engine</a></div><div class="ttdef"><b>Definition:</b> engine.h:7</div></div>
-<div class="ttc" id="aclass_grid_html"><div class="ttname"><a href="class_grid.html">Grid</a></div><div class="ttdef"><b>Definition:</b> grid.h:16</div></div>
+<div class="ttc" id="aclass_engine_html"><div class="ttname"><a href="class_engine.html">Engine</a></div><div class="ttdef"><b>Definition:</b> engine.h:9</div></div>
+<div class="ttc" id="aclass_grid_html"><div class="ttname"><a href="class_grid.html">Grid</a></div><div class="ttdef"><b>Definition:</b> grid.h:18</div></div>
 <div class="ttc" id="aclass_particle_list_html"><div class="ttname"><a href="class_particle_list.html">ParticleList</a></div><div class="ttdef"><b>Definition:</b> particle.h:28</div></div>
-<div class="ttc" id="aclass_engine_html_addb64d367456dd74c79566bc857522d5"><div class="ttname"><a href="class_engine.html#addb64d367456dd74c79566bc857522d5">Engine::P2GTransfer</a></div><div class="ttdeci">void P2GTransfer()</div><div class="ttdoc">Transfer the mass and velocity from particles to grid using APIC.</div><div class="ttdef"><b>Definition:</b> engine.cpp:14</div></div>
-<div class="ttc" id="aclass_engine_html_a7303c73002655d763d6ee37f38b2238a"><div class="ttname"><a href="class_engine.html#a7303c73002655d763d6ee37f38b2238a">Engine::computeGridForce</a></div><div class="ttdeci">void computeGridForce()</div><div class="ttdoc">Calculate grid forces.</div><div class="ttdef"><b>Definition:</b> engine.cpp:53</div></div>
+<div class="ttc" id="aclass_engine_html_addb64d367456dd74c79566bc857522d5"><div class="ttname"><a href="class_engine.html#addb64d367456dd74c79566bc857522d5">Engine::P2GTransfer</a></div><div class="ttdeci">void P2GTransfer()</div><div class="ttdoc">Transfer the mass and velocity from particles to grid using APIC.</div><div class="ttdef"><b>Definition:</b> engine.cpp:17</div></div>
+<div class="ttc" id="aclass_engine_html_ad1d6ff103c676c5f5aba0707dd6ee7f4"><div class="ttname"><a href="class_engine.html#ad1d6ff103c676c5f5aba0707dd6ee7f4">Engine::G2PTransfer</a></div><div class="ttdeci">void G2PTransfer()</div><div class="ttdoc">Transfer from grid to particles.</div><div class="ttdef"><b>Definition:</b> engine.cpp:67</div></div>
+<div class="ttc" id="aclass_engine_html_a7303c73002655d763d6ee37f38b2238a"><div class="ttname"><a href="class_engine.html#a7303c73002655d763d6ee37f38b2238a">Engine::computeGridForce</a></div><div class="ttdeci">void computeGridForce()</div><div class="ttdoc">Calculate grid forces.</div><div class="ttdef"><b>Definition:</b> engine.cpp:100</div></div>
+<div class="ttc" id="aclass_engine_html_a87e5278b5eec2a4f626293b6ac6f83de"><div class="ttname"><a href="class_engine.html#a87e5278b5eec2a4f626293b6ac6f83de">Engine::checkMass</a></div><div class="ttdeci">void checkMass()</div><div class="ttdef"><b>Definition:</b> engine.cpp:55</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

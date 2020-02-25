@@ -21,6 +21,12 @@ void {\bfseries check\+Boundary\+Vel} ()
 \mbox{\Hypertarget{class_grid_a1c9b816b0c80fb8202849cf69a157f5c}\label{class_grid_a1c9b816b0c80fb8202849cf69a157f5c}} 
 void {\bfseries collide\+With\+Body} ()
 \item 
+\mbox{\Hypertarget{class_grid_ac327e6999a018e493f5584f1b70195f3}\label{class_grid_ac327e6999a018e493f5584f1b70195f3}} 
+Vec3f {\bfseries calc\+Momentum} () const
+\item 
+\mbox{\Hypertarget{class_grid_a153095310e11b93d349d12f218b5e73e}\label{class_grid_a153095310e11b93d349d12f218b5e73e}} 
+void \mbox{\hyperlink{class_grid_a153095310e11b93d349d12f218b5e73e}{reset}} ()
+\begin{DoxyCompactList}\small\item\em Clear grid force, mass and velocity. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{class_grid_a5133c59f98992061f3576510e1bbb3f1}{is\+Valid\+Idx}} (const Vec3i \&idx) const
 \item 
 \mbox{\hyperlink{struct_block}{Block}} \& \mbox{\hyperlink{class_grid_a628698483e976f366577572219a63579}{get\+Block\+At}} (const Vec3i \&idx)
@@ -37,8 +43,8 @@ Vec3i {\bfseries size\+\_\+}
 \mbox{\Hypertarget{class_grid_a22ca434c2b07d603f834f61ed039a3ec}\label{class_grid_a22ca434c2b07d603f834f61ed039a3ec}} 
 std\+::vector$<$ \mbox{\hyperlink{struct_block}{Block}} $>$ $\ast$ {\bfseries blocks\+\_\+}
 \item 
-\mbox{\Hypertarget{class_grid_ad8b22168d6bb887c8f6c9b6494465708}\label{class_grid_ad8b22168d6bb887c8f6c9b6494465708}} 
-std\+::vector$<$ int $>$ \mbox{\hyperlink{class_grid_ad8b22168d6bb887c8f6c9b6494465708}{non\+Empty\+Blocks\+\_\+}}
+\mbox{\Hypertarget{class_grid_aca8f446bdc3320ba2f30623c93fa90f4}\label{class_grid_aca8f446bdc3320ba2f30623c93fa90f4}} 
+std\+::unordered\+\_\+set$<$ int $>$ \mbox{\hyperlink{class_grid_aca8f446bdc3320ba2f30623c93fa90f4}{non\+Empty\+Blocks\+\_\+}}
 \begin{DoxyCompactList}\small\item\em The node with non-\/zero mass. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 

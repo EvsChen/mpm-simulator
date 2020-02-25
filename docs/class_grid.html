@@ -92,6 +92,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>checkBoundaryVel</b> 
 <tr class="memitem:a1c9b816b0c80fb8202849cf69a157f5c"><td class="memItemLeft" align="right" valign="top"><a id="a1c9b816b0c80fb8202849cf69a157f5c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>collideWithBody</b> ()</td></tr>
 <tr class="separator:a1c9b816b0c80fb8202849cf69a157f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac327e6999a018e493f5584f1b70195f3"><td class="memItemLeft" align="right" valign="top"><a id="ac327e6999a018e493f5584f1b70195f3"></a>
+Vec3f&#160;</td><td class="memItemRight" valign="bottom"><b>calcMomentum</b> () const</td></tr>
+<tr class="separator:ac327e6999a018e493f5584f1b70195f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a153095310e11b93d349d12f218b5e73e"><td class="memItemLeft" align="right" valign="top"><a id="a153095310e11b93d349d12f218b5e73e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grid.html#a153095310e11b93d349d12f218b5e73e">reset</a> ()</td></tr>
+<tr class="memdesc:a153095310e11b93d349d12f218b5e73e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear grid force, mass and velocity. <br /></td></tr>
+<tr class="separator:a153095310e11b93d349d12f218b5e73e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5133c59f98992061f3576510e1bbb3f1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grid.html#a5133c59f98992061f3576510e1bbb3f1">isValidIdx</a> (const Vec3i &amp;idx) const</td></tr>
 <tr class="separator:a5133c59f98992061f3576510e1bbb3f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a628698483e976f366577572219a63579"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_block.html">Block</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grid.html#a628698483e976f366577572219a63579">getBlockAt</a> (const Vec3i &amp;idx)</td></tr>
@@ -108,10 +115,10 @@ Vec3i&#160;</td><td class="memItemRight" valign="bottom"><b>size_</b></td></tr>
 <tr class="memitem:a22ca434c2b07d603f834f61ed039a3ec"><td class="memItemLeft" align="right" valign="top"><a id="a22ca434c2b07d603f834f61ed039a3ec"></a>
 std::vector&lt; <a class="el" href="struct_block.html">Block</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>blocks_</b></td></tr>
 <tr class="separator:a22ca434c2b07d603f834f61ed039a3ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8b22168d6bb887c8f6c9b6494465708"><td class="memItemLeft" align="right" valign="top"><a id="ad8b22168d6bb887c8f6c9b6494465708"></a>
-std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grid.html#ad8b22168d6bb887c8f6c9b6494465708">nonEmptyBlocks_</a></td></tr>
-<tr class="memdesc:ad8b22168d6bb887c8f6c9b6494465708"><td class="mdescLeft">&#160;</td><td class="mdescRight">The node with non-zero mass. <br /></td></tr>
-<tr class="separator:ad8b22168d6bb887c8f6c9b6494465708"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca8f446bdc3320ba2f30623c93fa90f4"><td class="memItemLeft" align="right" valign="top"><a id="aca8f446bdc3320ba2f30623c93fa90f4"></a>
+std::unordered_set&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grid.html#aca8f446bdc3320ba2f30623c93fa90f4">nonEmptyBlocks_</a></td></tr>
+<tr class="memdesc:aca8f446bdc3320ba2f30623c93fa90f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The node with non-zero mass. <br /></td></tr>
+<tr class="separator:aca8f446bdc3320ba2f30623c93fa90f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a628698483e976f366577572219a63579"></a>
