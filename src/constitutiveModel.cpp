@@ -2,13 +2,13 @@
 #include "SVD.h"
 
 /// Young's modulus
-const static float E = 10.f;
+const static float E = 5.f;
 /// Poisson's ratio
-const static float vu = 0.3;
+const static float nu = 0.2f;
 /// Shear modulus
-const static float mu = E / 2.f / (1 + vu);
+const static float mu = E / 2.f / (1 + nu);
 /// Lame's first parameter
-const static float lambda = E * vu / (1 + vu) / (1 - 2 * vu);
+const static float lambda = E * nu / (1 + nu) / (1 - 2 * nu);
 
 Mat3f fixedCorotated(const Particle &p) {
   SVDResult res = SVDDecompose(p.F);

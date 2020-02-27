@@ -5,6 +5,8 @@
 // #include "ext/glm/glm.hpp"
 #include "ext/Eigen/Eigen"
 
+#include "profiler.h"
+
 // Custom float definition
 typedef float Float;
 
@@ -18,10 +20,13 @@ typedef Eigen::Matrix4f Mat4f;
 #define uPtr std::unique_ptr
 #define sPtr std::shared_ptr
 
-#define NDEBUG
+// #define NDEBUG
+#define PROFILE
 
 #define GRID_SPACING 1e-2
-#define P_MASS 1e-2
+#define P_MASS 0.1f
 #define P_DENSITY 1.f
 #define TIME_STEP 1e-3
 #define GRID_SIZE 20
+
+extern Profiler profiler;

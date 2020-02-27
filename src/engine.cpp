@@ -15,6 +15,9 @@ Engine::Engine() :
 Engine::~Engine() {}
 
 void Engine::P2GTransfer() {
+#ifdef PROFILE
+  profiler.profStart(ProfType::P2G_TRANSFER);
+#endif
   for (Particle &p : *(particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
 
@@ -32,7 +35,7 @@ void Engine::P2GTransfer() {
 
             block.mass += w * p.mass;
             // TODO: Check affine term calculation
-            Vec3f affineTerm = 4.f * p.Bp * (blockPosIdx.cast<Float>() - posIdx);
+            Vec3f affineTerm = 4.f * p.Bp / grid_.spacing_ * (blockPosIdx.cast<Float>() - posIdx);
             block.vel += w * p.mass * (p.vel + affineTerm);
           }
         }
@@ -50,6 +53,9 @@ void Engine::P2GTransfer() {
       block.vel = Vec3f::Constant(0.f);
     }
   }
+#ifdef PROFILE
+  profiler.profEnd(ProfType::P2G_TRANSFER);
+#endif
 }
 
 void Engine::checkMass() {
@@ -65,6 +71,9 @@ void Engine::checkMass() {
 }
 
 void Engine::G2PTransfer() {
+#ifdef PROFILE
+  profiler.profStart(ProfType::G2P_TRANSFER);
+#endif
   for (Particle &p : *(particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
     p.vel = Vec3f::Constant(0.f);
@@ -95,9 +104,15 @@ void Engine::G2PTransfer() {
     } 
 #endif
   }
+#ifdef PROFILE
+  profiler.profEnd(ProfType::G2P_TRANSFER);
+#endif
 }
 
 void Engine::computeGridForce() {
+#ifdef PROFILE
+  profiler.profStart(ProfType::CALC_GRID_FORCE);
+#endif
   for (const Particle &p : (*particleList_.particles_)) {
     Mat3f piola = fixedCorotated(p);
     Vec3f posIdx = p.pos / grid_.spacing_;
@@ -122,9 +137,15 @@ void Engine::computeGridForce() {
         }
     }
   }
+#ifdef PROFILE
+  profiler.profEnd(ProfType::CALC_GRID_FORCE);
+#endif
 }
 
 void Engine::updateDeformGrad() {
+#ifdef PROFILE
+  profiler.profStart(ProfType::UPDATE_DEFORM_GRAD);
+#endif
   for (Particle &p : (*particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
     Mat3f updateF = Mat3f::Identity();
@@ -150,13 +171,19 @@ void Engine::updateDeformGrad() {
     }
     p.F = updateF * p.F;
   }
+#ifdef PROFILE
+  profiler.profEnd(ProfType::UPDATE_DEFORM_GRAD);
+#endif
 }
 
 void Engine::visualize(const std::string &prefix, int idx) {
+#ifdef PROFILE
+  profiler.profStart(ProfType::VISUALIZATION);
+#endif
   int imgSize = 400;
   std::vector<int> output(imgSize * imgSize, 0);
   Vec3f baseCol = Vec3f::Constant(255);
-  Vec3f maxCol; maxCol << 255, 77, 98;
+  Vec3f maxCol; maxCol << 255, 38, 6;
   Vec3i gridCol; gridCol << 39, 120, 153;
   Float gridWidth = grid_.size_[0] * grid_.spacing_ ,
         gridHeight = grid_.size_[1] * grid_.spacing_;
@@ -203,4 +230,7 @@ void Engine::visualize(const std::string &prefix, int idx) {
   } else {
     std::cout << "Open file failed" << std::endl;
   }    
+#ifdef PROFILE
+  profiler.profEnd(ProfType::VISUALIZATION);
+#endif
 }

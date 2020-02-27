@@ -8,7 +8,7 @@ ParticleList::ParticleList() {
 
   for (int x = x0; x < x0 + cubeLen; x++) {
     for (int y = y0; y < y0 + cubeLen; y++) {
-      for (int z = z0; z < z0 + cubeLen; z++) {
+      for (int z = z0; z < z0 + 2; z++) {
         for (int i = 0; i < density; i++) {
           Float xc = x + static_cast<Float>(rand()) / RAND_MAX,
                 yc = y + static_cast<Float>(rand()) / RAND_MAX,

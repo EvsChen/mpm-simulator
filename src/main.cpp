@@ -2,7 +2,7 @@
 #include <cstring>
 #include <ctime>
 
-// TODO: timer
+Profiler profiler;
 
 int main() {
   Engine engine;
@@ -33,5 +33,7 @@ int main() {
 
     engine.visualize(std::to_string(timer), i);
     time += TIME_STEP;
+    profiler.reportLoop(i);
   }
+  profiler.report();
 }
