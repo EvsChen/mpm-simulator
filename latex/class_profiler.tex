@@ -1,0 +1,68 @@
+\hypertarget{class_profiler}{}\doxysection{Profiler Class Reference}
+\label{class_profiler}\index{Profiler@{Profiler}}
+
+
+Class for profiling.  
+
+
+
+
+{\ttfamily \#include $<$profiler.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_profiler_a944aac9ae0d4e116f04af9bc2e4ea3f3}\label{class_profiler_a944aac9ae0d4e116f04af9bc2e4ea3f3}} 
+using {\bfseries Time\+Point} = std\+::chrono\+::time\+\_\+point$<$ std\+::chrono\+::high\+\_\+resolution\+\_\+clock $>$
+\item 
+\mbox{\Hypertarget{class_profiler_a3fab6b2f5342c63e754b5365cda6467b}\label{class_profiler_a3fab6b2f5342c63e754b5365cda6467b}} 
+using {\bfseries Duration} = std\+::chrono\+::milliseconds
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_profiler_a39e778dc8afdcb281e49b2231ab90a05}\label{class_profiler_a39e778dc8afdcb281e49b2231ab90a05}} 
+void {\bfseries prof\+Start} (Prof\+Type type)
+\item 
+\mbox{\Hypertarget{class_profiler_a9129e75091d034a248a9596b1425e581}\label{class_profiler_a9129e75091d034a248a9596b1425e581}} 
+void {\bfseries prof\+End} (Prof\+Type type)
+\item 
+\mbox{\Hypertarget{class_profiler_a0ca46d2e86c901d6fccbebd560f37731}\label{class_profiler_a0ca46d2e86c901d6fccbebd560f37731}} 
+void \mbox{\hyperlink{class_profiler_a0ca46d2e86c901d6fccbebd560f37731}{report\+Loop}} (int idx)
+\begin{DoxyCompactList}\small\item\em Report the time distribution for this loop. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_profiler_a89f686cc592d18408e3c328949dd0602}\label{class_profiler_a89f686cc592d18408e3c328949dd0602}} 
+void \mbox{\hyperlink{class_profiler_a89f686cc592d18408e3c328949dd0602}{report}} ()
+\begin{DoxyCompactList}\small\item\em Report the overall time distribution. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::unordered\+\_\+map$<$ Prof\+Type, std\+::string $>$ {\bfseries prof\+Name}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for profiling. 
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_profiler_a1f895454f1a8931c75832a4b117103f4}\label{class_profiler_a1f895454f1a8931c75832a4b117103f4}} 
+\index{Profiler@{Profiler}!profName@{profName}}
+\index{profName@{profName}!Profiler@{Profiler}}
+\doxysubsubsection{\texorpdfstring{profName}{profName}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+map$<$Prof\+Type, std\+::string$>$ Profiler\+::prof\+Name}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{    \{ ProfType::P2G\_TRANSFER, \textcolor{stringliteral}{"P2G\_transfer"} \},}
+\DoxyCodeLine{    \{ ProfType::G2P\_TRANSFER, \textcolor{stringliteral}{"G2P\_transfer"} \},}
+\DoxyCodeLine{    \{ ProfType::VISUALIZATION, \textcolor{stringliteral}{"Visualization"} \},}
+\DoxyCodeLine{    \{ ProfType::CALC\_GRID\_FORCE, \textcolor{stringliteral}{"Calc\_grid\_force"} \},}
+\DoxyCodeLine{    \{ ProfType::UPDATE\_DEFORM\_GRAD, \textcolor{stringliteral}{"Update\_deform\_grad"} \}}
+\DoxyCodeLine{  \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/profiler.\+h\end{DoxyCompactItemize}
