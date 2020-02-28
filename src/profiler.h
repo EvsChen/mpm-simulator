@@ -5,7 +5,7 @@
 #include <iostream>
 
 enum class ProfType {
-  P2G_TRANSFER, G2P_TRANSFER, VISUALIZATION, CALC_GRID_FORCE, UPDATE_DEFORM_GRAD
+  P2G_TRANSFER, G2P_TRANSFER, VISUALIZATION, CALC_GRID_FORCE, UPDATE_DEFORM_GRAD, PLASTICITY_HARDENING
 };
 
 /// Class for profiling
@@ -19,7 +19,8 @@ public:
     { ProfType::G2P_TRANSFER, "G2P_transfer" },
     { ProfType::VISUALIZATION, "Visualization" },
     { ProfType::CALC_GRID_FORCE, "Calc_grid_force" },
-    { ProfType::UPDATE_DEFORM_GRAD, "Update_deform_grad" }
+    { ProfType::UPDATE_DEFORM_GRAD, "Update_deform_grad" },
+    { ProfType::PLASTICITY_HARDENING, "Plasticity_hardening" }
   };
 
   Profiler() {

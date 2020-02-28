@@ -12,5 +12,6 @@ add_executable(${PROJECT_NAME}
   ./src/particle.cpp
   ./src/SVD.cpp
   ./src/constitutiveModel.cpp
+  ./src/plasticity.cpp
 )
 target_include_directories(${PROJECT_NAME} PUBLIC src)

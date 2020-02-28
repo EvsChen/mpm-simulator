@@ -17,17 +17,29 @@ struct Block {
 
 class Grid {
 public:
-  Grid(const Vec3i &, Float);
+  Grid(int, int, int, Float);
   /// Default constructor
   Grid();
   ~Grid() {}
 
-  /// Update grid velocity for non-empty blocks
-  void updateGridVel();
-
-  void addExternalForces();
-
   void checkBoundaryVel();
+
+  /// Add external forces
+  void addExternalForces() {
+    Vec3f g;
+    g << 0, 9.8f, 0;
+    for (int idx : nonEmptyBlocks_) {
+      Block &block = (*blocks_)[idx];
+      block.f += block.mass * g;
+    }
+  }
+  /// Update grid velocity
+  void updateGridVel() {
+    for (int idx : nonEmptyBlocks_) {
+      Block &block = (*blocks_)[idx];
+      block.vel += block.f * params.timeStep / block.mass;
+    }
+  }
 
   void collideWithBody();
 

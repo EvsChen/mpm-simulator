@@ -1,18 +1,21 @@
 #include "constitutiveModel.h"
 #include "SVD.h"
 
-/// Young's modulus
-const static float E = 5.f;
-/// Poisson's ratio
-const static float nu = 0.2f;
-/// Shear modulus
-const static float mu = E / 2.f / (1 + nu);
-/// Lame's first parameter
-const static float lambda = E * nu / (1 + nu) / (1 - 2 * nu);
-
-Mat3f fixedCorotated(const Particle &p) {
-  SVDResult res = SVDDecompose(p.F);
+Mat3f fixedCorotated(const Mat3f &F) {
+  SVDResult res = SVDDecompose(F);
   Mat3f R = res.U * res.V.transpose();
-  Float J = p.F.determinant();
-  return 2.f * mu * (p.F - R) + lambda * (J - 1) * J * p.F.inverse().transpose();
+  Float J = F.determinant();
+  return 2.f * params.mu * (F - R) + params.lambda * (J - 1) * J * F.inverse().transpose();
+}
+
+Mat3f stVenant(const Mat3f &Fe, bool needProjected) {
+  SVDResult res = SVDDecompose(Fe);
+  Mat3f lnSigma = res.Sigma;
+  for (int i = 0; i < 3; i++) {
+    lnSigma(i, i) = std::log(lnSigma(i, i));
+  }
+  Mat3f invSigma = res.Sigma.inverse();
+  // Energy derivative
+  Mat3f T = 2 * params.mu * invSigma * lnSigma + params.lambda * lnSigma.trace() * invSigma;
+  return res.U * T * res.V.transpose();
 }

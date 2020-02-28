@@ -91,5 +91,8 @@
     "cinttypes": "cpp",
     "filesystem": "cpp",
     "eigen": "cpp"
+  },
+  "search.exclude": {
+    "**/ext": true
   }
 }

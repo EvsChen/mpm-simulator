@@ -5,10 +5,9 @@
 
 
 // TODO: Come up with iterator function?
-
 struct Particle {
   Particle(const Vec3f &p, Float m) :
-    originalPos(p), pos(p), mass(m), volume(m / P_DENSITY) {};
+    originalPos(p), pos(p), mass(m), volume(m / params.pDensity) {};
   /// Original position
   Vec3f originalPos;
   Vec3f pos;
@@ -23,11 +22,16 @@ struct Particle {
   Mat3f Fe = Mat3f::Identity();
   /// Plastic part of F
   Mat3f Fp = Mat3f::Identity();
+  // TODO: alpha initialization?
+  /// Yield surface size, used in plasticity hardening
+  Float alpha = 0.f;
+  /// Hardening state, used in plasticity hardening
+  Float q = 0.f;
 };
 
 class ParticleList {
 public:
-  ParticleList();
+  ParticleList(ParticleType type);
   /**
    * Get grid force to transfer to grid
    * @param idx grid index
@@ -43,8 +47,11 @@ public:
 
   /// Update particle velocity
   void advection();
+
+  void hardening();
   
   /// List of unique pointer to particles 
   std::vector<Particle> *particles_;
+  ParticleType type_;
 };
 

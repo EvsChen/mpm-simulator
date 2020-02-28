@@ -9,7 +9,7 @@
 const static bool USE_QUADRATIC_WEIGHT = true;
 
 Engine::Engine() :
-  grid_(), particleList_()
+  grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(params.pType)
 {}
 
 Engine::~Engine() {}
@@ -34,7 +34,6 @@ void Engine::P2GTransfer() {
             Float w = weight(0, offsetX) * weight(1, offsetY) * weight(2, offsetZ);
 
             block.mass += w * p.mass;
-            // TODO: Check affine term calculation
             Vec3f affineTerm = 4.f * p.Bp / grid_.spacing_ * (blockPosIdx.cast<Float>() - posIdx);
             block.vel += w * p.mass * (p.vel + affineTerm);
           }
@@ -109,12 +108,39 @@ void Engine::G2PTransfer() {
 #endif
 }
 
+void Engine::updateGridState() {
+  computeGridForce();
+  // Add external forces
+  grid_.addExternalForces();
+  // TODO: Grid collision and friction
+  grid_.updateGridVel();
+  grid_.checkBoundaryVel();
+}
+
 void Engine::computeGridForce() {
 #ifdef PROFILE
   profiler.profStart(ProfType::CALC_GRID_FORCE);
 #endif
   for (const Particle &p : (*particleList_.particles_)) {
-    Mat3f piola = fixedCorotated(p);
+    Mat3f Ap;
+    switch (particleList_.type_) {
+      case ParticleType::SAND: {
+        // Only use the elastic part
+        // Mat3f piola = stVenant(p.Fe, false);
+        Mat3f piola = fixedCorotated(p.Fe);
+        Ap = p.volume * piola * p.Fe.transpose();
+        break;
+      }
+      case ParticleType::ELASTIC: {
+        Mat3f piola = fixedCorotated(p.F);
+        Ap = p.volume * piola * p.F.transpose();
+        break;
+      }
+      default:
+        std::cerr << "Particle type not specified!" << std::endl;
+        break;
+    }
+
     Vec3f posIdx = p.pos / grid_.spacing_;
     if (USE_QUADRATIC_WEIGHT) {
         Mat3f weight = quadWeight(posIdx);
@@ -131,7 +157,7 @@ void Engine::computeGridForce() {
               Vec3i t;
               t << i, j, k;
               Block &block = grid_.getBlockAt(baseIdx + t);
-              block.f += -p.volume * piola * p.F.transpose() * weightGrad;
+              block.f += - Ap * weightGrad;
             }
           }
         }
@@ -164,12 +190,16 @@ void Engine::updateDeformGrad() {
             Vec3i t;
             t << i, j, k;
             Block &block = grid_.getBlockAt(baseIdx + t);
-            updateF += TIME_STEP * block.vel * weightGrad.transpose();
+            updateF += params.timeStep * block.vel * weightGrad.transpose();
           }
         }
       }
     }
-    p.F = updateF * p.F;
+    if (particleList_.type_ == ParticleType::ELASTIC) {
+      p.F = updateF * p.F;  
+    } else if (particleList_.type_ == ParticleType::SAND) {
+      p.Fe = updateF * p.Fe;
+    }  
   }
 #ifdef PROFILE
   profiler.profEnd(ProfType::UPDATE_DEFORM_GRAD);

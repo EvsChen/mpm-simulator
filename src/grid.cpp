@@ -1,27 +1,12 @@
 #include "grid.h"
 
-Grid::Grid(const Vec3i &s, Float space) :
-  spacing_(space), size_(s),
-  blocks_(new std::vector<Block>(s[0] * s[1] * s[2]))
-{}
-
-Grid::Grid() : Grid(Vec3i::Constant(GRID_SIZE), GRID_SPACING) {}
-
-void Grid::addExternalForces() {
-  Vec3f g;
-  g << 0, 9.8f, 0;
-  for (int idx : nonEmptyBlocks_) {
-    Block &block = (*blocks_)[idx];
-    block.f += block.mass * g;
-  }
+Grid::Grid(int gridX, int gridY, int gridZ, Float space) :
+  spacing_(space),
+  blocks_(new std::vector<Block>(gridX * gridY * gridZ))
+{
+  size_ << gridX, gridY, gridZ;
 }
 
-void Grid::updateGridVel() {
-  for (int idx : nonEmptyBlocks_) {
-    Block &block = (*blocks_)[idx];
-    block.vel += block.f * TIME_STEP / block.mass;
-  }
-}
 
 Vec3f Grid::calcMomentum() const {
   Vec3f momentum = Vec3f::Constant(0.f);
