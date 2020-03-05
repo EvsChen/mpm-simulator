@@ -126,8 +126,8 @@ void Engine::computeGridForce() {
     switch (particleList_.type_) {
       case ParticleType::SAND: {
         // Only use the elastic part
-        // Mat3f piola = stVenant(p.Fe, false);
-        Mat3f piola = fixedCorotated(p.Fe);
+        Mat3f piola = stVenant(p.Fe, false);
+        // Mat3f piola = fixedCorotated(p.Fe);
         Ap = p.volume * piola * p.Fe.transpose();
         break;
       }

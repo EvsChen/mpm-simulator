@@ -90,7 +90,9 @@
     "cfenv": "cpp",
     "cinttypes": "cpp",
     "filesystem": "cpp",
-    "eigen": "cpp"
+    "eigen": "cpp",
+    "cassert": "cpp",
+    "*.in": "cpp"
   },
   "search.exclude": {
     "**/ext": true

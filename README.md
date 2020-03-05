@@ -5,4 +5,5 @@ Implementation of the Material Point Method
 - [ ] Fix bugs for high Young's modulus
 - [ ] Snow model
 - [ ] Parallel execution
+- [ ] Write to grid file
 
