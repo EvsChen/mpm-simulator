@@ -2,8 +2,9 @@
 
 #include <cassert>
 
-// #include "ext/glm/glm.hpp"
+// TODO: Change eigen build to cmake
 #include "ext/Eigen/Eigen"
+#include <glog/logging.h>
 
 #include "profiler.h"
 
@@ -29,7 +30,7 @@ extern Profiler profiler;
 // TODO: Pass in constants variables
 
 /// Particle types
-enum class ParticleType : unsigned char {
+enum class ParticleType : int {
   SNOW, SAND, ELASTIC
 };
 
@@ -51,8 +52,8 @@ public:
     pType = type;
     switch(type) {
       case ParticleType::SAND: {
-        // E = 3.537e5;
-        E = 50.f;
+        E = 3.537e3;
+        // E = 50.f;
         nu = 0.3f;
         pDensity = 2.2f;
         break;
@@ -69,6 +70,12 @@ public:
     mu = E / 2.f / (1 + nu);
     lambda = E * nu / (1 + nu) / (1 - 2 * nu);
   }
+
+  void log() {
+    LOG(INFO) << "Particle type: " << (int) pType;
+    LOG(INFO) << "Grid size: " << gridX << " * " << gridY << " * " << spacing;
+  }
+
   /// Young's modulus
   Float E;
   /// Poisson's ratio
