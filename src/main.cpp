@@ -15,7 +15,6 @@ int main(int argc, char *argv[]) {
   params.log();
   Engine engine;
   std::time_t timer = std::time(0);
-  google::FlushLogFiles(google::INFO);
   for (int i = 0; i < params.stepSize; i++) {
     engine.P2GTransfer();
 
