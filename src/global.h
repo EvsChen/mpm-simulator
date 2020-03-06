@@ -72,6 +72,7 @@ public:
   void log() {
     LOG(INFO) << "Particle type: " << (int) pType;
     LOG(INFO) << "Grid size: " << gridX << " * " << gridY << " * " << spacing;
+    google::FlushLogFiles(google::INFO);
   }
 
   /// Young's modulus
