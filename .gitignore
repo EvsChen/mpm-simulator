@@ -1,6 +1,11 @@
+Houdini/backup/*
+bin/*
 build/*
 debug/*
 result-*/*
+.vs/*
+.vscode/*
+.clang-format
 
 # Prerequisites
 *.d

@@ -41,3 +41,12 @@ Mat3f quadWeightDeriv(const Vec3f &particlePosIdx) {
   }
   return result;
 }
+
+std::string paddingStr(const std::string &str, char c, int targetLength) {
+	int num = targetLength - str.size();
+	if (num < 0) {
+		throw std::runtime_error("[padding Str] num is negative :" + std::to_string(num));
+	}
+	std::string front = std::string(num, c);
+	return front + str;
+}

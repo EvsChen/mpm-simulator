@@ -22,3 +22,6 @@ Mat3f quadWeightDeriv(const Vec3f &particlePosIdx);
  */
 Vec3i floor(const Vec3f &v);
 
+// e.g input: "3", '0', 4, output : "0003"
+std::string paddingStr(const std::string &str, char c, int targetLength);
+

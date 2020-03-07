@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "util.h"
 #include <cstring>
 #include <ctime>
 
@@ -41,11 +42,12 @@ int main(int argc, char *argv[]) {
 
     engine.particleList_.advection();
     engine.visualize(std::to_string(timer), i);
+	engine.writePositions("particles_" + paddingStr(std::to_string(i), '0', 4) + ".txt");
 
 #ifdef PROFILE
     profiler.reportLoop(i);
 #endif
-    google::FlushLogFiles(google::INFO);
+    google::FlushLogFiles(google::GLOG_INFO);
   }
 #ifdef PROFILE
   profiler.report();

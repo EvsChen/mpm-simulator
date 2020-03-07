@@ -5,6 +5,7 @@
 // TODO: Change eigen build to cmake
 #include "ext/Eigen/Eigen"
 #include <glog/logging.h>
+//#include <glog/log_severity.h>
 
 #include "profiler.h"
 
@@ -74,7 +75,7 @@ public:
   void log() {
     LOG(INFO) << "Particle type: " << (int) pType;
     LOG(INFO) << "Grid size: " << gridX << " * " << gridY << " * " << spacing;
-    google::FlushLogFiles(google::INFO);
+    google::FlushLogFiles(google::GLOG_INFO);
   }
 
   /// Young's modulus
