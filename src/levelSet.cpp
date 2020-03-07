@@ -1,6 +1,7 @@
 #include "levelSet.h"
 
 Transform::Transform(const Vec3f &trans, const Vec3f &rot, const Vec3f &scale) {
+  Mat3f rotX;
   
 }
 

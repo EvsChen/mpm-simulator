@@ -27,6 +27,8 @@ public:
 
   void visualize(const std::string &prefix, int idx);
 
+  void writePositions(const std::string &filename);
+
   Grid grid_;
   ParticleList particleList_;
 

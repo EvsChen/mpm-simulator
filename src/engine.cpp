@@ -264,3 +264,20 @@ void Engine::visualize(const std::string &prefix, int idx) {
   profiler.profEnd(ProfType::VISUALIZATION);
 #endif
 }
+
+void Engine::writePositions(const std::string &filename)
+{
+	std::ofstream out(filename, std::ios::binary);
+	if (!out) {
+		throw std::runtime_error("[writePositions] cannot open file");
+	}
+	int size = particleList_.particles_->size();
+	out.write((char*)&size, sizeof(int));
+	for (const Particle &p : (*particleList_.particles_)) {
+		Vec3f pos = p.pos;
+		out.write((char*)&pos.x(), sizeof(Float));
+		out.write((char*)&pos.y(), sizeof(Float));
+		out.write((char*)&pos.z(), sizeof(Float));
+	}
+	out.close();
+}

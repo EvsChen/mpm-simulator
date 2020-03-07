@@ -5,6 +5,7 @@
 // TODO: Change eigen build to cmake
 #include "ext/Eigen/Eigen"
 #include <glog/logging.h>
+//#include <glog/log_severity.h>
 
 #include "profiler.h"
 
@@ -15,6 +16,8 @@ typedef Eigen::Vector3f Vec3f;
 typedef Eigen::Vector3i Vec3i;
 typedef Eigen::Matrix3f Mat3f;
 typedef Eigen::Matrix4f Mat4f;
+
+#define M_PI 3.1415926
 
 #define mkU std::make_unique
 #define mkS std::make_shared
