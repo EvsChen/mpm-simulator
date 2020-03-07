@@ -17,15 +17,17 @@ typedef Eigen::Vector3i Vec3i;
 typedef Eigen::Matrix3f Mat3f;
 typedef Eigen::Matrix4f Mat4f;
 
-#define M_PI 3.1415926
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327950288
+#endif
 
 #define mkU std::make_unique
 #define mkS std::make_shared
 #define uPtr std::unique_ptr
 #define sPtr std::shared_ptr
 
-#define NDEBUG
-// #define PROFILE
+// #define NDEBUG
+#define PROFILE
 
 extern Profiler profiler;
 // TODO: Pass in constants variables
@@ -40,7 +42,9 @@ class Params {
 public:
   Params() {}
   void init(Float pMass_ = 1.f,
-            Float timeStep_ = 5e-4, int stepSize_ = 1000, int gridX_ = 20, int gridY_ = 20, int gridZ_ = 20, Float spacing_ = 1e-2) {
+            Float timeStep_ = 5e-4, int stepSize_ = 1000,
+            int gridX_ = 20, int gridY_ = 20, int gridZ_ = 20,
+            Float spacing_ = 1e-2) {
     pMass = pMass_;
     timeStep = timeStep_;
     stepSize = stepSize_;
@@ -54,7 +58,6 @@ public:
     switch(type) {
       case ParticleType::SAND: {
         E = 3.537e5;
-        // E = 50.f;
         nu = 0.3f;
         pDensity = 2.2e3f;
         break;

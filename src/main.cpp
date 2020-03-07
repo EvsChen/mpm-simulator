@@ -6,8 +6,6 @@
 Profiler profiler;
 Params params;
 
-// TODO: Log file
-
 int main(int argc, char *argv[]) {
   FLAGS_log_dir = "./";
   google::InitGoogleLogging(argv[0]);

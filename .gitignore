@@ -2,6 +2,7 @@ Houdini/backup/*
 bin/*
 build/*
 debug/*
+release/*
 result-*/*
 .vs/*
 .vscode/*
