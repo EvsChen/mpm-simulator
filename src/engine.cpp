@@ -65,8 +65,8 @@ void Engine::checkMass() {
   for (int idx : grid_.nonEmptyBlocks_) {
     gridMass += (*grid_.blocks_)[idx].mass;
   }
-  std::cout << "Particle mass: " << particlesMass << std::endl;
-  std::cout << "Non-empty grid mass: " << gridMass << std::endl;
+  DLOG(INFO) << "Particle mass: " << particlesMass;
+  DLOG(INFO) << "Non-empty grid mass: " << gridMass;
 }
 
 void Engine::G2PTransfer() {
@@ -99,7 +99,7 @@ void Engine::G2PTransfer() {
 #ifdef NDEBUG
     Float maxSpeed = 5.f;
     if (p.vel[0] > maxSpeed || p.vel[1] > maxSpeed || p.vel[2] > maxSpeed) {
-      std::cerr << "Dangerous particle speed: (" << p.vel[0] << ", " << p.vel[1] << ", " << p.vel[2] << ")" << std::endl;
+      DLOG(WARNING) << "Dangerous particle speed: (" << p.vel[0] << ", " << p.vel[1] << ", " << p.vel[2] << ")";
     } 
 #endif
   }
@@ -137,7 +137,7 @@ void Engine::computeGridForce() {
         break;
       }
       default:
-        std::cerr << "Particle type not specified!" << std::endl;
+        LOG(FATAL) << "Particle type not specified!" << std::endl;
         break;
     }
 
@@ -228,7 +228,7 @@ void Engine::visualize(const std::string &prefix, int idx) {
     int idx = gridX + gridY * imgSize;
 #ifdef NDEBUG    
     if (gridX >= imgSize || gridY >= imgSize) {
-      std::cout << "Invalid grid X: " << gridX << " Y: " << gridY << std::endl;
+      DLOG(FATAL) << "Invalid grid X: " << gridX << " Y: " << gridY << std::endl;
       continue;
     }
 #endif
@@ -258,7 +258,7 @@ void Engine::visualize(const std::string &prefix, int idx) {
     }
     outFile.close();
   } else {
-    std::cout << "Open file failed" << std::endl;
+    LOG(FATAL) << "Open file failed" << std::endl;
   }    
 #ifdef PROFILE
   profiler.profEnd(ProfType::VISUALIZATION);

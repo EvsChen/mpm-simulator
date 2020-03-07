@@ -40,31 +40,33 @@ public:
 
   /// Report the time distribution for this loop
   void reportLoop(int idx) {
-    std::cout << "Report for loop " << idx << std::endl;
+    DLOG(INFO) << "Report for loop " << idx;
     double totalTime = 0.0;
     for (auto &p : loopTime_) {
       totalTime += p.second.count();
     }
     for (auto &p : loopTime_) {
-      std::cout << profName[p.first] << " " << p.second.count() << "ms ";
-      std::cout << p.second.count() / totalTime * 100.0 << "%" << std::endl;
+      DLOG(INFO) << profName[p.first] << " " << p.second.count() << "ms ";
+      DLOG(INFO) << p.second.count() / totalTime * 100.0 << "%";
       totalTime_[p.first] += p.second;
       p.second = Duration::zero();
     }
+    google::FlushLogFiles(google::INFO);
   }
 
   /// Report the overall time distribution
   void report() {
-    std::cout << "Report for total" << std::endl;
+    LOG(INFO) << "Report for total";
     double totalTime = 0.0;
     for (auto &p : totalTime_) {
       totalTime += p.second.count();
     }
     for (auto &p : totalTime_) {
-      std::cout << profName[p.first] << " " << p.second.count() << "ms ";
-      std::cout << p.second.count() / totalTime * 100.0 << "%" << std::endl;
+      LOG(INFO) << profName[p.first] << " " << p.second.count();
+      LOG(INFO) << p.second.count() / totalTime * 100.0 << "%";
       p.second = Duration::zero();
     }
+    google::FlushLogFiles(google::INFO);
   }
   
 private:

@@ -36,7 +36,7 @@ enum class ParticleType : int {
 class Params {
 public:
   Params() {}
-  void init(Float pMass_ = 0.1f,
+  void init(Float pMass_ = 1.f,
             Float timeStep_ = 5e-4, int stepSize_ = 1000, int gridX_ = 20, int gridY_ = 20, int gridZ_ = 20, Float spacing_ = 1e-2) {
     pMass = pMass_;
     timeStep = timeStep_;
@@ -50,16 +50,16 @@ public:
     pType = type;
     switch(type) {
       case ParticleType::SAND: {
-        E = 3.537e3;
+        E = 3.537e5;
         // E = 50.f;
         nu = 0.3f;
-        pDensity = 2.2f;
+        pDensity = 2.2e3f;
         break;
       }
       case ParticleType::ELASTIC: {
         E = 5.f;
         nu = 0.2f;
-        pDensity = 1.f;
+        pDensity = 1e3f;
         break;
       }
       default:
@@ -71,7 +71,10 @@ public:
 
   void log() {
     LOG(INFO) << "Particle type: " << (int) pType;
-    LOG(INFO) << "Grid size: " << gridX << " * " << gridY << " * " << spacing;
+    LOG(INFO) << "Grid size: " << gridX << " * " << gridY << " * " << gridZ << " * " << spacing;
+    LOG(INFO) << "Time Step: " << timeStep << " * " << stepSize;
+    LOG(INFO) << "Particle mass: " << pMass << " Density: " << pDensity;
+    LOG(INFO) << "E: " << E << " " << "nu: " << nu; 
     google::FlushLogFiles(google::INFO);
   }
 

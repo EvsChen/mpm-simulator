@@ -35,8 +35,8 @@ int main(int argc, char *argv[]) {
 
 #ifdef NDEBUG
     Vec3f particleM = engine.particleList_.calcMomentum();
-    std::cout << "Momentum difference is: " << std::endl;
-    std::cout << (gridM - particleM) << std::endl;
+    DLOG(INFO) << "Momentum difference is: ";
+    DLOG(INFO) << (gridM - particleM);
 #endif
 
     engine.particleList_.advection();
