@@ -81,7 +81,7 @@ public:
     LOG(INFO) << "Time Step: " << timeStep << " * " << stepSize;
     LOG(INFO) << "Particle mass: " << pMass << " Density: " << pDensity;
     LOG(INFO) << "E: " << E << " " << "nu: " << nu; 
-    google::FlushLogFiles(google::INFO);
+    google::FlushLogFiles(google::GLOG_INFO);
   }
 
   /// Young's modulus

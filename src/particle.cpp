@@ -3,7 +3,7 @@
 
 ParticleList::ParticleList(ParticleType type) : type_(type) {
   int x0 = 7, y0 = 10, z0 = 7;
-  int density = 10;
+  int density = 50;
   int cubeLen = 6;
   particles_ = new std::vector<Particle>();
 
