@@ -4,21 +4,14 @@ cmake_minimum_required(VERSION 3.10)
 project(MPMSimulator)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-if (MSVC)
-	set(DEFAULT_CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-	SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-endif()
+set(LIBRARY_NAME MPMSolverPlugin)
 
+# Locate Houdini's libraries and header files.
+# Registers an imported library target named 'Houdini'.
+find_package( Houdini REQUIRED )
 
 # glog
 add_subdirectory(src/ext/glog)
-
-if (MSVC)
-	set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/build/)
-endif()
 
 add_executable(${PROJECT_NAME}
   ./src/main.cpp
@@ -30,8 +23,21 @@ add_executable(${PROJECT_NAME}
   ./src/constitutiveModel.cpp
   ./src/plasticity.cpp
 )
+
+add_library( ${LIBRARY_NAME} SHARED
+    ./src/houdini/MPM_Solver.C
+    ./src/houdini/MPM_Solver.h
+)
+
+
 target_link_libraries(${PROJECT_NAME} glog::glog)
+target_link_libraries(${LIBRARY_NAME} glog::glog)
+
+# Link against the Houdini libraries, and add required include directories and compile definitions.
+target_link_libraries(${LIBRARY_NAME} Houdini)
+
 target_include_directories(${PROJECT_NAME} PUBLIC src)
-if (MSVC)
-	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
-endif()
+target_include_directories(${LIBRARY_NAME} PUBLIC src)
+
+# Configure several common target properties, such as its output directory.
+houdini_configure_target( ${LIBRARY_NAME} )
