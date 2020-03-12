@@ -92,7 +92,9 @@
     "filesystem": "cpp",
     "eigen": "cpp",
     "cassert": "cpp",
-    "*.in": "cpp"
+    "*.in": "cpp",
+    "sparse": "cpp",
+    "geometry": "cpp"
   },
   "search.exclude": {
     "**/ext": true

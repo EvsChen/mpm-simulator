@@ -15,6 +15,7 @@ endif()
 
 # glog
 add_subdirectory(src/ext/glog)
+add_subdirectory(src/ext/eigen)
 
 if (MSVC)
 	set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/build/)
@@ -31,6 +32,7 @@ add_executable(${PROJECT_NAME}
   ./src/plasticity.cpp
 )
 target_link_libraries(${PROJECT_NAME} glog::glog)
+target_link_libraries(${PROJECT_NAME} eigen)
 target_include_directories(${PROJECT_NAME} PUBLIC src)
 if (MSVC)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")

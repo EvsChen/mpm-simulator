@@ -3,7 +3,7 @@
 #include <cassert>
 
 // TODO: Change eigen build to cmake
-#include "ext/Eigen/Eigen"
+#include <Eigen/Dense>
 #include <glog/logging.h>
 //#include <glog/log_severity.h>
 
@@ -14,6 +14,7 @@ typedef float Float;
 
 typedef Eigen::Vector3f Vec3f;
 typedef Eigen::Vector3i Vec3i;
+typedef Eigen::Vector4f Vec4f;
 typedef Eigen::Matrix3f Mat3f;
 typedef Eigen::Matrix4f Mat4f;
 

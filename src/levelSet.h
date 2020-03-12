@@ -1,30 +1,34 @@
 #pragma once
 
 #include "global.h"
+#include <Eigen/Geometry>
 
 class Transform {
 public:
-  Transform(const Vec3f &trans, const Vec3f &rot, const Vec3f &scale);
-  Vec3f localPt2World(const Vec3f &p);
-  Vec3f localNorm2World(const Vec3f &normal);
-  Mat4f T, invT;
+  static Transform Inverse(const Transform &t);
+  Transform();
+  Transform(const Vec3f &translate, const Vec3f &rotate, const Vec3f &scale);
+  Vec3f tPoint(const Vec3f &pt) const;
+  Vec3f tVec(const Vec3f &v) const;
+  Vec3f tNorm(const Vec3f &n) const;
+
+  Vec3f translate_, rotate_, scale_;
+  Eigen::Affine3f t_;
 };
 
 class LevelSet {
 public:
   LevelSet(const Transform &t);
-  virtual Float sdf(const Vec3f &xi) const = 0;
-  virtual Vec3f normal(const Vec3f &xi) const = 0;
+  virtual bool sdf(const Vec3f &xi, Float *dist, Vec3f *norm) const;
 
-private:
-  Transform t_;
+protected:
+  Transform t_, inv_;
 };
 
 class Sphere : public LevelSet {
 public:
   Sphere(const Transform &t, Float radius);
-  virtual Float sdf(const Vec3f &xi) const;
-  virtual Vec3f normal(const Vec3f &xi) const;
+  virtual bool sdf(const Vec3f &xi, Float *dist, Vec3f *norm) const;
 
 private:
   Float radius_;
@@ -33,6 +37,5 @@ private:
 class Plane : public LevelSet {
 public:
   Plane(const Transform &t);
-  virtual Float sdf(const Vec3f &xi) const;
-  virtual Vec3f normal(const Vec3f &xi) const;
+  virtual bool sdf(const Vec3f &xi, Float *dist, Vec3f *norm) const;
 };
