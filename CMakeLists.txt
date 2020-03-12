@@ -26,6 +26,7 @@ add_library(${ENGINE_LIBRARY} STATIC
   ./src/SVD.cpp
   ./src/constitutiveModel.cpp
   ./src/plasticity.cpp
+  ./src/levelSet.cpp
 )
 
 target_link_libraries(${ENGINE_LIBRARY} glog::glog)

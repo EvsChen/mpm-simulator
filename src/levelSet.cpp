@@ -16,9 +16,11 @@ Transform::Transform() : Transform(Vec3f::Constant(0.f), Vec3f::Constant(0.f), V
 
 Transform::Transform(const Vec3f &translate, const Vec3f &rotate, const Vec3f &scale)
   : translate_(translate), rotate_(rotate_), scale_(scale) {
-    t_.scale(scale_);
-    t_.rotate(rotate_);
-    t_.translate(translate_);
+    t_ *= Eigen::Scaling(scale_(0), scale_(1), scale_(2));
+    t_ *= Eigen::AngleAxisf(rotate_(0), Vec3f::UnitX());
+    t_ *= Eigen::AngleAxisf(rotate_(1), Vec3f::UnitY());
+    t_ *= Eigen::AngleAxisf(rotate_(2), Vec3f::UnitZ());
+    t_ *= Eigen::Translation3f(translate_(0), translate_(1), translate_(2));
 }
 
 Vec3f Transform::tPoint(const Vec3f &pt) const {
