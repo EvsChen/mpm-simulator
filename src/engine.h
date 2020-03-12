@@ -5,6 +5,7 @@
 #include "global.h"
 #include "particle.h"
 #include "grid.h"
+#include "util.h"
 
 class Engine {
 public:
@@ -27,7 +28,11 @@ public:
 
   void visualize(const std::string &prefix, int idx);
 
+  /// Write particle positions
   void writePositions(const std::string &filename);
+
+  /// Write grid velocities
+  void writeVelocity(const std::string &filename);
 
   Grid grid_;
   ParticleList particleList_;

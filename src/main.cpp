@@ -1,5 +1,4 @@
 #include "engine.h"
-#include "util.h"
 #include <cstring>
 #include <ctime>
 
@@ -30,6 +29,11 @@ int main(int argc, char *argv[]) {
 
     engine.particleList_.hardening();
     engine.G2PTransfer();
+
+#ifdef NDEBUG
+	engine.writeVelocity("v_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
+#endif
+
     engine.grid_.reset();
 
 #ifdef NDEBUG
@@ -39,8 +43,12 @@ int main(int argc, char *argv[]) {
 #endif
 
     engine.particleList_.advection();
+
+#ifdef NDEBUG
     engine.visualize(std::to_string(timer), i);
-	engine.writePositions("particles_" + paddingStr(std::to_string(i), '0', 4) + ".txt");
+	  engine.writePositions("particles_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
+#endif
+	
 
 #ifdef PROFILE
     profiler.reportLoop(i);

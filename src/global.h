@@ -2,10 +2,8 @@
 
 #include <cassert>
 
-// TODO: Change eigen build to cmake
-#include <Eigen/Dense>
+#include "ext/Eigen/Eigen"
 #include <glog/logging.h>
-//#include <glog/log_severity.h>
 
 #include "profiler.h"
 
@@ -82,7 +80,7 @@ public:
     LOG(INFO) << "Time Step: " << timeStep << " * " << stepSize;
     LOG(INFO) << "Particle mass: " << pMass << " Density: " << pDensity;
     LOG(INFO) << "E: " << E << " " << "nu: " << nu; 
-    google::FlushLogFiles(google::INFO);
+    google::FlushLogFiles(google::GLOG_INFO);
   }
 
   /// Young's modulus

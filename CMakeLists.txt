@@ -4,25 +4,21 @@ cmake_minimum_required(VERSION 3.10)
 project(MPMSimulator)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-if (MSVC)
-	set(DEFAULT_CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-	SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(LIBRARY_NAME MPMSolverPlugin)
+set(ENGINE_LIBRARY MPMEngine)
+
+if (APPLE)
+  list(APPEND CMAKE_PREFIX_PATH "/Applications/Houdini/Current/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/cmake")
 endif()
 
+# Locate Houdini's libraries and header files.
+# Registers an imported library target named 'Houdini'.
+find_package( Houdini REQUIRED )
 
 # glog
 add_subdirectory(src/ext/glog)
-add_subdirectory(src/ext/eigen)
 
-if (MSVC)
-	set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/build/)
-endif()
-
-add_executable(${PROJECT_NAME}
-  ./src/main.cpp
+add_library(${ENGINE_LIBRARY} STATIC
   ./src/grid.cpp
   ./src/util.cpp
   ./src/engine.cpp
@@ -31,9 +27,24 @@ add_executable(${PROJECT_NAME}
   ./src/constitutiveModel.cpp
   ./src/plasticity.cpp
 )
-target_link_libraries(${PROJECT_NAME} glog::glog)
-target_link_libraries(${PROJECT_NAME} eigen)
-target_include_directories(${PROJECT_NAME} PUBLIC src)
-if (MSVC)
-	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
-endif()
+
+target_link_libraries(${ENGINE_LIBRARY} glog::glog)
+
+add_executable(${PROJECT_NAME}
+  ./src/main.cpp
+)
+
+target_link_libraries(${PROJECT_NAME} ${ENGINE_LIBRARY})
+
+add_library(${LIBRARY_NAME} SHARED
+  ./src/houdini/MPM_Solver.C
+  ./src/houdini/MPM_Solver.h
+)
+
+target_link_libraries(${LIBRARY_NAME} ${ENGINE_LIBRARY})
+
+# Link against the Houdini libraries, and add required include directories and compile definitions.
+target_link_libraries(${LIBRARY_NAME} Houdini)
+
+# Configure several common target properties, such as its output directory.
+houdini_configure_target( ${LIBRARY_NAME} )

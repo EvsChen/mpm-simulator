@@ -281,3 +281,24 @@ void Engine::writePositions(const std::string &filename)
 	}
 	out.close();
 }
+
+void Engine::writeVelocity(const std::string & filename)
+{
+	std::ofstream out(filename, std::ios::binary);
+	if (!out) {
+		throw std::runtime_error("[writeVelocity] cannot open file");
+	}
+	Vec3i size = grid_.size_;
+	Float spacing = grid_.spacing_;
+	out.write((char*)&size.x(), sizeof(int));
+	out.write((char*)&size.y(), sizeof(int));
+	out.write((char*)&size.z(), sizeof(int));
+	out.write((char*)&spacing, sizeof(Float));
+	for (const Block &b : (*grid_.blocks_)) {
+		Vec3f vel= b.vel;
+		out.write((char*)&vel.x(), sizeof(Float));
+		out.write((char*)&vel.y(), sizeof(Float));
+		out.write((char*)&vel.z(), sizeof(Float));
+	}
+	out.close();
+}

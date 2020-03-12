@@ -51,7 +51,7 @@ public:
       totalTime_[p.first] += p.second;
       p.second = Duration::zero();
     }
-    google::FlushLogFiles(google::INFO);
+    google::FlushLogFiles(google::GLOG_INFO);
   }
 
   /// Report the overall time distribution
@@ -66,7 +66,7 @@ public:
       LOG(INFO) << p.second.count() / totalTime * 100.0 << "%";
       p.second = Duration::zero();
     }
-    google::FlushLogFiles(google::INFO);
+    google::FlushLogFiles(google::GLOG_INFO);
   }
   
 private:

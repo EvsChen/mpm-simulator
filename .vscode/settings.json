@@ -94,7 +94,8 @@
     "cassert": "cpp",
     "*.in": "cpp",
     "sparse": "cpp",
-    "geometry": "cpp"
+    "geometry": "cpp",
+    "MPM_Solver.C": "cpp"
   },
   "search.exclude": {
     "**/ext": true
