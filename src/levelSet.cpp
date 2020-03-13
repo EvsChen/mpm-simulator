@@ -4,19 +4,17 @@ Transform Transform::Inverse(const Transform &t) {
   Transform invT;
   invT.translate_ = -t.translate_;
   invT.rotate_ = -t.rotate_;
-  for (int i = 0; i < 3; i++) {
-    invT.scale_(i) = 1.f / t.scale_(i);
-  }
+  invT.scale_ = 1.f / t.scale_;
   invT.t_ = t.t_.inverse();
   return invT; 
 }
 
-Transform::Transform() : Transform(Vec3f::Constant(0.f), Vec3f::Constant(0.f), Vec3f::Constant(1.f))
+Transform::Transform() : Transform(Vec3f::Constant(0.f), Vec3f::Constant(0.f), 1.f)
 {}
 
-Transform::Transform(const Vec3f &translate, const Vec3f &rotate, const Vec3f &scale)
-  : translate_(translate), rotate_(rotate_), scale_(scale) {
-    t_ *= Eigen::Scaling(scale_(0), scale_(1), scale_(2));
+Transform::Transform(const Vec3f &translate, const Vec3f &rotate, Float scale)
+  : translate_(translate), rotate_(rotate), scale_(scale) {
+    t_ *= Eigen::Scaling(scale);
     t_ *= Eigen::AngleAxisf(rotate_(0), Vec3f::UnitX());
     t_ *= Eigen::AngleAxisf(rotate_(1), Vec3f::UnitY());
     t_ *= Eigen::AngleAxisf(rotate_(2), Vec3f::UnitZ());
@@ -43,7 +41,7 @@ Sphere::Sphere(const Transform &t, Float radius) : LevelSet(t), radius_(radius) 
 bool Sphere::sdf(const Vec3f &xi, Float *dist, Vec3f *norm) const {
   Vec3f localP = inv_.tPoint(xi);
   Float len = localP.norm() - radius_;
-  *dist = t_.scale_.minCoeff() * len;
+  *dist = t_.scale_ * len;
   *norm = t_.tNorm(localP);
   return *dist > 0.f;
 }
@@ -53,7 +51,7 @@ Plane::Plane(const Transform &t) : LevelSet(t) {}
 bool Plane::sdf(const Vec3f &xi, Float *dist, Vec3f *norm) const {
   Vec3f localP = inv_.tPoint(xi);
   Float len = localP(2);
-  *dist = t_.scale_.minCoeff() * len;
+  *dist = t_.scale_ * len;
   Vec3f localN; localN << 0.f, 0.f, 1.f;
   *norm = t_.tNorm(localN);
   return *dist > 0.f;

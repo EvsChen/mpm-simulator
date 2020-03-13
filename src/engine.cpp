@@ -10,7 +10,13 @@ const static bool USE_QUADRATIC_WEIGHT = true;
 
 Engine::Engine() :
   grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(params.pType)
-{}
+{
+  Vec3f translate; translate << 0.1f, 0.1f, 0.1f;
+  Vec3f rotate; rotate << 0.f, 0.f, 0.f;
+  Transform t(translate, rotate, 1.f);
+  levelSets.push_back(mkU<Sphere>(t, 0.03f));
+  grid_.parseLevelSets(levelSets);
+}
 
 Engine::~Engine() {}
 
@@ -112,7 +118,6 @@ void Engine::updateGridState() {
   computeGridForce();
   // Add external forces
   grid_.addExternalForces();
-  // TODO: Grid collision and friction
   grid_.updateGridVel();
   grid_.checkBoundaryVel();
 }

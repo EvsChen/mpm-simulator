@@ -7,12 +7,17 @@
 #include <iostream>
 
 #include "global.h"
+#include "levelSet.h"
 
 struct Block {
   Float mass = 0.0;
   Vec3f vel = Vec3f::Constant(0.f);
   /// Block force
   Vec3f f = Vec3f::Constant(0.f);
+  /// Level set sdf
+  Float sdf;
+  /// Level set normal
+  Vec3f sdfNorm;
 };
 
 class Grid {
@@ -24,6 +29,8 @@ public:
 
   void checkBoundaryVel();
 
+  void parseLevelSets(const std::vector<uPtr<LevelSet>> &levelSets);
+
   /// Add external forces
   void addExternalForces() {
     Vec3f g;
@@ -33,13 +40,9 @@ public:
       block.f += block.mass * g;
     }
   }
+
   /// Update grid velocity
-  void updateGridVel() {
-    for (int idx : nonEmptyBlocks_) {
-      Block &block = (*blocks_)[idx];
-      block.vel += block.f * params.timeStep / block.mass;
-    }
-  }
+  void updateGridVel();
 
   void collideWithBody();
 
@@ -57,6 +60,16 @@ public:
     return idx[0] < size_[0] && idx[0] >= 0 &&
            idx[1] < size_[1] && idx[1] >= 0 &&
            idx[2] < size_[2] && idx[2] >= 0;
+  }
+
+  Vec3i getBlockIndex(int idx) const {
+    Vec3i i;
+    int z = idx / (size_[0] * size_[1]);
+    int xy = idx % (size_[0] * size_[1]);
+    int y = xy / size_[0];
+    int x = xy % size_[0];
+    i << x, y, z;
+    return i;
   }
 
   /**

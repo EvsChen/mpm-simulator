@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     engine.G2PTransfer();
 
 #ifdef NDEBUG
-	engine.writeVelocity("v_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
+	  engine.writeVelocity("v_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
 #endif
 
     engine.grid_.reset();

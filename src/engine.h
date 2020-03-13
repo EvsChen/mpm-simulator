@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstring>
+#include <vector>
 
 #include "global.h"
 #include "particle.h"
 #include "grid.h"
 #include "util.h"
+#include "levelSet.h"
 
 class Engine {
 public:
@@ -36,6 +38,7 @@ public:
 
   Grid grid_;
   ParticleList particleList_;
+  std::vector<uPtr<LevelSet>> levelSets;
 
 private:
   /// Calculate grid forces 

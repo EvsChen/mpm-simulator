@@ -7,6 +7,24 @@ Grid::Grid(int gridX, int gridY, int gridZ, Float space) :
   size_ << gridX, gridY, gridZ;
 }
 
+void Grid::parseLevelSets(const std::vector<uPtr<LevelSet>> &levelSets) {
+  for (int i = 0; i < (*blocks_).size(); i++) {
+    Vec3i idx = getBlockIndex(i);
+    Vec3f blockPos = idx.cast<Float>() * spacing_;
+    Float sdf, minSdf = std::numeric_limits<Float>::max();
+    Vec3f norm, minNorm;
+    for (const uPtr<LevelSet> &ls : levelSets) {
+      ls->sdf(blockPos, &sdf, &norm);
+      if (sdf < minSdf) {
+        minSdf = sdf;
+        minNorm = norm;
+      }
+    }
+    Block &block = (*blocks_)[i];
+    block.sdf = minSdf;
+    block.sdfNorm = minNorm;
+  }
+}
 
 Vec3f Grid::calcMomentum() const {
   Vec3f momentum = Vec3f::Constant(0.f);
@@ -15,6 +33,13 @@ Vec3f Grid::calcMomentum() const {
     momentum += block.vel * block.mass;
   }
   return momentum;
+}
+
+void Grid::updateGridVel() {
+  for (int idx : nonEmptyBlocks_) {
+    Block &block = (*blocks_)[idx];
+    block.vel += block.f * params.timeStep / block.mass;
+  }
 }
 
 void Grid::reset() {
