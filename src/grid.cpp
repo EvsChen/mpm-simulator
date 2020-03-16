@@ -55,8 +55,12 @@ T Grid::trilinearInterp(const Vec3i &base, const Vec3f &frac, F&& getProp) const
 }
 
 void Grid::updateGridVel() {
+  profiler.profStart(ProfType::GRID_VEL_UPDATE);
+  Vec3f g; g << 0, -9.8f, 0;
   for (int idx : nonEmptyBlocks_) {
     Block &block = (*blocks_)[idx];
+    // Add external forces    
+    block.f += block.mass * g;
     block.vel += block.f * params.timeStep / block.mass;
     // Collision detection
     Vec3i blockIdx = getBlockIndex(idx);
@@ -72,8 +76,8 @@ void Grid::updateGridVel() {
     Vec3f frac = blockPosHat - base.cast<Float>();
     Float sdf = trilinearInterp<Float>(base, frac, [](Block b) { return b.sdf; });
     Float phiHat = sdf - std::min(block.sdf, 0.f);
-    if ((params.collision == CollisionCondition::SEPARATING && phiHat < 0) ||
-        (params.collision == CollisionCondition::SLIPPING && block.sdf < 0))
+    if ((params.collision == CollisionType::SEPARATING && phiHat < 0) ||
+        (params.collision == CollisionType::SLIPPING && block.sdf < 0))
     {
       Vec3f normal = trilinearInterp<Vec3f>(base, frac, [](Block b) { return b.sdfNorm; });
       normal.normalize();
@@ -88,6 +92,7 @@ void Grid::updateGridVel() {
       block.vel = velHat;
     }
   }
+  profiler.profEnd(ProfType::GRID_VEL_UPDATE);
 }
 
 void Grid::reset() {

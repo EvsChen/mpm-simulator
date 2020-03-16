@@ -8,7 +8,6 @@ Params params;
 int main(int argc, char *argv[]) {
   FLAGS_log_dir = "./";
   google::InitGoogleLogging(argv[0]);
-  params.init();
   params.setMaterial(ParticleType::SAND);
   params.setOutput(true, true);
   params.log();

@@ -5,7 +5,14 @@
 #include <iostream>
 
 enum class ProfType {
-  P2G_TRANSFER, G2P_TRANSFER, VISUALIZATION, CALC_GRID_FORCE, UPDATE_DEFORM_GRAD, PLASTICITY_HARDENING
+  P2G_TRANSFER,
+  G2P_TRANSFER,
+  CALC_GRID_FORCE,
+  GRID_VEL_UPDATE,
+  UPDATE_DEFORM_GRAD,
+  PLASTICITY_HARDENING,
+  VISUALIZATION,
+  OUTPUT_FILE,
 };
 
 /// Class for profiling
@@ -18,7 +25,9 @@ public:
     { ProfType::P2G_TRANSFER, "P2G_transfer" },
     { ProfType::G2P_TRANSFER, "G2P_transfer" },
     { ProfType::VISUALIZATION, "Visualization" },
+    { ProfType::OUTPUT_FILE, "Output_File" },
     { ProfType::CALC_GRID_FORCE, "Calc_grid_force" },
+    { ProfType::GRID_VEL_UPDATE, "Grid_velocity_update" },
     { ProfType::UPDATE_DEFORM_GRAD, "Update_deform_grad" },
     { ProfType::PLASTICITY_HARDENING, "Plasticity_hardening" }
   };

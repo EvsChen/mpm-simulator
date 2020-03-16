@@ -29,33 +29,17 @@ typedef Eigen::Matrix4f Mat4f;
 // #define PROFILE
 
 extern Profiler profiler;
-// TODO: Pass in constants variables
 
 /// Particle types
-enum class ParticleType : int {
-  SNOW, SAND, ELASTIC
-};
+enum class ParticleType : int { SNOW, SAND, ELASTIC };
 
-enum class CollisionCondition : int {
-  STICKY, SEPARATING, SLIPPING
-};
+/// Collision type
+enum class CollisionType : int { STICKY, SEPARATING, SLIPPING };
 
 /// Global params object
 class Params {
 public:
   Params() {}
-  void init(Float pMass_ = 1.f,
-            Float timeStep_ = 5e-4, int stepSize_ = 1000,
-            int gridX_ = 20, int gridY_ = 20, int gridZ_ = 20,
-            Float spacing_ = 1e-2) {
-    pMass = pMass_;
-    timeStep = timeStep_;
-    stepSize = stepSize_;
-    gridX = gridX_;
-    gridY = gridY_;
-    gridZ = gridZ_;
-    spacing = spacing_;
-  }
 
   void setOutput(bool visualize_, bool outputFile_) {
     visualize = visualize_;
@@ -102,21 +86,21 @@ public:
   /// Lame's first parameter
   Float lambda;
   /// Particle mass
-  Float pMass;
+  Float pMass = 1.f;
   /// Particle density
   Float pDensity;
   /// Particle type 
   ParticleType pType;
   /// Time step
-  Float timeStep;
+  Float timeStep = 5e-4;
   /// Step size
-  int stepSize;
+  int stepSize = 1000;
   /// Grid size
-  int gridX, gridY, gridZ;
+  int gridX = 20, gridY = 20, gridZ = 20;
   /// Grid spacing
-  Float spacing;
+  Float spacing = 1e-2;
   /// Collision status 
-  CollisionCondition collision = CollisionCondition::SLIPPING;
+  CollisionType collision = CollisionType::SLIPPING;
   /// Friction Coefficient
   Float muB = 0.2f;
   /// Whether output simple visualization

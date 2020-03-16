@@ -111,7 +111,6 @@ void Engine::G2PTransfer() {
 void Engine::updateGridState() {
   computeGridForce();
   // Add external forces
-  grid_.addExternalForces();
   grid_.updateGridVel();
   grid_.checkBoundaryVel();
 }
@@ -180,8 +179,7 @@ void Engine::updateDeformGrad() {
             weightGrad(1) = weight(0, i) * dweight(1, j) * weight(2, k);
             weightGrad(2) = weight(0, i) * weight(1, j) * dweight(2, k);
             weightGrad /= grid_.spacing_;
-            Vec3i t;
-            t << i, j, k;
+            Vec3i t; t << i, j, k;
             Block &block = grid_.getBlockAt(baseIdx + t);
             updateF += params.timeStep * block.vel * weightGrad.transpose();
           }
@@ -260,6 +258,7 @@ void Engine::writePositions(const std::string &filename)
   if (!params.outputFile) {
     return;
   }
+  profiler.profStart(ProfType::OUTPUT_FILE);
 	std::ofstream out(filename, std::ios::binary);
 	if (!out) {
 		throw std::runtime_error("[writePositions] cannot open file");
@@ -273,6 +272,7 @@ void Engine::writePositions(const std::string &filename)
 		out.write((char*)&pos.z(), sizeof(Float));
 	}
 	out.close();
+  profiler.profEnd(ProfType::OUTPUT_FILE);
 }
 
 void Engine::writeVelocity(const std::string & filename)
@@ -280,6 +280,7 @@ void Engine::writeVelocity(const std::string & filename)
   if (!params.outputFile) {
     return;
   }
+  profiler.profStart(ProfType::OUTPUT_FILE);
 	std::ofstream out(filename, std::ios::binary);
 	if (!out) {
 		throw std::runtime_error("[writeVelocity] cannot open file");
@@ -297,4 +298,5 @@ void Engine::writeVelocity(const std::string & filename)
 		out.write((char*)&vel.z(), sizeof(Float));
 	}
 	out.close();
+  profiler.profEnd(ProfType::OUTPUT_FILE);
 }

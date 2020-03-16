@@ -28,23 +28,13 @@ public:
   ~Grid() {}
 
   void checkBoundaryVel();
-
+  
+  /// Take in a list of level sets and compute the sdf and normal at grid nodes.
+  /// The values in-between will be interpolated
   void parseLevelSets(const std::vector<uPtr<LevelSet>> &levelSets);
-
-  /// Add external forces
-  void addExternalForces() {
-    Vec3f g;
-    g << 0, -9.8f, 0;
-    for (int idx : nonEmptyBlocks_) {
-      Block &block = (*blocks_)[idx];
-      block.f += block.mass * g;
-    }
-  }
 
   /// Update grid velocity
   void updateGridVel();
-
-  void collideWithBody();
 
   Vec3f calcMomentum() const;
 
