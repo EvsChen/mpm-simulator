@@ -56,23 +56,21 @@ T Grid::trilinearInterp(const Vec3i &base, const Vec3f &frac, F&& getProp) const
 
 void Grid::updateGridVel() {
   profiler.profStart(ProfType::GRID_VEL_UPDATE);
-  Vec3f g; g << 0, -9.8f, 0;
+  Vec3f g; g << 0.f, -9.8f, 0.f;
+  Float maxSpeed = 0.5f * spacing_ / params.timeStep;
   for (int idx : nonEmptyBlocks_) {
     Block &block = (*blocks_)[idx];
     // Add external forces    
     block.f += block.mass * g;
     block.vel += block.f * params.timeStep / block.mass;
+    // Set max velocity
+    block.vel = block.vel.cwiseMin(maxSpeed);
+    block.vel = block.vel.cwiseMax(-maxSpeed);
     // Collision detection
     Vec3i blockIdx = getBlockIndex(idx);
     // Block pos in GRID coordinate!
     Vec3f blockPosHat = blockIdx.cast<Float>() + block.vel * params.timeStep / params.spacing;
     Vec3i base = floor(blockPosHat);
-    // If on boundary, continue
-    if (base(0) <= 0 || base(0) >= size_[0] - 1 ||
-        base(1) <= 0 || base(1) >= size_[1] - 1 ||
-        base(2) <= 0 || base(2) >= size_[2] - 1) {
-      continue;
-    }
     Vec3f frac = blockPosHat - base.cast<Float>();
     Float sdf = trilinearInterp<Float>(base, frac, [](Block b) { return b.sdf; });
     Float phiHat = sdf - std::min(block.sdf, 0.f);

@@ -28,7 +28,7 @@ public:
   /// Update deformation gradient
   void updateDeformGrad();
 
-  void visualize(const std::string &prefix, int idx);
+  void visualize(int idx);
 
   /// Write particle positions
   void writePositions(const std::string &filename);

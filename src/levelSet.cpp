@@ -53,10 +53,11 @@ bool Sphere::sdf(const Vec3f &xi, Float *dist, Vec3f *norm) const {
 Plane::Plane(const Transform &t) : LevelSet(t) {}
 
 bool Plane::sdf(const Vec3f &xi, Float *dist, Vec3f *norm) const {
+  // Default normal pointing y-plus, infinite large
   Vec3f localP = inv_.tPoint(xi);
-  Float len = localP(2);
-  *dist = t_.scale_ * len;
-  Vec3f localN; localN << 0.f, 0.f, 1.f;
+  Float len = localP(1);
+  *dist = len;
+  Vec3f localN; localN << 0.f, 1.f, 0.f;
   *norm = t_.tNorm(localN);
   return *dist > 0.f;
 }

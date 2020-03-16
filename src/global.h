@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cassert>
+#include <ctime>
+#include <cstring>
 
 #include "ext/Eigen/Eigen"
 #include <glog/logging.h>
@@ -94,19 +96,21 @@ public:
   /// Time step
   Float timeStep = 5e-4;
   /// Step size
-  int stepSize = 1000;
+  int stepSize = 500;
   /// Grid size
-  int gridX = 20, gridY = 20, gridZ = 20;
+  int gridX = 30, gridY = 30, gridZ = 30;
   /// Grid spacing
   Float spacing = 1e-2;
   /// Collision status 
-  CollisionType collision = CollisionType::SLIPPING;
+  CollisionType collision = CollisionType::SEPARATING;
   /// Friction Coefficient
   Float muB = 0.2f;
   /// Whether output simple visualization
   bool visualize = true;
   /// Whether output position and velocity bin file
   bool outputFile = true;
+  /// Output folder name
+  std::string outFolder = std::to_string(std::time(0));
 };
 
 extern Params params;

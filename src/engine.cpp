@@ -11,10 +11,56 @@ const static bool USE_QUADRATIC_WEIGHT = true;
 Engine::Engine() :
   grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(params.pType)
 {
-  Vec3f translate; translate << 0.1f, 0.03f, 0.1f;
+  Vec3f translate; translate << 0.f, 0.f, 0.f;
   Vec3f rotate; rotate << 0.f, 0.f, 0.f;
-  Transform t(translate, rotate, 1.f);
-  levelSets.push_back(mkU<Sphere>(t, 0.03f));
+  int offset = 3;
+  // {
+  //   translate << 0.1f, 0.03f, 0.1f;
+  //   Transform t(translate, rotate, 1.f);
+  //   levelSets.push_back(mkU<Sphere>(t, 0.03f));
+  // }
+  {
+    // x ground
+    translate << 0.f, offset * params.spacing, 0.f;
+    rotate << 0.f, 0.f, -M_PI_2;
+    Transform t(translate, rotate, 1.f);
+    levelSets.push_back(mkU<Plane>(t));
+  }
+  {
+    // x ceiling
+    translate << 0.f, -(params.gridX - offset) * params.spacing, 0.f;
+    rotate << 0.f, 0.f, M_PI_2;
+    Transform t(translate, rotate, 1.f);
+    levelSets.push_back(mkU<Plane>(t));
+  }
+  {
+    // y ground
+    translate << 0.f, offset * params.spacing, 0.f;
+    rotate << 0.f, 0.f, 0.f;
+    Transform t(translate, rotate, 1.f);
+    levelSets.push_back(mkU<Plane>(t));
+  }
+  {
+    // y ceiling
+    translate << 0.f, -(params.gridY - offset) * params.spacing, 0.f;
+    rotate << 0.f, 0.f, M_PI;
+    Transform t(translate, rotate, 1.f);
+    levelSets.push_back(mkU<Plane>(t));
+  }
+  {
+    // z ground
+    translate << 0.f, offset * params.spacing, 0.f;
+    rotate << M_PI_2, 0.f, 0.f;
+    Transform t(translate, rotate, 1.f);
+    levelSets.push_back(mkU<Plane>(t));
+  }
+  {
+    // z ceiling
+    translate << 0.f, -(params.gridZ - offset) * params.spacing, 0.f;
+    rotate << -M_PI_2, 0.f, 0.f;
+    Transform t(translate, rotate, 1.f);
+    levelSets.push_back(mkU<Plane>(t));
+  }
   grid_.parseLevelSets(levelSets);
 }
 
@@ -110,9 +156,8 @@ void Engine::G2PTransfer() {
 
 void Engine::updateGridState() {
   computeGridForce();
-  // Add external forces
   grid_.updateGridVel();
-  grid_.checkBoundaryVel();
+  // grid_.checkBoundaryVel();
 }
 
 void Engine::computeGridForce() {
@@ -195,7 +240,7 @@ void Engine::updateDeformGrad() {
   profiler.profEnd(ProfType::UPDATE_DEFORM_GRAD);
 }
 
-void Engine::visualize(const std::string &prefix, int idx) {
+void Engine::visualize(int idx) {
   if (!params.visualize) {
     return;
   }
@@ -227,7 +272,7 @@ void Engine::visualize(const std::string &prefix, int idx) {
   }
   
   std::ofstream outFile;
-  std::string fileName = prefix + "_" + std::to_string(idx) + ".ppm";
+  std::string fileName = params.outFolder + "/" + std::to_string(idx) + ".ppm";
   outFile.open(fileName);
   if (outFile.is_open()) {
     outFile << "P3\n" << imgSize << " " << imgSize << "\n255\n";
