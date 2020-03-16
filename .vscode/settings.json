@@ -95,7 +95,8 @@
     "*.in": "cpp",
     "sparse": "cpp",
     "geometry": "cpp",
-    "MPM_Solver.C": "cpp"
+    "MPM_Solver.C": "cpp",
+    "shared_mutex": "cpp"
   },
   "search.exclude": {
     "**/ext": true

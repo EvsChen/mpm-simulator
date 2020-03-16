@@ -3,7 +3,7 @@
 
 ParticleList::ParticleList(ParticleType type) : type_(type) {
   int x0 = 7, y0 = 10, z0 = 7;
-  int density = 50;
+  int density = 10;
   int cubeLen = 6;
   particles_ = new std::vector<Particle>();
 
@@ -35,15 +35,11 @@ void ParticleList::hardening() {
   if (type_ == ParticleType::ELASTIC) {
     return;
   }
-#ifdef PROFILE
   profiler.profStart(ProfType::PLASTICITY_HARDENING);
-#endif
   for (Particle &p : (*particles_)) {
     plasticityHardening(&p);
   }
-#ifdef PROFILE
   profiler.profEnd(ProfType::PLASTICITY_HARDENING);
-#endif
 }
 
 void ParticleList::advection() {

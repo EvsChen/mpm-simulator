@@ -5,7 +5,11 @@ Transform Transform::Inverse(const Transform &t) {
   invT.translate_ = -t.translate_;
   invT.rotate_ = -t.rotate_;
   invT.scale_ = 1.f / t.scale_;
-  invT.t_ = t.t_.inverse();
+  invT.t_ = Eigen::Translation3f(invT.translate_(0), invT.translate_(1), invT.translate_(2));
+  invT.t_ *= Eigen::AngleAxisf(invT.rotate_(2), Vec3f::UnitZ());
+  invT.t_ *= Eigen::AngleAxisf(invT.rotate_(1), Vec3f::UnitY());
+  invT.t_ *= Eigen::AngleAxisf(invT.rotate_(0), Vec3f::UnitX());
+  invT.t_ *= Eigen::Scaling(invT.scale_);
   return invT; 
 }
 
@@ -14,7 +18,7 @@ Transform::Transform() : Transform(Vec3f::Constant(0.f), Vec3f::Constant(0.f), 1
 
 Transform::Transform(const Vec3f &translate, const Vec3f &rotate, Float scale)
   : translate_(translate), rotate_(rotate), scale_(scale) {
-    t_ *= Eigen::Scaling(scale);
+    t_ = Eigen::Scaling(scale);
     t_ *= Eigen::AngleAxisf(rotate_(0), Vec3f::UnitX());
     t_ *= Eigen::AngleAxisf(rotate_(1), Vec3f::UnitY());
     t_ *= Eigen::AngleAxisf(rotate_(2), Vec3f::UnitZ());

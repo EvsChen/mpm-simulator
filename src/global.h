@@ -25,8 +25,8 @@ typedef Eigen::Matrix4f Mat4f;
 #define uPtr std::unique_ptr
 #define sPtr std::shared_ptr
 
-// #define NDEBUG
-#define PROFILE
+#define MPM_DEBUG
+// #define PROFILE
 
 extern Profiler profiler;
 // TODO: Pass in constants variables
@@ -34,6 +34,10 @@ extern Profiler profiler;
 /// Particle types
 enum class ParticleType : int {
   SNOW, SAND, ELASTIC
+};
+
+enum class CollisionCondition : int {
+  STICKY, SEPARATING, SLIPPING
 };
 
 /// Global params object
@@ -52,6 +56,12 @@ public:
     gridZ = gridZ_;
     spacing = spacing_;
   }
+
+  void setOutput(bool visualize_, bool outputFile_) {
+    visualize = visualize_;
+    outputFile = outputFile_;
+  }
+
   void setMaterial(ParticleType type) {
     pType = type;
     switch(type) {
@@ -105,6 +115,14 @@ public:
   int gridX, gridY, gridZ;
   /// Grid spacing
   Float spacing;
+  /// Collision status 
+  CollisionCondition collision = CollisionCondition::SLIPPING;
+  /// Friction Coefficient
+  Float muB = 0.2f;
+  /// Whether output simple visualization
+  bool visualize = true;
+  /// Whether output position and velocity bin file
+  bool outputFile = true;
 };
 
 extern Params params;

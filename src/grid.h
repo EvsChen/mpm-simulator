@@ -34,7 +34,7 @@ public:
   /// Add external forces
   void addExternalForces() {
     Vec3f g;
-    g << 0, 9.8f, 0;
+    g << 0, -9.8f, 0;
     for (int idx : nonEmptyBlocks_) {
       Block &block = (*blocks_)[idx];
       block.f += block.mass * g;
@@ -72,18 +72,31 @@ public:
     return i;
   }
 
+  template <typename T, typename F>
+  T trilinearInterp(const Vec3i &base, const Vec3f &frac, F &&getProp) const;
+
   /**
    * Get block pointer at idx
    * @param idx block index
    */
   Block &getBlockAt(const Vec3i &idx) {
-#ifdef NDEBUG
+#ifdef MPM_DEBUG
     if (!isValidIdx(idx)) {
       std::cerr << "Idx: " << idx << std::endl;
       throw std::invalid_argument("Index of out range");
     }
 #endif
     return (*blocks_)[idx[0] + idx[1] * size_[0] + idx[2] * size_[0] * size_[1]];
+  }
+
+  const Block &getBlockAt(const Vec3i &idx) const {
+#ifdef MPM_DEBUG
+    if (!isValidIdx(idx)) {
+      std::cerr << "Idx: " << idx << std::endl;
+      throw std::invalid_argument("Index of out range");
+    }
+#endif
+    return (*blocks_).at(idx[0] + idx[1] * size_[0] + idx[2] * size_[0] * size_[1]);
   }
 
   Float spacing_;

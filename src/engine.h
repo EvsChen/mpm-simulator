@@ -20,7 +20,7 @@ public:
   void G2PTransfer();
   
   /// Check mass of particles & grids, DEBUG only
-  void checkMass();
+  void CHECK_MASS();
 
   /// Update grid velocities
   void updateGridState();

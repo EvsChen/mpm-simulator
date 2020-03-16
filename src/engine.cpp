@@ -11,7 +11,7 @@ const static bool USE_QUADRATIC_WEIGHT = true;
 Engine::Engine() :
   grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(params.pType)
 {
-  Vec3f translate; translate << 0.1f, 0.1f, 0.1f;
+  Vec3f translate; translate << 0.1f, 0.03f, 0.1f;
   Vec3f rotate; rotate << 0.f, 0.f, 0.f;
   Transform t(translate, rotate, 1.f);
   levelSets.push_back(mkU<Sphere>(t, 0.03f));
@@ -21,9 +21,7 @@ Engine::Engine() :
 Engine::~Engine() {}
 
 void Engine::P2GTransfer() {
-#ifdef PROFILE
   profiler.profStart(ProfType::P2G_TRANSFER);
-#endif
   for (Particle &p : *(particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
 
@@ -58,12 +56,11 @@ void Engine::P2GTransfer() {
       block.vel = Vec3f::Constant(0.f);
     }
   }
-#ifdef PROFILE
   profiler.profEnd(ProfType::P2G_TRANSFER);
-#endif
 }
 
-void Engine::checkMass() {
+void Engine::CHECK_MASS() {
+#ifdef MPM_DEBUG
   Float particlesMass = 0.f, gridMass = 0.f;
   for (const Particle &p : (*particleList_.particles_)) {
     particlesMass += p.mass;
@@ -73,12 +70,11 @@ void Engine::checkMass() {
   }
   DLOG(INFO) << "Particle mass: " << particlesMass;
   DLOG(INFO) << "Non-empty grid mass: " << gridMass;
+#endif
 }
 
 void Engine::G2PTransfer() {
-#ifdef PROFILE
   profiler.profStart(ProfType::G2P_TRANSFER);
-#endif
   for (Particle &p : *(particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
     p.vel = Vec3f::Constant(0.f);
@@ -102,16 +98,14 @@ void Engine::G2PTransfer() {
         }
       }
     }
-#ifdef NDEBUG
+#ifdef MPM_DEBUG
     Float maxSpeed = 5.f;
     if (p.vel[0] > maxSpeed || p.vel[1] > maxSpeed || p.vel[2] > maxSpeed) {
       DLOG(WARNING) << "Dangerous particle speed: (" << p.vel[0] << ", " << p.vel[1] << ", " << p.vel[2] << ")";
     } 
 #endif
   }
-#ifdef PROFILE
   profiler.profEnd(ProfType::G2P_TRANSFER);
-#endif
 }
 
 void Engine::updateGridState() {
@@ -123,9 +117,7 @@ void Engine::updateGridState() {
 }
 
 void Engine::computeGridForce() {
-#ifdef PROFILE
   profiler.profStart(ProfType::CALC_GRID_FORCE);
-#endif
   for (const Particle &p : (*particleList_.particles_)) {
     Mat3f Ap;
     switch (particleList_.type_) {
@@ -168,15 +160,11 @@ void Engine::computeGridForce() {
         }
     }
   }
-#ifdef PROFILE
   profiler.profEnd(ProfType::CALC_GRID_FORCE);
-#endif
 }
 
 void Engine::updateDeformGrad() {
-#ifdef PROFILE
   profiler.profStart(ProfType::UPDATE_DEFORM_GRAD);
-#endif
   for (Particle &p : (*particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
     Mat3f updateF = Mat3f::Identity();
@@ -206,15 +194,14 @@ void Engine::updateDeformGrad() {
       p.Fe = updateF * p.Fe;
     }  
   }
-#ifdef PROFILE
   profiler.profEnd(ProfType::UPDATE_DEFORM_GRAD);
-#endif
 }
 
 void Engine::visualize(const std::string &prefix, int idx) {
-#ifdef PROFILE
+  if (!params.visualize) {
+    return;
+  }
   profiler.profStart(ProfType::VISUALIZATION);
-#endif
   int imgSize = 400;
   std::vector<int> output(imgSize * imgSize, 0);
   Vec3f baseCol = Vec3f::Constant(255);
@@ -229,9 +216,9 @@ void Engine::visualize(const std::string &prefix, int idx) {
   int maxParticles = 0;
   for (const Particle &p : (*particleList_.particles_)) {
     int gridX = p.pos(0) / gridWidth * imgSize;
-    int gridY = p.pos(1) / gridHeight * imgSize;
+    int gridY = imgSize - p.pos(1) / gridHeight * imgSize;
     int idx = gridX + gridY * imgSize;
-#ifdef NDEBUG    
+#ifdef MPM_DEBUG    
     if (gridX >= imgSize || gridY >= imgSize) {
       DLOG(FATAL) << "Invalid grid X: " << gridX << " Y: " << gridY << std::endl;
       continue;
@@ -265,13 +252,14 @@ void Engine::visualize(const std::string &prefix, int idx) {
   } else {
     LOG(FATAL) << "Open file failed" << std::endl;
   }    
-#ifdef PROFILE
   profiler.profEnd(ProfType::VISUALIZATION);
-#endif
 }
 
 void Engine::writePositions(const std::string &filename)
 {
+  if (!params.outputFile) {
+    return;
+  }
 	std::ofstream out(filename, std::ios::binary);
 	if (!out) {
 		throw std::runtime_error("[writePositions] cannot open file");
@@ -289,6 +277,9 @@ void Engine::writePositions(const std::string &filename)
 
 void Engine::writeVelocity(const std::string & filename)
 {
+  if (!params.outputFile) {
+    return;
+  }
 	std::ofstream out(filename, std::ios::binary);
 	if (!out) {
 		throw std::runtime_error("[writeVelocity] cannot open file");

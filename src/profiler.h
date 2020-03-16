@@ -31,15 +31,20 @@ public:
   }
 
   void profStart(ProfType type) {
+#ifdef PROFILE
     loopStart_[type] = std::chrono::high_resolution_clock::now();
+#endif
   }
 
   void profEnd(ProfType type) {
+#ifdef PROFILE
     loopTime_[type] += std::chrono::duration_cast<Duration>(std::chrono::high_resolution_clock::now() - loopStart_[type]);
+#endif
   }
 
   /// Report the time distribution for this loop
   void reportLoop(int idx) {
+#ifdef PROFILE
     DLOG(INFO) << "Report for loop " << idx;
     double totalTime = 0.0;
     for (auto &p : loopTime_) {
@@ -52,10 +57,12 @@ public:
       p.second = Duration::zero();
     }
     google::FlushLogFiles(google::GLOG_INFO);
+#endif
   }
 
   /// Report the overall time distribution
   void report() {
+#ifdef PROFILE
     LOG(INFO) << "Report for total";
     double totalTime = 0.0;
     for (auto &p : totalTime_) {
@@ -67,6 +74,7 @@ public:
       p.second = Duration::zero();
     }
     google::FlushLogFiles(google::GLOG_INFO);
+#endif
   }
   
 private:

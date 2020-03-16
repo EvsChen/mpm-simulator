@@ -1,4 +1,5 @@
 #include "grid.h"
+#include "util.h"
 
 Grid::Grid(int gridX, int gridY, int gridZ, Float space) :
   spacing_(space),
@@ -35,10 +36,57 @@ Vec3f Grid::calcMomentum() const {
   return momentum;
 }
 
+template <typename T, typename F>
+T Grid::trilinearInterp(const Vec3i &base, const Vec3f &frac, F&& getProp) const {
+  T result;
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      for (int k = 0; k < 2; k++) {
+        Vec3i bIdx; bIdx << base(0) + i, base(1) + j, base(2) + k;
+        const Block &neighbor = getBlockAt(bIdx);
+        result += getProp(neighbor) * (i == 0 ? 1 - frac(0) : frac(0))
+                                    * (j == 0 ? 1 - frac(1) : frac(1))
+                                    * (k == 0 ? 1 - frac(2) : frac(2));
+
+      }
+    }
+  }
+  return result;
+}
+
 void Grid::updateGridVel() {
   for (int idx : nonEmptyBlocks_) {
     Block &block = (*blocks_)[idx];
     block.vel += block.f * params.timeStep / block.mass;
+    // Collision detection
+    Vec3i blockIdx = getBlockIndex(idx);
+    // Block pos in GRID coordinate!
+    Vec3f blockPosHat = blockIdx.cast<Float>() + block.vel * params.timeStep / params.spacing;
+    Vec3i base = floor(blockPosHat);
+    // If on boundary, continue
+    if (base(0) <= 0 || base(0) >= size_[0] - 1 ||
+        base(1) <= 0 || base(1) >= size_[1] - 1 ||
+        base(2) <= 0 || base(2) >= size_[2] - 1) {
+      continue;
+    }
+    Vec3f frac = blockPosHat - base.cast<Float>();
+    Float sdf = trilinearInterp<Float>(base, frac, [](Block b) { return b.sdf; });
+    Float phiHat = sdf - std::min(block.sdf, 0.f);
+    if ((params.collision == CollisionCondition::SEPARATING && phiHat < 0) ||
+        (params.collision == CollisionCondition::SLIPPING && block.sdf < 0))
+    {
+      Vec3f normal = trilinearInterp<Vec3f>(base, frac, [](Block b) { return b.sdfNorm; });
+      normal.normalize();
+      // Collided
+      Vec3f delV = -phiHat * normal / params.timeStep;
+      Vec3f velHat = block.vel + delV;
+      // Tangent component
+      Vec3f vt = velHat - normal * normal.dot(velHat);
+      Vec3f tangent = vt.normalized();
+      // Friction calculation
+      velHat -= std::min(vt.norm(), params.muB * delV.norm()) * tangent;
+      block.vel = velHat;
+    }
   }
 }
 
