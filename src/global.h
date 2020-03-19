@@ -27,8 +27,8 @@ typedef Eigen::Matrix4f Mat4f;
 #define uPtr std::unique_ptr
 #define sPtr std::shared_ptr
 
-#define MPM_DEBUG
-// #define PROFILE
+// #define MPM_DEBUG
+#define PROFILE
 
 extern Profiler profiler;
 

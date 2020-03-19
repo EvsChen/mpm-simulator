@@ -22,6 +22,8 @@ void Grid::parseLevelSets(const std::vector<uPtr<LevelSet>> &levelSets) {
       }
     }
     Block &block = (*blocks_)[i];
+    // LOG(INFO) << "sdf at (" << idx[0] << "," << idx[1] << "," << idx[2] << ") is " << minSdf;
+    // LOG(INFO) << "normal at (" << idx[0] << "," << idx[1] << "," << idx[2] << ") is (" << minNorm[0] << "," << minNorm[1] << "," << minNorm[2] << ")";
     block.sdf = minSdf;
     block.sdfNorm = minNorm;
   }
@@ -77,7 +79,12 @@ void Grid::updateGridVel() {
     if ((params.collision == CollisionType::SEPARATING && phiHat < 0) ||
         (params.collision == CollisionType::SLIPPING && block.sdf < 0))
     {
+      LOG(INFO) << "block (" << blockIdx[0] << "," << blockIdx[1] << "," << blockIdx[2] << ") collided";
+      LOG(INFO) << "sdf = " << sdf; 
+      LOG(INFO) << "blockSdf = " << block.sdf;
       Vec3f normal = trilinearInterp<Vec3f>(base, frac, [](Block b) { return b.sdfNorm; });
+      LOG(INFO) << "normal (" << normal[0] << "," << normal[1] << "," << normal[2] << ")";
+      LOG(INFO) << "vel (" << block.vel[0] << "," << block.vel[1] << "," << block.vel[2] << ")";
       normal.normalize();
       // Collided
       Vec3f delV = -phiHat * normal / params.timeStep;
@@ -88,6 +95,7 @@ void Grid::updateGridVel() {
       // Friction calculation
       velHat -= std::min(vt.norm(), params.muB * delV.norm()) * tangent;
       block.vel = velHat;
+      LOG(INFO) << "vel after collision (" << block.vel[0] << "," << block.vel[1] << "," << block.vel[2] << ")";
     }
   }
   profiler.profEnd(ProfType::GRID_VEL_UPDATE);

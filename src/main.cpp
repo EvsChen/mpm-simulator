@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
   params.setMaterial(ParticleType::SAND);
-  params.setOutput(false, false);
+  params.setOutput(true, true);
   params.log();
   Engine engine;
   
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     LOG(INFO) << "Start loop " << i;
 #endif
     engine.P2GTransfer();
-    engine.CHECK_MASS();  
+    // engine.CHECK_MASS();  
 
     engine.updateGridState();
     engine.updateDeformGrad();
