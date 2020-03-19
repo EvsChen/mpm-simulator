@@ -2,7 +2,7 @@
 #include "plasticity.h"
 
 ParticleList::ParticleList(ParticleType type) : type_(type) {
-  int x0 = 7, y0 = 5, z0 = 7;
+  int x0 = 3, y0 = 3, z0 = 3;
   int density = 10;
   int cubeLen = 6;
   particles_ = new std::vector<Particle>();

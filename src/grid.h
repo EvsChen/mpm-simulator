@@ -70,22 +70,12 @@ public:
    * @param idx block index
    */
   Block &getBlockAt(const Vec3i &idx) {
-#ifdef MPM_DEBUG
-    if (!isValidIdx(idx)) {
-      std::cerr << "Idx: " << idx << std::endl;
-      throw std::invalid_argument("Index of out range");
-    }
-#endif
+    CHECK(isValidIdx(idx)) << "getBlockAt idx out of range: " << idx[0] << " " << idx[1] << " " << idx[2]; 
     return (*blocks_)[idx[0] + idx[1] * size_[0] + idx[2] * size_[0] * size_[1]];
   }
 
   const Block &getBlockAt(const Vec3i &idx) const {
-#ifdef MPM_DEBUG
-    if (!isValidIdx(idx)) {
-      std::cerr << "Idx: " << idx << std::endl;
-      throw std::invalid_argument("Index of out range");
-    }
-#endif
+    CHECK(isValidIdx(idx)) << "getBlockAt idx out of range: " << idx[0] << " " << idx[1] << " " << idx[2];
     return (*blocks_).at(idx[0] + idx[1] * size_[0] + idx[2] * size_[0] * size_[1]);
   }
 

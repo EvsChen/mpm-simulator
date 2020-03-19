@@ -75,7 +75,14 @@ public:
     LOG(INFO) << "Grid size: " << gridX << " * " << gridY << " * " << gridZ << " * " << spacing;
     LOG(INFO) << "Time Step: " << timeStep << " * " << stepSize;
     LOG(INFO) << "Particle mass: " << pMass << " Density: " << pDensity;
+    LOG(INFO) << "Friction coefficient: " << muB;
     LOG(INFO) << "E: " << E << " " << "nu: " << nu; 
+    LOG(INFO) << "Collision type: " << (int) collision;
+    LOG(INFO) << "Visualize: " << (visualize ? "on" : "off");
+    LOG(INFO) << "Output file: " << (outputFile ? "on" : "off");
+    if (visualize || outputFile) {
+      LOG(INFO) << "Output folder name: " << outFolder;
+    }
     google::FlushLogFiles(google::GLOG_INFO);
   }
 
@@ -96,7 +103,7 @@ public:
   /// Time step
   Float timeStep = 5e-4;
   /// Step size
-  int stepSize = 500;
+  int stepSize = 1000;
   /// Grid size
   int gridX = 30, gridY = 30, gridZ = 30;
   /// Grid spacing
@@ -104,7 +111,7 @@ public:
   /// Collision status 
   CollisionType collision = CollisionType::SEPARATING;
   /// Friction Coefficient
-  Float muB = 0.2f;
+  Float muB = 0.8f;
   /// Whether output simple visualization
   bool visualize = true;
   /// Whether output position and velocity bin file

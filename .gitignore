@@ -3,6 +3,7 @@ bin/*
 build/*
 debug/*
 release/*
+rel-with-deb/*
 result-*/*
 .vs/*
 .vscode/*

@@ -18,12 +18,16 @@ int main(int argc, char *argv[]) {
   #endif
   FLAGS_log_dir = params.outFolder;
   google::InitGoogleLogging(argv[0]);
+  google::InstallFailureSignalHandler();
   params.setMaterial(ParticleType::SAND);
-  params.setOutput(true, true);
+  params.setOutput(false, false);
   params.log();
   Engine engine;
   
   for (int i = 0; i < params.stepSize; i++) {
+#ifdef MPM_DEBUG
+    LOG(INFO) << "Start loop " << i;
+#endif
     engine.P2GTransfer();
     engine.CHECK_MASS();  
 

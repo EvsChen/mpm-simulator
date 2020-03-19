@@ -70,15 +70,13 @@ void Engine::P2GTransfer() {
   profiler.profStart(ProfType::P2G_TRANSFER);
   for (Particle &p : *(particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
-
     if (USE_QUADRATIC_WEIGHT) {
       Mat3f weight = quadWeight(posIdx);
       Vec3i baseIdx = floor(posIdx - Vec3f::Constant(0.5f));
       for (int offsetX = 0; offsetX < 3; offsetX++) {
         for (int offsetY = 0; offsetY < 3; offsetY++) {
           for (int offsetZ = 0; offsetZ < 3; offsetZ++) {
-            Vec3i t;
-            t << offsetX, offsetY, offsetZ;
+            Vec3i t; t << offsetX, offsetY, offsetZ;
             Vec3i blockPosIdx = baseIdx + t;
             Block &block = grid_.getBlockAt(blockPosIdx);
             Float w = weight(0, offsetX) * weight(1, offsetY) * weight(2, offsetZ);
@@ -114,8 +112,8 @@ void Engine::CHECK_MASS() {
   for (int idx : grid_.nonEmptyBlocks_) {
     gridMass += (*grid_.blocks_)[idx].mass;
   }
-  DLOG(INFO) << "Particle mass: " << particlesMass;
-  DLOG(INFO) << "Non-empty grid mass: " << gridMass;
+  LOG(INFO) << "Particle mass: " << particlesMass;
+  LOG(INFO) << "Non-empty grid mass: " << gridMass;
 #endif
 }
 
@@ -144,12 +142,6 @@ void Engine::G2PTransfer() {
         }
       }
     }
-#ifdef MPM_DEBUG
-    Float maxSpeed = 5.f;
-    if (p.vel[0] > maxSpeed || p.vel[1] > maxSpeed || p.vel[2] > maxSpeed) {
-      DLOG(WARNING) << "Dangerous particle speed: (" << p.vel[0] << ", " << p.vel[1] << ", " << p.vel[2] << ")";
-    } 
-#endif
   }
   profiler.profEnd(ProfType::G2P_TRANSFER);
 }
@@ -261,12 +253,7 @@ void Engine::visualize(int idx) {
     int gridX = p.pos(0) / gridWidth * imgSize;
     int gridY = imgSize - p.pos(1) / gridHeight * imgSize;
     int idx = gridX + gridY * imgSize;
-#ifdef MPM_DEBUG    
-    if (gridX >= imgSize || gridY >= imgSize) {
-      DLOG(FATAL) << "Invalid grid X: " << gridX << " Y: " << gridY << std::endl;
-      continue;
-    }
-#endif
+    CHECK(gridX < imgSize && gridY < imgSize) << "Invalid grid X: " << gridX << " Y: " << gridY << std::endl;
     output[gridX + gridY * imgSize]++;
     maxParticles = std::max(maxParticles, output[gridX + gridY * imgSize]);
   }

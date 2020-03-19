@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(LIBRARY_NAME MPMSolverPlugin)
 set(ENGINE_LIBRARY MPMEngine)
+# NDEBUG flag will cause strange bugs
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+message("CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
+message("CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
+message("CMAKE_CXX_FLAGS_RELWITHDEBINFO is ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
 
 if (APPLE)
   list(APPEND CMAKE_PREFIX_PATH "/Applications/Houdini/Current/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/cmake")
