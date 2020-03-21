@@ -20,6 +20,18 @@ Engine::Engine() :
   grid_.parseLevelSets(levelSets);
 }
 
+Engine::Engine(const std::vector<Vec3f>& positions)
+	: grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(positions, params.pType)
+{
+	int offset = 3;
+	Vec3f center; center << params.gridX, params.gridY, params.gridZ;
+	center *= params.spacing / 2.f;
+	Vec3f bound = center;
+	bound -= Vec3f::Constant(offset * params.spacing);
+	levelSets.push_back(mkU<Box>(center, bound));
+	grid_.parseLevelSets(levelSets);
+}
+
 Engine::~Engine() {}
 
 void Engine::P2GTransfer() {
@@ -288,4 +300,19 @@ void Engine::writeVelocity(const std::string & filename)
 	}
 	out.close();
   profiler.profEnd(ProfType::OUTPUT_FILE);
+}
+
+void Engine::CHECK_PARTICLE_BOUND()
+{
+	Vec3f bound = grid_.size_.cast<Float>() * grid_.spacing_;
+	int count = 0;
+	for (Particle& particle : *(particleList_.particles_)) {
+		Vec3f pos = particle.pos;
+		if (pos.x() > bound.x() || pos.y() > bound.y() || pos.z() > bound.z())
+		{
+			LOG(INFO) << "Particle mass: " << pos;
+			count++;
+		}
+	}
+	LOG(INFO) << "Wrong Paticles Number: " << count;
 }

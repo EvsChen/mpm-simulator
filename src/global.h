@@ -74,6 +74,14 @@ public:
     lambda = E * nu / (1 + nu) / (1 - 2 * nu);
   }
 
+  void setMaterial(Float E_, Float nu_, Float pDensity_) {
+	  E = E_;
+	  nu = nu_;
+	  pDensity = pDensity_;
+	  mu = E / 2.f / (1 + nu);
+	  lambda = E * nu / (1 + nu) / (1 - 2 * nu);
+  }
+
   void log() {
     LOG(INFO) << "Particle type: " << (int) pType;
     LOG(INFO) << "Grid size: " << gridX << " * " << gridY << " * " << gridZ << " * " << spacing;
