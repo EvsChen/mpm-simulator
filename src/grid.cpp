@@ -12,20 +12,12 @@ void Grid::parseLevelSets(const std::vector<uPtr<LevelSet>> &levelSets) {
   for (int i = 0; i < (*blocks_).size(); i++) {
     Vec3i idx = getBlockIndex(i);
     Vec3f blockPos = idx.cast<Float>() * spacing_;
-    Float sdf, minSdf = std::numeric_limits<Float>::max();
-    Vec3f norm, minNorm;
+    Float minSdf = std::numeric_limits<Float>::max();
     for (const uPtr<LevelSet> &ls : levelSets) {
-      ls->sdf(blockPos, &sdf, &norm);
-      if (sdf < minSdf) {
-        minSdf = sdf;
-        minNorm = norm;
-      }
+      Float sdf = ls->sdf(blockPos);
+      if (sdf < minSdf) minSdf = sdf;
     }
-    Block &block = (*blocks_)[i];
-    // LOG(INFO) << "sdf at (" << idx[0] << "," << idx[1] << "," << idx[2] << ") is " << minSdf;
-    // LOG(INFO) << "normal at (" << idx[0] << "," << idx[1] << "," << idx[2] << ") is (" << minNorm[0] << "," << minNorm[1] << "," << minNorm[2] << ")";
-    block.sdf = minSdf;
-    block.sdfNorm = minNorm;
+    (*blocks_)[i].sdf = minSdf;
   }
 }
 
@@ -38,22 +30,33 @@ Vec3f Grid::calcMomentum() const {
   return momentum;
 }
 
-template <typename T, typename F>
-T Grid::trilinearInterp(const Vec3i &base, const Vec3f &frac, F&& getProp) const {
-  T result;
-  for (int i = 0; i < 2; i++) {
-    for (int j = 0; j < 2; j++) {
-      for (int k = 0; k < 2; k++) {
-        Vec3i bIdx; bIdx << base(0) + i, base(1) + j, base(2) + k;
-        const Block &neighbor = getBlockAt(bIdx);
-        result += getProp(neighbor) * (i == 0 ? 1 - frac(0) : frac(0))
-                                    * (j == 0 ? 1 - frac(1) : frac(1))
-                                    * (k == 0 ? 1 - frac(2) : frac(2));
-
-      }
-    }
+void Grid::trilinearInterp(const Vec3i &base, const Vec3f &frac, Float *sdf, Vec3f *normal) const {
+  Float res = 0.f;
+  Vec3f resNorm = Vec3f::Constant(0.f);
+  Float multp[3][2];
+  for (int i = 0; i < 3; i++) {
+    multp[i][0] = 1 - frac[i];
+    multp[i][1] = frac[i];
   }
-  return result;
+  for (int i = 0; i < 8; i++) {
+    // Map 8 to binary
+    Vec3i idx = base;
+    int diffX = i & 1,
+        diffY = (i >> 1) & 1,
+        diffZ = (i >> 2) & 1;
+    idx(0) += diffX;
+    idx(1) += diffY;
+    idx(2) += diffZ;
+    Float s = getBlockAt(idx).sdf;
+    res += s * multp[0][diffX] * multp[1][diffY] * multp[2][diffZ];
+    // Map (0, 1) to (-1, 1)
+    resNorm[0] += s * (diffX * 2 - 1) * multp[1][diffY] * multp[2][diffZ];
+    resNorm[1] += s * multp[0][diffX] * (diffY * 2 - 1) * multp[2][diffZ];
+    resNorm[2] += s * multp[0][diffX] * multp[1][diffY] * (diffZ * 2 - 1);
+  }
+  resNorm.normalize();
+  *sdf = res;
+  *normal = resNorm;
 }
 
 void Grid::updateGridVel() {
@@ -74,18 +77,13 @@ void Grid::updateGridVel() {
     Vec3f blockPosHat = blockIdx.cast<Float>() + block.vel * params.timeStep / params.spacing;
     Vec3i base = floor(blockPosHat);
     Vec3f frac = blockPosHat - base.cast<Float>();
-    Float sdf = trilinearInterp<Float>(base, frac, [](Block b) { return b.sdf; });
+    Float sdf;
+    Vec3f normal;
+    trilinearInterp(base, frac, &sdf, &normal);
     Float phiHat = sdf - std::min(block.sdf, 0.f);
     if ((params.collision == CollisionType::SEPARATING && phiHat < 0) ||
         (params.collision == CollisionType::SLIPPING && block.sdf < 0))
     {
-      LOG(INFO) << "block (" << blockIdx[0] << "," << blockIdx[1] << "," << blockIdx[2] << ") collided";
-      LOG(INFO) << "sdf = " << sdf; 
-      LOG(INFO) << "blockSdf = " << block.sdf;
-      Vec3f normal = trilinearInterp<Vec3f>(base, frac, [](Block b) { return b.sdfNorm; });
-      LOG(INFO) << "normal (" << normal[0] << "," << normal[1] << "," << normal[2] << ")";
-      LOG(INFO) << "vel (" << block.vel[0] << "," << block.vel[1] << "," << block.vel[2] << ")";
-      normal.normalize();
       // Collided
       Vec3f delV = -phiHat * normal / params.timeStep;
       Vec3f velHat = block.vel + delV;
@@ -95,7 +93,6 @@ void Grid::updateGridVel() {
       // Friction calculation
       velHat -= std::min(vt.norm(), params.muB * delV.norm()) * tangent;
       block.vel = velHat;
-      LOG(INFO) << "vel after collision (" << block.vel[0] << "," << block.vel[1] << "," << block.vel[2] << ")";
     }
   }
   profiler.profEnd(ProfType::GRID_VEL_UPDATE);
