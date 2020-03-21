@@ -22,6 +22,10 @@ typedef Eigen::Matrix4f Mat4f;
 #define M_PI 3.14159265358979323846264338327950288
 #endif
 
+#ifndef M_PI_2
+#define M_PI_2 1.5707963
+#endif
+
 #define mkU std::make_unique
 #define mkS std::make_shared
 #define uPtr std::unique_ptr
