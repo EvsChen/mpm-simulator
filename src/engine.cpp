@@ -11,56 +11,12 @@ const static bool USE_QUADRATIC_WEIGHT = true;
 Engine::Engine() :
   grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(params.pType)
 {
-  Vec3f translate; translate << 0.f, 0.f, 0.f;
-  Vec3f rotate; rotate << 0.f, 0.f, 0.f;
   int offset = 3;
-  // {
-  //   translate << 0.1f, 0.03f, 0.1f;
-  //   Transform t(translate, rotate, 1.f);
-  //   levelSets.push_back(mkU<Sphere>(t, 0.03f));
-  // }
-  {
-    // x ground
-    translate << 0.f, offset * params.spacing, 0.f;
-    rotate << 0.f, 0.f, -M_PI_2;
-    Transform t(translate, rotate, 1.f);
-    levelSets.push_back(mkU<Plane>(t));
-  }
-  {
-    // x ceiling
-    translate << 0.f, -(params.gridX - offset) * params.spacing, 0.f;
-    rotate << 0.f, 0.f, M_PI_2;
-    Transform t(translate, rotate, 1.f);
-    levelSets.push_back(mkU<Plane>(t));
-  }
-  {
-    // y ground
-    translate << 0.f, offset * params.spacing, 0.f;
-    rotate << 0.f, 0.f, 0.f;
-    Transform t(translate, rotate, 1.f);
-    levelSets.push_back(mkU<Plane>(t));
-  }
-  {
-    // y ceiling
-    translate << 0.f, -(params.gridY - offset) * params.spacing, 0.f;
-    rotate << 0.f, 0.f, M_PI;
-    Transform t(translate, rotate, 1.f);
-    levelSets.push_back(mkU<Plane>(t));
-  }
-  {
-    // z ground
-    translate << 0.f, offset * params.spacing, 0.f;
-    rotate << M_PI_2, 0.f, 0.f;
-    Transform t(translate, rotate, 1.f);
-    levelSets.push_back(mkU<Plane>(t));
-  }
-  {
-    // z ceiling
-    translate << 0.f, -(params.gridZ - offset) * params.spacing, 0.f;
-    rotate << -M_PI_2, 0.f, 0.f;
-    Transform t(translate, rotate, 1.f);
-    levelSets.push_back(mkU<Plane>(t));
-  }
+  Vec3f center; center << params.gridX, params.gridY, params.gridZ;
+  center *= params.spacing / 2.f;
+  Vec3f bound = center;
+  bound -= Vec3f::Constant(offset * params.spacing);
+  levelSets.push_back(mkU<Box>(center, bound));
   grid_.parseLevelSets(levelSets);
 }
 
@@ -132,7 +88,8 @@ void Engine::G2PTransfer() {
           for (int offsetZ = 0; offsetZ < 3; offsetZ++) {
             Vec3i t;
             t << offsetX, offsetY, offsetZ;
-            Vec3i blockPosIdx = baseIdx + t;
+            Vec3i blockPosIdx = baseIdx;
+            blockPosIdx += t;
             Block &block = grid_.getBlockAt(blockPosIdx);
             Float w = weight(0, offsetX) * weight(1, offsetY) * weight(2, offsetZ);
             p.vel += w * block.vel;

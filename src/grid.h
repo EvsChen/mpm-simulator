@@ -61,9 +61,8 @@ public:
     i << x, y, z;
     return i;
   }
-
-  template <typename T, typename F>
-  T trilinearInterp(const Vec3i &base, const Vec3f &frac, F &&getProp) const;
+  /// Get sdf and normal at a point
+  void trilinearInterp(const Vec3i &base, const Vec3f &frac, Float *sdf, Vec3f *normal) const;
 
   /**
    * Get block pointer at idx
