@@ -6,6 +6,7 @@
 #define PROFILE
 
 enum class ProfType {
+  INIT,
   P2G_TRANSFER,
   G2P_TRANSFER,
   CALC_GRID_FORCE,
@@ -23,6 +24,7 @@ public:
   using Duration = std::chrono::milliseconds;
 
   std::unordered_map<ProfType, std::string> profName = {
+    { ProfType::INIT, "Initialize" },
     { ProfType::P2G_TRANSFER, "P2G_transfer" },
     { ProfType::G2P_TRANSFER, "G2P_transfer" },
     { ProfType::VISUALIZATION, "Visualization" },
@@ -78,8 +80,9 @@ public:
     for (auto &p : totalTime_) {
       totalTime += p.second.count();
     }
+    LOG(INFO) << "Total time is: " << totalTime << "ms";
     for (auto &p : totalTime_) {
-      LOG(INFO) << profName[p.first] << " " << p.second.count();
+      LOG(INFO) << profName[p.first] << " " << p.second.count() << "ms";
       LOG(INFO) << p.second.count() / totalTime * 100.0 << "%";
       p.second = Duration::zero();
     }

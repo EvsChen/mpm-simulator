@@ -10,7 +10,7 @@
 #include "levelSet.h"
 
 struct Block {
-  Float mass = 0.0;
+  Float mass = 0.f;
   Vec3f vel = Vec3f::Constant(0.f);
   /// Block force
   Vec3f f = Vec3f::Constant(0.f);
@@ -61,21 +61,21 @@ public:
     i << x, y, z;
     return i;
   }
+
+  int getBlockOffset(const Vec3i &idx) const {
+    CHECK(isValidIdx(idx)) << "getBlockAt idx out of range: " << idx[0] << " " << idx[1] << " " << idx[2];
+    return idx[0] + idx[1] * size_[0] + idx[2] * size_[0] * size_[1];
+  }
+
   /// Get sdf and normal at a point
   void trilinearInterp(const Vec3i &base, const Vec3f &frac, Float *sdf, Vec3f *normal) const;
 
-  /**
-   * Get block pointer at idx
-   * @param idx block index
-   */
   Block &getBlockAt(const Vec3i &idx) {
-    CHECK(isValidIdx(idx)) << "getBlockAt idx out of range: " << idx[0] << " " << idx[1] << " " << idx[2]; 
-    return (*blocks_)[idx[0] + idx[1] * size_[0] + idx[2] * size_[0] * size_[1]];
+    return (*blocks_)[getBlockOffset(idx)];
   }
 
   const Block &getBlockAt(const Vec3i &idx) const {
-    CHECK(isValidIdx(idx)) << "getBlockAt idx out of range: " << idx[0] << " " << idx[1] << " " << idx[2];
-    return (*blocks_).at(idx[0] + idx[1] * size_[0] + idx[2] * size_[0] * size_[1]);
+    return (*blocks_).at(getBlockOffset(idx));
   }
 
   Float spacing_;

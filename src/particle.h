@@ -54,7 +54,7 @@ public:
   inline Vec3f getPosition(int idx) const {
 #ifdef MPM_DEBUG
 	  return (*particles_).at(idx).pos;
-#elif
+#else
 	  return (*particles_)[idx].pos;
 #endif
   }

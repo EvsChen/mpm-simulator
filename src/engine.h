@@ -14,6 +14,23 @@ public:
   Engine();
   Engine(const std::vector<Vec3f>& positions);
   ~Engine();
+   
+  /**
+   * Iterator function to iterate over nearby 3x3 cells
+   * @param posInGrid position in grid coordinate
+   * @param updateFunc modify or use the value of block or weight
+   */
+  template<typename F>
+  void iterWeight(const Vec3f &posInGrid, F&& updateFunc);
+
+  /**
+   * Iterator function to iterate over nearby 3x3 cells
+   * @param posInGrid position in grid coordinate
+   * @param updateFunc modify or use the value of block or weight gradient
+   */
+  template<typename F>
+  void iterWeightGrad(const Vec3f &posInGrid, F&& updateFunc);
+  
   /// Transfer the mass and velocity from particles to grid using APIC
   void P2GTransfer();
 

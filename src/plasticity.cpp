@@ -41,7 +41,7 @@ void plasticityHardening(Particle *p) {
   p->Fp = res.V * T.inverse() * res.Sigma * res.V.transpose() * p->Fp;
   p->q += dq;
   // internal friction angle
-  Float phiF = h0 + (h1 * p->q - h3) / std::exp(h2 * p->q);
+  Float phiF = h0 + (h1 * p->q - h3) * std::exp(-h2 * p->q);
   Float sinF = std::sin(phiF * M_PI / 180.f);
   p->alpha = std::sqrt(2.f / 3.f) * 2 * sinF / (3 - sinF);
 }
