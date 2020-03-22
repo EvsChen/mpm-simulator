@@ -64,6 +64,10 @@ inline UT_Vector3 VecToUTVec3(Vec3f v) {
 	return UT_Vector3(v.x(), v.y(), v.z());
 }
 
+inline UT_Matrix3 MatToUTMat3(Mat3f m) {
+	return UT_Matrix3();
+}
+
 SIM_MPMSolver::SIM_MPMSolver(const SIM_DataFactory * factory) 
 	: BaseClass(factory), 
 	  SIM_OptionsUser(this) 
@@ -74,12 +78,33 @@ SIM_MPMSolver::~SIM_MPMSolver()
 {
 }
 
+/*
+	GETSET_DATA_FUNCS_S(MPM_P_MASS, PMass);
+	GETSET_DATA_FUNCS_S(MPM_P_VOLUME, PVolume);
+	GETSET_DATA_FUNCS_S(MPM_P_VEL, PVelocity);
+	GETSET_DATA_FUNCS_S(MPM_P_BP, PBp);
+	GETSET_DATA_FUNCS_S(MPM_P_F, PF);
+	GETSET_DATA_FUNCS_S(MPM_P_FE, PFe);
+	GETSET_DATA_FUNCS_S(MPM_P_FP, PFp);
+	GETSET_DATA_FUNCS_S(MPM_P_ALPHA, PAlpha);
+	GETSET_DATA_FUNCS_S(MPM_P_Q, PQ);
+*/
 const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 {
 	static PRM_Name	prm_gridx(MPM_GRIDX, "Grid Resolution X");
 	static PRM_Name	prm_gridy(MPM_GRIDY, "Grid Resolution Y");
 	static PRM_Name	prm_gridz(MPM_GRIDZ, "Grid Resolution Z");
 	static PRM_Name prm_spacing(MPM_SPACING, "Grid Spacing");
+
+	//static PRM_Name p_mass(MPM_P_MASS, "Particle Mass");
+	//static PRM_Name p_volume(MPM_P_VOLUME, "Particle Volume");
+	//static PRM_Name p_vel(MPM_P_VEL, "Particle Velocity");
+	//static PRM_Name p_Bp(MPM_P_BP, "Particle Bp");
+	//static PRM_Name p_F(MPM_P_F, "Particle F");
+	//static PRM_Name p_Fe(MPM_P_FE, "Particle Fe");
+	//static PRM_Name p_Fp(MPM_P_FP, "Particle Fp");
+	//static PRM_Name p_alpha(MPM_P_ALPHA, "Particle alpha");
+	//static PRM_Name p_q(MPM_P_Q, "Particle q");
 
 	static PRM_Name prm_e(MPM_E, "Young's Modulus");
 	static PRM_Name prm_nu(MPM_NU, "Poisson's Ratio");
@@ -97,6 +122,7 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 	static PRM_Default prm_bboxMin_dft[] = { PRM_Default(-1), PRM_Default(-1),PRM_Default(-1) };
 	static PRM_Default prm_bboxMax_dft[] = { PRM_Default(1), PRM_Default(1),PRM_Default(1) };
 	static PRM_Default prm_timestep_dft(5e-4f);
+
 	static PRM_Template theTemplates[] =
 	{
 		PRM_Template(PRM_INT_J, 1, &prm_gridx, &prm_grid_dft),
@@ -139,28 +165,31 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	SIM_Object & object, SIM_ObjectArray & feedbackToObjects, const SIM_Time & timeStep, bool objectIsNew)
 {	
 	// Initialize
+	if (objectIsNew) {
+		// Set Params
+		params.setMaterial(getE(), getNu(), getDensity());
+		params.pType = ParticleType::ELASTIC;
+		params.timeStep = getTimestep();
+		params.spacing = getSpacing();
+		params.gridX = getGridX();
+		params.gridY = getGridY();
+		params.gridZ = getGridZ();
+		params.setOutput(true, false);
+		params.log();
+		google::FlushLogFiles(google::GLOG_INFO);
 
-	// Set Params
-	params.setMaterial(getE(), getNu(), getDensity());
-	params.pType = ParticleType::ELASTIC;
-	params.timeStep = getTimestep();
-	params.spacing = getSpacing();
-	params.gridX = getGridX();
-	params.gridY = getGridY();
-	params.gridZ = getGridZ();
-	params.setOutput(true, false);
-	params.log();
-	google::FlushLogFiles(google::GLOG_INFO);
+		// Set BouningBox
+		worldMin = UTVecToVec3(getBBoxMin());
+		worldMax = UTVecToVec3(getBBoxMax());
+		worldDiff = worldMax - worldMin;
+		worldDiffInv = Vec3f(1 / worldDiff.x(), 1 / worldDiff.y(), 1 / worldDiff.z());
+		localMin = Vec3f(0, 0, 0);
+		localMax = Vec3f(params.gridX * params.spacing, params.gridY * params.spacing, params.gridZ * params.spacing);
+		localDiff = localMax - localMin;
+		localDiffInv = Vec3f(1 / localDiff.x(), 1 / localDiff.y(), 1 / localDiff.z());
 
-	// Set BouningBox
-	worldMin = UTVecToVec3(getBBoxMin());
-	worldMax = UTVecToVec3(getBBoxMax());
-	worldDiff = worldMax - worldMin;
-	worldDiffInv = Vec3f(1 / worldDiff.x(), 1 / worldDiff.y(), 1 / worldDiff.z());
-	localMin = Vec3f(0, 0, 0);
-	localMax = Vec3f(params.gridX * params.spacing, params.gridY * params.spacing, params.gridZ * params.spacing);
-	localDiff = localMax - localMin;
-	localDiffInv = Vec3f(1 / localDiff.x(), 1 / localDiff.y(), 1 / localDiff.z());
+	}
+
 
 	// Get the object's last state before this time step
 	const SIM_Geometry* geometry(object.getGeometry());
@@ -168,49 +197,88 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	{
 		return SIM_SOLVER_FAIL;
 	}
+
+	// Init MPMEngine
+	Engine MPMEngine;
+	MPMEngine.initGrid(getGridX(), getGridY(), getGridZ(), getSpacing());
+	MPMEngine.initBoundary();
+	std::vector<Particle>* particles = MPMEngine.getParticleVecPointer();
+	particles->clear();
+
 	// Extract simulation state from geometry
 	GU_ConstDetailHandle gdh = geometry->getOwnGeometry();
 	const GU_Detail* gdp = gdh.gdp();
-	GA_ROHandleV3 vhnd(gdp->findPointAttribute("v"));
-	std::vector<Vec3f> positions;
-	std::vector<Vec3f> velocities;
-	for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
+	GA_ROHandleV3 pHnd(gdp->findPointAttribute("P"));
+
+	if (objectIsNew)
 	{
-		Vec3f p = worldToLocal(UTVecToVec3(gdp->getPos3(*it)));
-		Vec3f v = vhnd.get(*it);
-		positions.push_back(p);
+		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
+		{
+			GA_Offset offset = *it;
+			Vec3f pos = worldToLocal(UTVecToVec3(pHnd.get(offset)));
+			Particle particle(pos, params.pMass);
+			particles->push_back(particle);
+		}
+	}
+	else
+	{
+		GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
+		GA_ROHandleF massHnd(gdp->findPointAttribute("mass"));
+		GA_ROHandleF volumeHnd(gdp->findPointAttribute("volume"));
+		GA_ROHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
+		GA_ROHandleM3 fHnd(gdp->findPointAttribute("F"));
+		GA_ROHandleM3 feHnd(gdp->findPointAttribute("Fe"));
+		GA_ROHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
+		GA_ROHandleF alphaHnd(gdp->findPointAttribute("alpha"));
+		GA_ROHandleF qHnd(gdp->findPointAttribute("q"));
+		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
+		{
+			Particle particle;
+			GA_Offset offset = *it;
+
+			particle.pos = worldToLocal(UTVecToVec3(pHnd.get(offset)));
+			particle.vel = UTVecToVec3(velHnd.get(offset));
+			particle.mass = massHnd.get(offset);
+			particle.volume = volumeHnd.get(offset);
+
+			particle.Bp = Mat3f(bpHnd.get(offset).data());
+			particle.F = Mat3f(fHnd.get(offset).data());
+			particle.Fp = Mat3f(fpHnd.get(offset).data());
+			particle.Fe = Mat3f(feHnd.get(offset).data());
+			particle.alpha = alphaHnd.get(offset);
+			particle.q = qHnd.get(offset);
+
+			particles->push_back(particle);
+		}
 	}
 
 	
 
-	// Initialize Engine
-	Engine MPMEngine(positions);
+	// Integrate simulation state forward by time step
+	MPMEngine.P2GTransfer();
+	LOG(INFO) << "P2G";
+	google::FlushLogFiles(google::GLOG_INFO);
+	MPMEngine.updateGridState();
+	LOG(INFO) << "UPDATE STATE";
+	google::FlushLogFiles(google::GLOG_INFO);
+	MPMEngine.updateDeformGrad();
+	LOG(INFO) << "UPDATE DEFORM GRAD";
+	google::FlushLogFiles(google::GLOG_INFO);
 
-		// Integrate simulation state forward by time step
-		//MPMEngine->P2GTransfer();
-		//LOG(INFO) << "P2G";
-		//google::FlushLogFiles(google::GLOG_INFO);
-		//MPMEngine->updateGridState();
-		//LOG(INFO) << "UPDATE STATE";
-		//google::FlushLogFiles(google::GLOG_INFO);
-		//MPMEngine->updateDeformGrad();
-		//LOG(INFO) << "UPDATE DEFORM GRAD";
-		//google::FlushLogFiles(google::GLOG_INFO);
+	MPMEngine.particleList_.hardening();
+	LOG(INFO) << "HADERDENING";
+	google::FlushLogFiles(google::GLOG_INFO);
+	MPMEngine.G2PTransfer();
+	LOG(INFO) << "G2P";
+	google::FlushLogFiles(google::GLOG_INFO);
 
-		//MPMEngine->particleList_.hardening();
-		//LOG(INFO) << "HADERDENING";
-		//google::FlushLogFiles(google::GLOG_INFO);
-		//MPMEngine->G2PTransfer();
-		//LOG(INFO) << "G2P";
-		//google::FlushLogFiles(google::GLOG_INFO);
+	MPMEngine.grid_.reset();
+	LOG(INFO) << "RESET";
+	google::FlushLogFiles(google::GLOG_INFO);
 
-		//MPMEngine->grid_.reset();
-		//LOG(INFO) << "RESET";
-		//google::FlushLogFiles(google::GLOG_INFO);
-
-		//MPMEngine->particleList_.advection();
-		//LOG(INFO) << "ADVECT";		
-		//google::FlushLogFiles(google::GLOG_INFO);
+	MPMEngine.particleList_.advection();
+	LOG(INFO) << "ADVECT";		
+	google::FlushLogFiles(google::GLOG_INFO);
 
 
 	// Write Positions Back
@@ -225,12 +293,25 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	if (lock.isValid()) 
 	{
 		GU_Detail* gdp = lock.getGdp();
+		GA_RWHandleV3 pHnd(gdp->findPointAttribute("P"));
+		GA_RWHandleV3 velHnd(gdp->findPointAttribute("vel"));
+		// GA_RWHandleF massHnd(gdp->findPointAttribute("mass"));
+		// GA_RWHandleF volumeHnd(gdp->findPointAttribute("volume"));
+		GA_RWHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
+		GA_RWHandleM3 fHnd(gdp->findPointAttribute("F"));
+		GA_RWHandleM3 feHnd(gdp->findPointAttribute("Fe"));
+		GA_RWHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
+		GA_RWHandleF alphaHnd(gdp->findPointAttribute("alpha"));
+		GA_RWHandleF qHnd(gdp->findPointAttribute("q"));
 		int idx = 0;
 		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 		{
-			UT_Vector3 newpos = VecToUTVec3(localToWorld(MPMEngine.particleList_.getPosition(idx)));
-			// const UT_Vector3 newpos = gdp->getPos3(*it) + UT_Vector3(0, 5, 0);
-			gdp->setPos3(*it, newpos);
+			Particle particle = (*particles)[idx];
+			GA_Offset offset = *it;
+			pHnd.set(offset, VecToUTVec3(localToWorld(particle.pos)));
+			velHnd.set(offset, VecToUTVec3(particle.vel));
+			
+
 			idx++;
 		}
 	}

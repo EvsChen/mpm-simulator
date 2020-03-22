@@ -12,7 +12,6 @@
 class Engine {
 public:
   Engine();
-  Engine(const std::vector<Vec3f>& positions);
   ~Engine();
   /// Transfer the mass and velocity from particles to grid using APIC
   void P2GTransfer();
@@ -40,7 +39,11 @@ public:
   void CHECK_PARTICLE_BOUND();
 
   void initGrid(int x, int y, int z, Float spacing);
-  void initBoundary(int offset);
+  void initBoundary(int offset = 3);
+
+  std::vector<Particle>* getParticleVecPointer() {
+	  return particleList_.particles_;
+  }
 
   Grid grid_;
   ParticleList particleList_;

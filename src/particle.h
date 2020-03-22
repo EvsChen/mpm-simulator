@@ -12,9 +12,9 @@ struct Particle {
   Particle() {}
   /// Original position
   Vec3f originalPos;
-  Vec3f pos;
-  Float mass;
-  Float volume;
+  Vec3f pos = Vec3f::Constant(0.f);
+  Float mass = 1.0;
+  Float volume = 1.0;
   Vec3f vel = Vec3f::Constant(0.f);
   /// The APIC Bp matrix
   Mat3f Bp = Mat3f::Constant(0.f);
@@ -33,7 +33,7 @@ struct Particle {
 
 class ParticleList {
 public:
-	ParticleList() {}
+	ParticleList() : particles_(new std::vector<Particle>()) {}
   ParticleList(ParticleType type);
   ParticleList(const std::vector<Vec3f>& positions, ParticleType type);
   /**
@@ -54,14 +54,6 @@ public:
 
   void hardening();
 
-  inline Vec3f getPosition(int idx) const {
-#ifdef MPM_DEBUG
-	  return (*particles_).at(idx).pos;
-#else
-	  return (*particles_)[idx].pos;
-#endif
-  }
-  
   /// List of unique pointer to particles 
   std::vector<Particle> *particles_;
   ParticleType type_;

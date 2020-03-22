@@ -17,6 +17,18 @@
 #define MPM_GRIDZ "gridz"
 #define MPM_SPACING "spacing"
 
+//
+//// Particle
+//#define MPM_P_MASS "mass"
+//#define MPM_P_VOLUME "volume"
+//#define MPM_P_VEL "velocity"
+//#define MPM_P_BP "Bp"
+//#define MPM_P_F "F"
+//#define MPM_P_FE "Fe"
+//#define MPM_P_FP "Fp"
+//#define MPM_P_ALPHA "alpha"
+//#define MPM_P_Q "q"
+
 // Young's modulus
 #define MPM_E "e"
 // Poisson's ratio
@@ -42,6 +54,17 @@ public:
 	GETSET_DATA_FUNCS_I(MPM_GRIDY, GridY);
 	GETSET_DATA_FUNCS_I(MPM_GRIDZ, GridZ);
 	GETSET_DATA_FUNCS_F(MPM_SPACING, Spacing);
+
+	//// Get Attribute Name
+	//GETSET_DATA_FUNCS_S(MPM_P_MASS, PMass);
+	//GETSET_DATA_FUNCS_S(MPM_P_VOLUME, PVolume);
+	//GETSET_DATA_FUNCS_S(MPM_P_VEL, PVelocity);
+	//GETSET_DATA_FUNCS_S(MPM_P_BP, PBp);
+	//GETSET_DATA_FUNCS_S(MPM_P_F, PF);
+	//GETSET_DATA_FUNCS_S(MPM_P_FE, PFe);
+	//GETSET_DATA_FUNCS_S(MPM_P_FP, PFp);
+	//GETSET_DATA_FUNCS_S(MPM_P_ALPHA, PAlpha);
+	//GETSET_DATA_FUNCS_S(MPM_P_Q, PQ);
 
 	GETSET_DATA_FUNCS_F(MPM_E, E);
 	GETSET_DATA_FUNCS_F(MPM_NU, Nu);
@@ -79,6 +102,7 @@ private:
 
 	inline Vec3f worldToLocal(Vec3f p0);
 	inline Vec3f localToWorld(Vec3f p1);
+
 
 };
 
