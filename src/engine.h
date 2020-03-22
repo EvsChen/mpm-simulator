@@ -39,6 +39,9 @@ public:
 
   void CHECK_PARTICLE_BOUND();
 
+  void initGrid(int x, int y, int z, Float spacing);
+  void initBoundary(int offset);
+
   Grid grid_;
   ParticleList particleList_;
   std::vector<uPtr<LevelSet>> levelSets;

@@ -8,6 +8,8 @@
 struct Particle {
   Particle(const Vec3f &p, Float m) :
     originalPos(p), pos(p), mass(m), volume(m / params.pDensity) {};
+
+  Particle() {}
   /// Original position
   Vec3f originalPos;
   Vec3f pos;
@@ -31,6 +33,7 @@ struct Particle {
 
 class ParticleList {
 public:
+	ParticleList() {}
   ParticleList(ParticleType type);
   ParticleList(const std::vector<Vec3f>& positions, ParticleType type);
   /**
@@ -54,7 +57,7 @@ public:
   inline Vec3f getPosition(int idx) const {
 #ifdef MPM_DEBUG
 	  return (*particles_).at(idx).pos;
-#elif
+#else
 	  return (*particles_)[idx].pos;
 #endif
   }
