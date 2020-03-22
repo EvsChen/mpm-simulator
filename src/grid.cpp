@@ -8,6 +8,10 @@ Grid::Grid(int gridX, int gridY, int gridZ, Float space) :
   size_ << gridX, gridY, gridZ;
 }
 
+Grid::~Grid() {
+  delete blocks_;
+}
+
 void Grid::parseLevelSets(const std::vector<uPtr<LevelSet>> &levelSets) {
   for (int i = 0; i < (*blocks_).size(); i++) {
     Vec3i idx = getBlockIndex(i);

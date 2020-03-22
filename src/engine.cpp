@@ -8,34 +8,57 @@
 
 const static bool USE_QUADRATIC_WEIGHT = true;
 
-Engine::Engine()
-	: grid_(), particleList_()
-{}
+Engine::Engine() : grid_(), particleList_() {}
 
 Engine::~Engine() {}
+
+template<typename F>
+void Engine::iterWeight(const Vec3f &posInGrid, F&& updateFunc) {
+  Mat3f weight = quadWeight(posInGrid);
+  Vec3i baseIdx = floor(posInGrid - Vec3f::Constant(0.5f));
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (int k = 0; k < 3; k++) {
+        Vec3i t; t << i, j, k;
+        Vec3i blockPosIdx = baseIdx + t;
+        Float w = weight(0, i) * weight(1, j) * weight(2, k);
+        updateFunc(blockPosIdx, w);
+      }
+    }
+  }
+}
+
+template<typename F>
+void Engine::iterWeightGrad(const Vec3f &posInGrid, F&& updateFunc) {
+  Mat3f weight = quadWeight(posInGrid);
+  Mat3f dweight = quadWeightDeriv(posInGrid);
+  Vec3i baseIdx = floor(posInGrid - Vec3f::Constant(0.5f));
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (int k = 0; k < 3; k++) {
+        Vec3f weightGrad;
+        weightGrad(0) = dweight(0, i) * weight(1, j) * weight(2, k);
+        weightGrad(1) = weight(0, i) * dweight(1, j) * weight(2, k);
+        weightGrad(2) = weight(0, i) * weight(1, j) * dweight(2, k);
+        weightGrad /= grid_.spacing_;
+        Vec3i t; t << i, j, k;
+        Vec3i blockPosIdx = baseIdx + t;
+        updateFunc(blockPosIdx, weightGrad);
+      }
+    }
+  }
+}
 
 void Engine::P2GTransfer() {
   profiler.profStart(ProfType::P2G_TRANSFER);
   for (Particle &p : *(particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
-    if (USE_QUADRATIC_WEIGHT) {
-      Mat3f weight = quadWeight(posIdx);
-      Vec3i baseIdx = floor(posIdx - Vec3f::Constant(0.5f));
-      for (int offsetX = 0; offsetX < 3; offsetX++) {
-        for (int offsetY = 0; offsetY < 3; offsetY++) {
-          for (int offsetZ = 0; offsetZ < 3; offsetZ++) {
-            Vec3i t; t << offsetX, offsetY, offsetZ;
-            Vec3i blockPosIdx = baseIdx + t;
-            Block &block = grid_.getBlockAt(blockPosIdx);
-            Float w = weight(0, offsetX) * weight(1, offsetY) * weight(2, offsetZ);
-
-            block.mass += w * p.mass;
-            Vec3f affineTerm = 4.f * p.Bp / grid_.spacing_ * (blockPosIdx.cast<Float>() - posIdx);
-            block.vel += w * p.mass * (p.vel + affineTerm);
-          }
-        }
-      }
-    }
+    iterWeight(posIdx, [&](const Vec3i &blockPosIdx, Float weight) {
+      Block &block = grid_.getBlockAt(blockPosIdx);
+      block.mass += weight * p.mass;
+      Vec3f affineTerm = 4.f * p.Bp / grid_.spacing_ * (blockPosIdx.cast<Float>() - posIdx);
+      block.vel += weight * p.mass * (p.vel + affineTerm);
+    });
   }
   for (int i = 0; i < (*grid_.blocks_).size(); i++) {
     Block &block = (*grid_.blocks_)[i];
@@ -70,26 +93,12 @@ void Engine::G2PTransfer() {
     Vec3f posIdx = p.pos / grid_.spacing_;
     p.vel = Vec3f::Constant(0.f);
     p.Bp = Mat3f::Constant(0.f);
-
-    if (USE_QUADRATIC_WEIGHT) {
-      Mat3f weight = quadWeight(posIdx);
-      Vec3i baseIdx = floor(posIdx - Vec3f::Constant(0.5f));
-      for (int offsetX = 0; offsetX < 3; offsetX++) {
-        for (int offsetY = 0; offsetY < 3; offsetY++) {
-          for (int offsetZ = 0; offsetZ < 3; offsetZ++) {
-            Vec3i t;
-            t << offsetX, offsetY, offsetZ;
-            Vec3i blockPosIdx = baseIdx;
-            blockPosIdx += t;
-            Block &block = grid_.getBlockAt(blockPosIdx);
-            Float w = weight(0, offsetX) * weight(1, offsetY) * weight(2, offsetZ);
-            p.vel += w * block.vel;
-            Vec3f diffPos = blockPosIdx.cast<Float>() * grid_.spacing_ - p.pos;
-            p.Bp += w * block.vel * diffPos.transpose();
-          }
-        }
-      }
-    }
+    iterWeight(posIdx, [&](const Vec3i &blockPosIdx, Float weight) {
+      const Block &block = grid_.getBlockAt(blockPosIdx);
+      p.vel += weight * block.vel;
+      Vec3f diffPos = blockPosIdx.cast<Float>() * grid_.spacing_ - p.pos;
+      p.Bp += weight * block.vel * diffPos.transpose();
+    });
   }
   profiler.profEnd(ProfType::G2P_TRANSFER);
 }
@@ -123,26 +132,10 @@ void Engine::computeGridForce() {
     }
 
     Vec3f posIdx = p.pos / grid_.spacing_;
-    if (USE_QUADRATIC_WEIGHT) {
-        Mat3f weight = quadWeight(posIdx);
-        Mat3f dweight = quadWeightDeriv(posIdx);
-        Vec3i baseIdx = floor(posIdx - Vec3f::Constant(0.5f));
-        for (int i = 0; i < 3; i++) {
-          for (int j = 0; j < 3; j++) {
-            for (int k = 0; k < 3; k++) {
-              Vec3f weightGrad;
-              weightGrad(0) = dweight(0, i) * weight(1, j) * weight(2, k);
-              weightGrad(1) = weight(0, i) * dweight(1, j) * weight(2, k);
-              weightGrad(2) = weight(0, i) * weight(1, j) * dweight(2, k);
-              weightGrad /= grid_.spacing_;
-              Vec3i t;
-              t << i, j, k;
-              Block &block = grid_.getBlockAt(baseIdx + t);
-              block.f += - Ap * weightGrad;
-            }
-          }
-        }
-    }
+    iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad) {
+      Block &block = grid_.getBlockAt(blockPosIdx);
+      block.f += -Ap * weightGrad;
+    });
   }
   profiler.profEnd(ProfType::CALC_GRID_FORCE);
 }
@@ -152,25 +145,10 @@ void Engine::updateDeformGrad() {
   for (Particle &p : (*particleList_.particles_)) {
     Vec3f posIdx = p.pos / grid_.spacing_;
     Mat3f updateF = Mat3f::Identity();
-    if (USE_QUADRATIC_WEIGHT) {
-      Mat3f weight = quadWeight(posIdx);
-      Mat3f dweight = quadWeightDeriv(posIdx);
-      Vec3i baseIdx = floor(posIdx - Vec3f::Constant(0.5f));
-      for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-          for (int k = 0; k < 3; k++) {
-            Vec3f weightGrad;
-            weightGrad(0) = dweight(0, i) * weight(1, j) * weight(2, k);
-            weightGrad(1) = weight(0, i) * dweight(1, j) * weight(2, k);
-            weightGrad(2) = weight(0, i) * weight(1, j) * dweight(2, k);
-            weightGrad /= grid_.spacing_;
-            Vec3i t; t << i, j, k;
-            Block &block = grid_.getBlockAt(baseIdx + t);
-            updateF += params.timeStep * block.vel * weightGrad.transpose();
-          }
-        }
-      }
-    }
+    iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad) {
+      Block &block = grid_.getBlockAt(blockPosIdx);
+      updateF += params.timeStep * block.vel * weightGrad.transpose();
+    });
     if (particleList_.type_ == ParticleType::ELASTIC) {
       p.F = updateF * p.F;  
     } else if (particleList_.type_ == ParticleType::SAND) {

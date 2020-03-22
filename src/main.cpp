@@ -19,10 +19,17 @@ int main(int argc, char *argv[]) {
   FLAGS_log_dir = params.outFolder;
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
+  profiler.profStart(ProfType::INIT);
   params.setMaterial(ParticleType::SAND);
   params.setOutput(false, true);
   params.log();
   Engine engine;
+  engine.particleList_.type_ = ParticleType::SAND;
+  engine.particleList_.initToSquare();
+  engine.initGrid(params.gridX, params.gridY, params.gridZ, params.spacing);
+  engine.initBoundary(3);
+
+  profiler.profEnd(ProfType::INIT);
   
   for (int i = 0; i < params.stepSize; i++) {
 #ifdef MPM_DEBUG

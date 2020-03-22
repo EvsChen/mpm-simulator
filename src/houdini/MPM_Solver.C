@@ -252,7 +252,6 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 		}
 	}
 
-	
 
 	// Integrate simulation state forward by time step
 	MPMEngine.P2GTransfer();

@@ -34,8 +34,9 @@ struct Particle {
 class ParticleList {
 public:
 	ParticleList() : particles_(new std::vector<Particle>()) {}
-  ParticleList(ParticleType type);
-  ParticleList(const std::vector<Vec3f>& positions, ParticleType type);
+  ~ParticleList();
+  void initToSquare();
+  
   /**
    * Get grid force to transfer to grid
    * @param idx grid index
@@ -53,7 +54,7 @@ public:
   void advection();
 
   void hardening();
-
+  
   /// List of unique pointer to particles 
   std::vector<Particle> *particles_;
   ParticleType type_;
