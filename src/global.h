@@ -22,6 +22,10 @@ typedef Eigen::Matrix4f Mat4f;
 #define M_PI 3.14159265358979323846264338327950288
 #endif
 
+#ifndef M_PI_2
+#define M_PI_2 1.5707963
+#endif
+
 #define mkU std::make_unique
 #define mkS std::make_shared
 #define uPtr std::unique_ptr
@@ -67,6 +71,14 @@ public:
     }
     mu = E / 2.f / (1 + nu);
     lambda = E * nu / (1 + nu) / (1 - 2 * nu);
+  }
+
+  void setMaterial(Float E_, Float nu_, Float pDensity_) {
+	  E = E_;
+	  nu = nu_;
+	  pDensity = pDensity_;
+	  mu = E / 2.f / (1 + nu);
+	  lambda = E * nu / (1 + nu) / (1 - 2 * nu);
   }
 
   void log() {

@@ -14,6 +14,10 @@ if (APPLE)
   list(APPEND CMAKE_PREFIX_PATH "/Applications/Houdini/Current/Frameworks/Houdini.framework/Versions/Current/Resources/toolkit/cmake")
 endif()
 
+if (MSVC)
+  set(Houdini_DIR "C:/Program Files/Side Effects Software/Houdini 18.0.348/toolkit/cmake")
+endif()
+
 # Locate Houdini's libraries and header files.
 # Registers an imported library target named 'Houdini'.
 find_package( Houdini REQUIRED )

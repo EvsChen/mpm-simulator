@@ -23,6 +23,15 @@ ParticleList::ParticleList(ParticleType type) : type_(type) {
   }
 }
 
+ParticleList::ParticleList(const std::vector<Vec3f>& positions, ParticleType type)
+	: type_(type)
+{
+	particles_ = new std::vector<Particle>();
+	for (Vec3f p : positions) {
+		(*particles_).push_back(Particle(p, params.pMass));
+	}
+}
+
 Vec3f ParticleList::calcMomentum() const {
   Vec3f momentum = Vec3f::Constant(0.f);
   for (const Particle &p : (*particles_)) {
