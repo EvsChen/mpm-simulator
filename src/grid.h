@@ -24,8 +24,8 @@ class Grid {
 public:
   Grid(int, int, int, Float);
   /// Default constructor
-  Grid();
-  ~Grid() {}
+  Grid() {}
+  ~Grid();
 
   void checkBoundaryVel();
   

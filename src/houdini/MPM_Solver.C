@@ -177,15 +177,12 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 	{
 		Vec3f p = worldToLocal(UTVecToVec3(gdp->getPos3(*it)));
-		Vec3f v = vhnd.get(*it);
 		positions.push_back(p);
 	}
 
-	
 
 	// Initialize Engine
-	Engine MPMEngine(positions);
-
+    Engine MPMEngine;
 		// Integrate simulation state forward by time step
 		//MPMEngine->P2GTransfer();
 		//LOG(INFO) << "P2G";
@@ -220,20 +217,6 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 			SIM_DATA_RETURN_EXISTING | SIM_DATA_ADOPT_EXISTING_ON_DELETE
 		)
 	);
-
-	GU_DetailHandleAutoWriteLock lock(geometryCopy->getOwnGeometry());
-	if (lock.isValid()) 
-	{
-		GU_Detail* gdp = lock.getGdp();
-		int idx = 0;
-		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
-		{
-			UT_Vector3 newpos = VecToUTVec3(localToWorld(MPMEngine.particleList_.getPosition(idx)));
-			// const UT_Vector3 newpos = gdp->getPos3(*it) + UT_Vector3(0, 5, 0);
-			gdp->setPos3(*it, newpos);
-			idx++;
-		}
-	}
 
 	return SIM_SOLVER_SUCCESS;
 	// return SIM_SOLVER_FAIL;

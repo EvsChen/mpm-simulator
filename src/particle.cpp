@@ -1,11 +1,14 @@
 #include "particle.h"
 #include "plasticity.h"
 
-ParticleList::ParticleList(ParticleType type) : type_(type) {
+ParticleList::~ParticleList() {
+  delete particles_;
+}
+
+void ParticleList::initToSquare() {
   int x0 = 3, y0 = 3, z0 = 3;
   int density = 10;
   int cubeLen = 6;
-  particles_ = new std::vector<Particle>();
 
   for (int x = x0; x < x0 + cubeLen; x++) {
     for (int y = y0; y < y0 + cubeLen; y++) {
@@ -21,15 +24,6 @@ ParticleList::ParticleList(ParticleType type) : type_(type) {
       }
     }
   }
-}
-
-ParticleList::ParticleList(const std::vector<Vec3f>& positions, ParticleType type)
-	: type_(type)
-{
-	particles_ = new std::vector<Particle>();
-	for (Vec3f p : positions) {
-		(*particles_).push_back(Particle(p, params.pMass));
-	}
 }
 
 Vec3f ParticleList::calcMomentum() const {

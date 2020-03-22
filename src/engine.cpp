@@ -6,29 +6,9 @@
 #include "util.h"
 #include "constitutiveModel.h"
 
-Engine::Engine() :
-  grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(params.pType)
-{
-  int offset = 3;
-  Vec3f center; center << params.gridX, params.gridY, params.gridZ;
-  center *= params.spacing / 2.f;
-  Vec3f bound = center;
-  bound -= Vec3f::Constant(offset * params.spacing);
-  levelSets.push_back(mkU<Box>(center, bound));
-  grid_.parseLevelSets(levelSets);
-}
+const static bool USE_QUADRATIC_WEIGHT = true;
 
-Engine::Engine(const std::vector<Vec3f>& positions)
-	: grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_(positions, params.pType)
-{
-	int offset = 3;
-	Vec3f center; center << params.gridX, params.gridY, params.gridZ;
-	center *= params.spacing / 2.f;
-	Vec3f bound = center;
-	bound -= Vec3f::Constant(offset * params.spacing);
-	levelSets.push_back(mkU<Box>(center, bound));
-	grid_.parseLevelSets(levelSets);
-}
+Engine::Engine() : grid_(), particleList_() {}
 
 Engine::~Engine() {}
 
@@ -293,3 +273,17 @@ void Engine::CHECK_PARTICLE_BOUND()
 	}
 	LOG(INFO) << "Wrong Paticles Number: " << count;
 }
+
+void Engine::initGrid(int x, int y, int z, Float spacing)
+{
+	grid_ = Grid(x, y, z, spacing);
+}
+
+void Engine::initBoundary(int offset)
+{
+	Vec3f center = grid_.size_.cast<Float>() * grid_.spacing_ * 0.5f;
+	Vec3f bound = center - Vec3f::Constant(offset * grid_.spacing_);
+	levelSets.push_back(mkU<Box>(center, bound));
+	grid_.parseLevelSets(levelSets);
+}
+

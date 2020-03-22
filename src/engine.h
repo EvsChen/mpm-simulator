@@ -12,7 +12,6 @@
 class Engine {
 public:
   Engine();
-  Engine(const std::vector<Vec3f>& positions);
   ~Engine();
    
   /**
@@ -55,6 +54,9 @@ public:
   void writeVelocity(const std::string &filename);
 
   void CHECK_PARTICLE_BOUND();
+
+  void initGrid(int x, int y, int z, Float spacing);
+  void initBoundary(int offset);
 
   Grid grid_;
   ParticleList particleList_;

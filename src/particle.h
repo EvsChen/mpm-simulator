@@ -8,6 +8,8 @@
 struct Particle {
   Particle(const Vec3f &p, Float m) :
     originalPos(p), pos(p), mass(m), volume(m / params.pDensity) {};
+
+  Particle() {}
   /// Original position
   Vec3f originalPos;
   Vec3f pos;
@@ -31,8 +33,10 @@ struct Particle {
 
 class ParticleList {
 public:
-  ParticleList(ParticleType type);
-  ParticleList(const std::vector<Vec3f>& positions, ParticleType type);
+	ParticleList() : particles_(new std::vector<Particle>()) {}
+  ~ParticleList();
+  void initToSquare();
+  
   /**
    * Get grid force to transfer to grid
    * @param idx grid index
@@ -50,14 +54,6 @@ public:
   void advection();
 
   void hardening();
-
-  inline Vec3f getPosition(int idx) const {
-#ifdef MPM_DEBUG
-	  return (*particles_).at(idx).pos;
-#else
-	  return (*particles_)[idx].pos;
-#endif
-  }
   
   /// List of unique pointer to particles 
   std::vector<Particle> *particles_;
