@@ -57,7 +57,6 @@ void Engine::P2GTransfer() {
       }
     }
   }
-
   for (int i = 0; i < (*grid_.blocks_).size(); i++) {
     Block &block = (*grid_.blocks_)[i];
     if (block.mass != 0.f) {

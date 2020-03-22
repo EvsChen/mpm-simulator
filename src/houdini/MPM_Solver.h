@@ -80,7 +80,6 @@ private:
 	inline Vec3f worldToLocal(Vec3f p0);
 	inline Vec3f localToWorld(Vec3f p1);
 
-	uPtr<Engine> MPMEngine;
 };
 
 #endif

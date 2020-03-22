@@ -139,83 +139,79 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	SIM_Object & object, SIM_ObjectArray & feedbackToObjects, const SIM_Time & timeStep, bool objectIsNew)
 {	
 	// Initialize
-	if (objectIsNew)
+
+	// Set Params
+	params.setMaterial(getE(), getNu(), getDensity());
+	params.pType = ParticleType::ELASTIC;
+	params.timeStep = getTimestep();
+	params.spacing = getSpacing();
+	params.gridX = getGridX();
+	params.gridY = getGridY();
+	params.gridZ = getGridZ();
+	params.setOutput(true, false);
+	params.log();
+	google::FlushLogFiles(google::GLOG_INFO);
+
+	// Set BouningBox
+	worldMin = UTVecToVec3(getBBoxMin());
+	worldMax = UTVecToVec3(getBBoxMax());
+	worldDiff = worldMax - worldMin;
+	worldDiffInv = Vec3f(1 / worldDiff.x(), 1 / worldDiff.y(), 1 / worldDiff.z());
+	localMin = Vec3f(0, 0, 0);
+	localMax = Vec3f(params.gridX * params.spacing, params.gridY * params.spacing, params.gridZ * params.spacing);
+	localDiff = localMax - localMin;
+	localDiffInv = Vec3f(1 / localDiff.x(), 1 / localDiff.y(), 1 / localDiff.z());
+
+	// Get the object's last state before this time step
+	const SIM_Geometry* geometry(object.getGeometry());
+	if (!geometry)
 	{
-		// Set Params
-		params.setMaterial(getE(), getNu(), getDensity());
-		params.pType = ParticleType::ELASTIC;
-		params.timeStep = getTimestep();
-		params.spacing = getSpacing();
-		params.gridX = getGridX();
-		params.gridY = getGridY();
-		params.gridZ = getGridZ();
-		params.setOutput(true, false);
-		params.log();
-		google::FlushLogFiles(google::GLOG_INFO);
-
-		// Set BouningBox
-		worldMin = UTVecToVec3(getBBoxMin());
-		worldMax = UTVecToVec3(getBBoxMax());
-		worldDiff = worldMax - worldMin;
-		worldDiffInv = Vec3f(1 / worldDiff.x(), 1 / worldDiff.y(), 1 / worldDiff.z());
-		localMin = Vec3f(0, 0, 0);
-		localMax = Vec3f(params.gridX * params.spacing, params.gridY * params.spacing, params.gridZ * params.spacing);
-		localDiff = localMax - localMin;
-		localDiffInv = Vec3f(1 / localDiff.x(), 1 / localDiff.y(), 1 / localDiff.z());
-
-		// Get the object's last state before this time step
-		const SIM_Geometry* geometry(object.getGeometry());
-		if (!geometry)
-		{
-			return SIM_SOLVER_FAIL;
-		}
-		// Extract simulation state from geometry
-		GU_ConstDetailHandle gdh = geometry->getOwnGeometry();
-		const GU_Detail* gdp = gdh.gdp();
-
-		std::vector<Vec3f> positions;
-		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
-		{
-			Vec3f p = worldToLocal(UTVecToVec3(gdp->getPos3(*it)));
-			positions.push_back(p);
-		}
-
-		// Initialize Engine
-		MPMEngine = mkU<Engine>(positions);
-		MPMEngine->CHECK_PARTICLE_BOUND();
+		return SIM_SOLVER_FAIL;
 	}
-	else
+	// Extract simulation state from geometry
+	GU_ConstDetailHandle gdh = geometry->getOwnGeometry();
+	const GU_Detail* gdp = gdh.gdp();
+	GA_ROHandleV3 vhnd(gdp->findPointAttribute("v"));
+	std::vector<Vec3f> positions;
+	std::vector<Vec3f> velocities;
+	for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 	{
-		LOG(INFO) << "TIMESETEP: " << timeStep;
-		google::FlushLogFiles(google::GLOG_INFO);
+		Vec3f p = worldToLocal(UTVecToVec3(gdp->getPos3(*it)));
+		Vec3f v = vhnd.get(*it);
+		positions.push_back(p);
+	}
+
+	
+
+	// Initialize Engine
+	Engine MPMEngine(positions);
+
 		// Integrate simulation state forward by time step
-		MPMEngine->P2GTransfer();
-		LOG(INFO) << "P2G";
-		google::FlushLogFiles(google::GLOG_INFO);
-		MPMEngine->updateGridState();
-		LOG(INFO) << "UPDATE STATE";
-		google::FlushLogFiles(google::GLOG_INFO);
-		MPMEngine->updateDeformGrad();
-		LOG(INFO) << "UPDATE DEFORM GRAD";
-		google::FlushLogFiles(google::GLOG_INFO);
+		//MPMEngine->P2GTransfer();
+		//LOG(INFO) << "P2G";
+		//google::FlushLogFiles(google::GLOG_INFO);
+		//MPMEngine->updateGridState();
+		//LOG(INFO) << "UPDATE STATE";
+		//google::FlushLogFiles(google::GLOG_INFO);
+		//MPMEngine->updateDeformGrad();
+		//LOG(INFO) << "UPDATE DEFORM GRAD";
+		//google::FlushLogFiles(google::GLOG_INFO);
 
-		MPMEngine->particleList_.hardening();
-		LOG(INFO) << "HADERDENING";
-		google::FlushLogFiles(google::GLOG_INFO);
-		MPMEngine->G2PTransfer();
-		LOG(INFO) << "G2P";
-		google::FlushLogFiles(google::GLOG_INFO);
+		//MPMEngine->particleList_.hardening();
+		//LOG(INFO) << "HADERDENING";
+		//google::FlushLogFiles(google::GLOG_INFO);
+		//MPMEngine->G2PTransfer();
+		//LOG(INFO) << "G2P";
+		//google::FlushLogFiles(google::GLOG_INFO);
 
-		MPMEngine->grid_.reset();
-		LOG(INFO) << "RESET";
-		google::FlushLogFiles(google::GLOG_INFO);
+		//MPMEngine->grid_.reset();
+		//LOG(INFO) << "RESET";
+		//google::FlushLogFiles(google::GLOG_INFO);
 
-		MPMEngine->particleList_.advection();
-		LOG(INFO) << "ADVECT";
+		//MPMEngine->particleList_.advection();
+		//LOG(INFO) << "ADVECT";		
+		//google::FlushLogFiles(google::GLOG_INFO);
 
-		MPMEngine->visualize(0);
-		google::FlushLogFiles(google::GLOG_INFO);
-	}
 
 	// Write Positions Back
 	SIM_GeometryCopy* geometryCopy(
@@ -232,7 +228,7 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 		int idx = 0;
 		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 		{
-			UT_Vector3 newpos = VecToUTVec3(localToWorld(MPMEngine->particleList_.getPosition(idx)));
+			UT_Vector3 newpos = VecToUTVec3(localToWorld(MPMEngine.particleList_.getPosition(idx)));
 			// const UT_Vector3 newpos = gdp->getPos3(*it) + UT_Vector3(0, 5, 0);
 			gdp->setPos3(*it, newpos);
 			idx++;
