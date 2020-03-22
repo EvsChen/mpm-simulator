@@ -3,6 +3,7 @@
 #include <chrono>
 #include <unordered_map>
 #include <iostream>
+#define PROFILE
 
 enum class ProfType {
   P2G_TRANSFER,
