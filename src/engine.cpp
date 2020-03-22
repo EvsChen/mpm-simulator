@@ -49,6 +49,16 @@ void Engine::iterWeightGrad(const Vec3f &posInGrid, F&& updateFunc) {
   }
 }
 
+void Engine::execOneStep() {
+    P2GTransfer();
+    updateGridState();
+    updateDeformGrad();
+    particleList_.hardening();
+    G2PTransfer();
+    grid_.reset();
+    particleList_.advection();
+}
+
 void Engine::P2GTransfer() {
   profiler.profStart(ProfType::P2G_TRANSFER);
   for (Particle &p : *(particleList_.particles_)) {
@@ -106,7 +116,6 @@ void Engine::G2PTransfer() {
 void Engine::updateGridState() {
   computeGridForce();
   grid_.updateGridVel();
-  // grid_.checkBoundaryVel();
 }
 
 void Engine::computeGridForce() {
@@ -233,32 +242,6 @@ void Engine::writePositions(const std::string &filename)
   profiler.profEnd(ProfType::OUTPUT_FILE);
 }
 
-void Engine::writeVelocity(const std::string & filename)
-{
-  if (!params.outputFile) {
-    return;
-  }
-  profiler.profStart(ProfType::OUTPUT_FILE);
-	std::ofstream out(filename, std::ios::binary);
-	if (!out) {
-		throw std::runtime_error("[writeVelocity] cannot open file");
-	}
-	Vec3i size = grid_.size_;
-	Float spacing = grid_.spacing_;
-	out.write((char*)&size.x(), sizeof(int));
-	out.write((char*)&size.y(), sizeof(int));
-	out.write((char*)&size.z(), sizeof(int));
-	out.write((char*)&spacing, sizeof(Float));
-	for (const Block &b : (*grid_.blocks_)) {
-		Vec3f vel= b.vel;
-		out.write((char*)&vel.x(), sizeof(Float));
-		out.write((char*)&vel.y(), sizeof(Float));
-		out.write((char*)&vel.z(), sizeof(Float));
-	}
-	out.close();
-  profiler.profEnd(ProfType::OUTPUT_FILE);
-}
-
 void Engine::CHECK_PARTICLE_BOUND()
 {
 	Vec3f bound = grid_.size_.cast<Float>() * grid_.spacing_;
@@ -276,7 +259,11 @@ void Engine::CHECK_PARTICLE_BOUND()
 
 void Engine::initGrid(int x, int y, int z, Float spacing)
 {
-	grid_ = Grid(x, y, z, spacing);
+	grid_.spacing_ = spacing;
+  grid_.blocks_ = new std::vector<Block>(x * y * z);
+  grid_.size_(0) = x;
+  grid_.size_(1) = y;
+  grid_.size_(2) = z;
 }
 
 void Engine::initBoundary(int offset)

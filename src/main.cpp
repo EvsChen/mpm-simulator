@@ -35,20 +35,7 @@ int main(int argc, char *argv[]) {
 #ifdef MPM_DEBUG
     LOG(INFO) << "Start loop " << i;
 #endif
-    engine.P2GTransfer();
-    // engine.CHECK_MASS();  
-
-    engine.updateGridState();
-    engine.updateDeformGrad();
-
-    engine.particleList_.hardening();
-    engine.G2PTransfer();
-
-	  engine.writeVelocity(params.outFolder + "/" + "v_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
-
-    engine.grid_.reset();
-    engine.particleList_.advection();
-
+    engine.execOneStep();
     engine.visualize(i);
 	  engine.writePositions(params.outFolder + "/" + "particles_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
     profiler.reportLoop(i);

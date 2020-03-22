@@ -29,6 +29,9 @@ public:
    */
   template<typename F>
   void iterWeightGrad(const Vec3f &posInGrid, F&& updateFunc);
+
+  /// execute one time step, combines the major functions
+  void execOneStep();
   
   /// Transfer the mass and velocity from particles to grid using APIC
   void P2GTransfer();
@@ -49,9 +52,6 @@ public:
 
   /// Write particle positions
   void writePositions(const std::string &filename);
-
-  /// Write grid velocities
-  void writeVelocity(const std::string &filename);
 
   void CHECK_PARTICLE_BOUND();
 

@@ -10,10 +10,15 @@
 #include "levelSet.h"
 
 struct Block {
-  Float mass = 0.f;
-  Vec3f vel = Vec3f::Constant(0.f);
+  Block() :
+    mass(0.f),
+    vel(Vec3f::Constant(0.f)),
+    f(Vec3f::Constant(0.f))
+  {}
+  Float mass;
+  Vec3f vel; 
   /// Block force
-  Vec3f f = Vec3f::Constant(0.f);
+  Vec3f f;
   /// Level set sdf
   Float sdf;
   /// Level set normal
@@ -24,10 +29,8 @@ class Grid {
 public:
   Grid(int, int, int, Float);
   /// Default constructor
-  Grid() {}
+  Grid() : blocks_(nullptr) {}
   ~Grid();
-
-  void checkBoundaryVel();
   
   /// Take in a list of level sets and compute the sdf and normal at grid nodes.
   /// The values in-between will be interpolated
