@@ -31,8 +31,7 @@ typedef Eigen::Matrix4f Mat4f;
 #define uPtr std::unique_ptr
 #define sPtr std::shared_ptr
 
-#define MPM_DEBUG
-// #define PROFILE
+// #define MPM_DEBUG
 
 extern Profiler profiler;
 
@@ -107,7 +106,7 @@ public:
   /// Lame's first parameter
   Float lambda;
   /// Particle mass
-  Float pMass = 1.f;
+  Float pMass = 0.1f;
   /// Particle density
   Float pDensity;
   /// Particle type 
@@ -115,15 +114,15 @@ public:
   /// Time step
   Float timeStep = 5e-4;
   /// Step size
-  int stepSize = 1000;
+  int stepSize = 2000;
   /// Grid size
   int gridX = 30, gridY = 30, gridZ = 30;
   /// Grid spacing
-  Float spacing = 1e-2;
+  Float spacing = 0.1f;
   /// Collision status 
-  CollisionType collision = CollisionType::SEPARATING;
+  CollisionType collision = CollisionType::SLIPPING;
   /// Friction Coefficient
-  Float muB = 0.8f;
+  Float muB = 0.2f;
   /// Whether output simple visualization
   bool visualize = true;
   /// Whether output position and velocity bin file

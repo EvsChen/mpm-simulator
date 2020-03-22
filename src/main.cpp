@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
   params.setMaterial(ParticleType::SAND);
-  params.setOutput(true, false);
+  params.setOutput(false, true);
   params.log();
   Engine engine;
   
