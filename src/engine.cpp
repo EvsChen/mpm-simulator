@@ -8,7 +8,7 @@
 
 const static bool USE_QUADRATIC_WEIGHT = true;
 
-Engine::Engine() : grid_(), particleList_() {}
+Engine::Engine() : grid_(params.gridX, params.gridY, params.gridZ, params.spacing), particleList_() {}
 
 Engine::~Engine() {}
 
