@@ -272,32 +272,8 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	}
 
 	// Integrate simulation state forward by time step
-	MPMEngine.P2GTransfer();
-	LOG(INFO) << "P2G";
-	google::FlushLogFiles(google::GLOG_INFO);
-
-	MPMEngine.updateGridState();
-	LOG(INFO) << "UPDATE STATE";
-	google::FlushLogFiles(google::GLOG_INFO);
-
-	MPMEngine.updateDeformGrad();
-	LOG(INFO) << "UPDATE DEFORM GRAD";
-	google::FlushLogFiles(google::GLOG_INFO);
-
-	MPMEngine.particleList_.hardening();
-	LOG(INFO) << "HADERDENING";
-	google::FlushLogFiles(google::GLOG_INFO);
-
-	MPMEngine.G2PTransfer();
-	LOG(INFO) << "G2P";
-	google::FlushLogFiles(google::GLOG_INFO);
-
-	MPMEngine.grid_.reset();
-	LOG(INFO) << "RESET";
-	google::FlushLogFiles(google::GLOG_INFO);
-
-	MPMEngine.particleList_.advection();
-	LOG(INFO) << "ADVECT";		
+  MPMEngine.execOneStep();
+	LOG(INFO) << "Exec one step";		
 	google::FlushLogFiles(google::GLOG_INFO);
 
 	// Write Positions Back

@@ -5,6 +5,7 @@
 
 #include "util.h"
 #include "constitutiveModel.h"
+#include "plasticity.h"
 
 const static bool USE_QUADRATIC_WEIGHT = true;
 
@@ -43,7 +44,8 @@ void Engine::iterWeightGrad(const Vec3f &posInGrid, F&& updateFunc) {
         weightGrad /= grid_.spacing_;
         Vec3i t; t << i, j, k;
         Vec3i blockPosIdx = baseIdx + t;
-        updateFunc(blockPosIdx, weightGrad);
+        Float w = weight(0, i) * weight(1, j) * weight(2, k);
+        updateFunc(blockPosIdx, weightGrad, w);
       }
     }
   }
@@ -52,11 +54,8 @@ void Engine::iterWeightGrad(const Vec3f &posInGrid, F&& updateFunc) {
 void Engine::execOneStep() {
     P2GTransfer();
     updateGridState();
-    updateDeformGrad();
-    particleList_.hardening();
     G2PTransfer();
     grid_.reset();
-    particleList_.advection();
 }
 
 void Engine::P2GTransfer() {
@@ -75,9 +74,6 @@ void Engine::P2GTransfer() {
     if (block.mass != 0.f) {
       block.vel /= block.mass;
       grid_.nonEmptyBlocks_.insert(i);
-    } else {
-      block.mass = 0.f;
-      block.vel = Vec3f::Constant(0.f);
     }
   }
   profiler.profEnd(ProfType::P2G_TRANSFER);
@@ -103,12 +99,22 @@ void Engine::G2PTransfer() {
     Vec3f posIdx = p.pos / grid_.spacing_;
     p.vel = Vec3f::Constant(0.f);
     p.Bp = Mat3f::Constant(0.f);
-    iterWeight(posIdx, [&](const Vec3i &blockPosIdx, Float weight) {
+    Mat3f updateF = Mat3f::Identity();
+    iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad, Float weight) {
       const Block &block = grid_.getBlockAt(blockPosIdx);
+      updateF += params.timeStep * block.vel * weightGrad.transpose();
       p.vel += weight * block.vel;
       Vec3f diffPos = blockPosIdx.cast<Float>() * grid_.spacing_ - p.pos;
       p.Bp += weight * block.vel * diffPos.transpose();
     });
+    // Update deformation gradient
+    p.Fe = updateF * p.Fe;
+    // Plasticity hardening
+    if (particleList_.type_ != ParticleType::ELASTIC) {
+      plasticityHardening(&p);
+    }
+    // Advect
+    p.pos += p.vel * params.timeStep;
   }
   profiler.profEnd(ProfType::G2P_TRANSFER);
 }
@@ -141,26 +147,12 @@ void Engine::computeGridForce() {
     }
 
     Vec3f posIdx = p.pos / grid_.spacing_;
-    iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad) {
+    iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad, Float w) {
       Block &block = grid_.getBlockAt(blockPosIdx);
       block.f += -Ap * weightGrad;
     });
   }
   profiler.profEnd(ProfType::CALC_GRID_FORCE);
-}
-
-void Engine::updateDeformGrad() {
-  profiler.profStart(ProfType::UPDATE_DEFORM_GRAD);
-  for (Particle &p : (*particleList_.particles_)) {
-    Vec3f posIdx = p.pos / grid_.spacing_;
-    Mat3f updateF = Mat3f::Identity();
-    iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad) {
-      Block &block = grid_.getBlockAt(blockPosIdx);
-      updateF += params.timeStep * block.vel * weightGrad.transpose();
-    });
-    p.Fe = updateF * p.Fe;
-  }
-  profiler.profEnd(ProfType::UPDATE_DEFORM_GRAD);
 }
 
 void Engine::visualize(int idx) {

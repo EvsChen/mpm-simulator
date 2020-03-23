@@ -13,6 +13,10 @@ class Engine {
 public:
   Engine();
   ~Engine();
+
+  void initGrid(int x, int y, int z, Float spacing);
+
+  void initBoundary(int offset = 3);
    
   /**
    * Iterator function to iterate over nearby 3x3 cells
@@ -36,27 +40,21 @@ public:
   /// Transfer the mass and velocity from particles to grid using APIC
   void P2GTransfer();
 
+  /// Update grid velocities
+  void updateGridState();
+
   /// Transfer from grid to particles
   void G2PTransfer();
   
   /// Check mass of particles & grids, DEBUG only
   void CHECK_MASS();
 
-  /// Update grid velocities
-  void updateGridState();
-
-  /// Update deformation gradient
-  void updateDeformGrad();
+  void CHECK_PARTICLE_BOUND();
 
   void visualize(int idx);
 
   /// Write particle positions
   void writePositions(const std::string &filename);
-
-  void CHECK_PARTICLE_BOUND();
-
-  void initGrid(int x, int y, int z, Float spacing);
-  void initBoundary(int offset = 3);
 
   std::vector<Particle>* getParticleVecPointer() {
 	  return particleList_.particles_;

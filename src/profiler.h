@@ -63,6 +63,9 @@ public:
       totalTime += p.second.count();
     }
     for (auto &p : loopTime_) {
+      if (p.second.count() == 0) {
+        continue;
+      }
       DLOG(INFO) << profName[p.first] << " " << p.second.count() << "ms ";
       DLOG(INFO) << p.second.count() / totalTime * 100.0 << "%";
       totalTime_[p.first] += p.second;
@@ -82,6 +85,9 @@ public:
     }
     LOG(INFO) << "Total time is: " << totalTime << "ms";
     for (auto &p : totalTime_) {
+      if (p.second.count() == 0) {
+        continue;
+      }
       LOG(INFO) << profName[p.first] << " " << p.second.count() << "ms";
       LOG(INFO) << p.second.count() / totalTime * 100.0 << "%";
       p.second = Duration::zero();
