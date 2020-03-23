@@ -131,8 +131,8 @@ void Engine::computeGridForce() {
         break;
       }
       case ParticleType::ELASTIC: {
-        Mat3f piola = fixedCorotated(p.F);
-        Ap = p.volume * piola * p.F.transpose();
+        Mat3f piola = fixedCorotated(p.Fe);
+        Ap = p.volume * piola * p.Fe.transpose();
         break;
       }
       default:
@@ -158,11 +158,7 @@ void Engine::updateDeformGrad() {
       Block &block = grid_.getBlockAt(blockPosIdx);
       updateF += params.timeStep * block.vel * weightGrad.transpose();
     });
-    if (particleList_.type_ == ParticleType::ELASTIC) {
-      p.F = updateF * p.F;  
-    } else if (particleList_.type_ == ParticleType::SAND) {
-      p.Fe = updateF * p.Fe;
-    }  
+    p.Fe = updateF * p.Fe;
   }
   profiler.profEnd(ProfType::UPDATE_DEFORM_GRAD);
 }

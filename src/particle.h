@@ -18,8 +18,8 @@ struct Particle {
   Vec3f vel = Vec3f::Constant(0.f);
   /// The APIC Bp matrix
   Mat3f Bp = Mat3f::Constant(0.f);
-  /// Deformation gradient
-  Mat3f F = Mat3f::Identity();
+  /// Deformation gradient should use Fe and Fp instead
+  [[deprecated]] Mat3f F = Mat3f::Identity();
   /// Elastic part of F
   Mat3f Fe = Mat3f::Identity();
   /// Plastic part of F

@@ -20,13 +20,12 @@ int main(int argc, char *argv[]) {
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
   profiler.profStart(ProfType::INIT);
-  params.setMaterial(ParticleType::SAND);
+  params.setMaterial(ParticleType::ELASTIC);
   params.setOutput(false, true);
   params.log();
   Engine engine;
-  engine.particleList_.type_ = ParticleType::SAND;
+  engine.particleList_.type_ = ParticleType::ELASTIC;
   engine.particleList_.initToSquare();
-  engine.initGrid(params.gridX, params.gridY, params.gridZ, params.spacing);
   engine.initBoundary(3);
 
   profiler.profEnd(ProfType::INIT);
@@ -36,7 +35,6 @@ int main(int argc, char *argv[]) {
     LOG(INFO) << "Start loop " << i;
 #endif
     engine.execOneStep();
-    engine.visualize(i);
 	  engine.writePositions(params.outFolder + "/" + "particles_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
     profiler.reportLoop(i);
     google::FlushLogFiles(google::GLOG_INFO);

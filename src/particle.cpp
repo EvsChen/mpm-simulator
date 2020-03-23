@@ -6,7 +6,7 @@ ParticleList::~ParticleList() {
 }
 
 void ParticleList::initToSquare() {
-  int x0 = 3, y0 = 3, z0 = 3;
+  int x0 = 6, y0 = 6, z0 = 6;
   int density = 10;
   int cubeLen = 6;
 

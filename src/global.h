@@ -61,7 +61,7 @@ public:
         break;
       }
       case ParticleType::ELASTIC: {
-        E = 5.f;
+        E = 5e4f;
         nu = 0.2f;
         pDensity = 1e3f;
         break;
