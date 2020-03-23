@@ -133,7 +133,7 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 
 	static PRM_Default prm_grid_dft(30);
 	static PRM_Default prm_spacing_dft(1e-2f);
-	static PRM_Default prm_e_dft(5.f);
+	static PRM_Default prm_e_dft(5e4f);
 	static PRM_Default prm_nu_dft(0.2f);
 	static PRM_Default prm_density_dft(1e3f);
 	static PRM_Default prm_bboxMin_dft[] = { PRM_Default(-1), PRM_Default(-1),PRM_Default(-1) };
