@@ -245,7 +245,6 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 		GA_ROHandleF massHnd(gdp->findPointAttribute("mass"));
 		GA_ROHandleF volumeHnd(gdp->findPointAttribute("volume"));
 		GA_ROHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
-		GA_ROHandleM3 fHnd(gdp->findPointAttribute("F"));
 		GA_ROHandleM3 feHnd(gdp->findPointAttribute("Fe"));
 		GA_ROHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
 		GA_ROHandleF alphaHnd(gdp->findPointAttribute("alpha"));
@@ -261,7 +260,6 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 			particle.volume = volumeHnd.get(offset);
 
 			particle.Bp = UTMatToMat3(bpHnd.get(offset));
-			particle.F = UTMatToMat3(fHnd.get(offset));
 			particle.Fp = UTMatToMat3(fpHnd.get(offset));
 			particle.Fe = UTMatToMat3(feHnd.get(offset));
 			particle.alpha = alphaHnd.get(offset);
@@ -272,7 +270,7 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	}
 
 	// Integrate simulation state forward by time step
-  MPMEngine.execOneStep();
+	MPMEngine.execOneStep();
 	LOG(INFO) << "Exec one step";		
 	google::FlushLogFiles(google::GLOG_INFO);
 
@@ -294,7 +292,6 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 		GA_RWHandleF massHnd(gdp->findPointAttribute("mass"));
 		GA_RWHandleF volumeHnd(gdp->findPointAttribute("volume"));
 		GA_RWHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
-		GA_RWHandleM3 fHnd(gdp->findPointAttribute("F"));
 		GA_RWHandleM3 feHnd(gdp->findPointAttribute("Fe"));
 		GA_RWHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
 		GA_RWHandleF alphaHnd(gdp->findPointAttribute("alpha"));
@@ -309,7 +306,6 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 			massHnd.set(offset, particle.mass);
 			volumeHnd.set(offset,particle.volume);
 			bpHnd.set(offset, MatToUTMat3(particle.Bp));
-			fHnd.set(offset, MatToUTMat3(particle.F));
 			feHnd.set(offset, MatToUTMat3(particle.Fe));
 			fpHnd.set(offset, MatToUTMat3(particle.Fp));
 			alphaHnd.set(offset, particle.alpha);
