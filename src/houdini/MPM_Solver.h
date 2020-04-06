@@ -43,6 +43,9 @@
 // Simulation
 #define MPM_TIMESTEP "timestep"
 
+// Collision
+#define MPM_COLLISION_OBJECT "CollisionObject"
+
 class SIM_MPMSolver : public SIM_SingleSolver,
 	public SIM_OptionsUser
 {
@@ -100,7 +103,12 @@ private:
 	Vec3f localDiff;
 	Vec3f localDiffInv;		// (1/x, 1/y, 1/z)
 
+	// World: coordinte system in Houdini
+	// Local: coordinate system in MPMEngine
+
+	// Convert Houdini coordinates to MPMEngine coordinates
 	inline Vec3f worldToLocal(Vec3f p0);
+	// Convert MPMEngine coordinates to Houdini coordinates
 	inline Vec3f localToWorld(Vec3f p1);
 
 

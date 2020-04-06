@@ -17,6 +17,10 @@ public:
   void initGrid(int x, int y, int z, Float spacing);
 
   void initBoundary(int offset = 3);
+
+  void addObstacle(uPtr<SDF> customsdf);
+
+  void generateLevelset();
    
   /**
    * Iterator function to iterate over nearby 3x3 cells

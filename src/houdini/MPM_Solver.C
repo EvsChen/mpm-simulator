@@ -12,6 +12,10 @@
 #include <SIM/SIM_Guide.h>
 #include <SIM/SIM_GuideShared.h>
 #include <SIM/SIM_GeometryCopy.h>
+#include <SIM/SIM_ScalarField.h>
+#include <SIM/SIM_VectorField.h>
+#include <SIM/SIM_MatrixField.h>
+#include <SIM/SIM_SDF.h>
 #include <GU/GU_Detail.h>
 #include <GU/GU_PrimPart.h>
 #include <GU/GU_RayIntersect.h>
@@ -26,8 +30,10 @@
 #include <UT/UT_WorkBuffer.h>
 #include <SYS/SYS_Floor.h>
 #include <SYS/SYS_Math.h>
+#include <GAS/GAS_SubSolver.h>
 
 #include <cstring>
+#include "../levelSet.h"
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #include "direct.h"
@@ -95,33 +101,13 @@ SIM_MPMSolver::~SIM_MPMSolver()
 {
 }
 
-/*
-	GETSET_DATA_FUNCS_S(MPM_P_MASS, PMass);
-	GETSET_DATA_FUNCS_S(MPM_P_VOLUME, PVolume);
-	GETSET_DATA_FUNCS_S(MPM_P_VEL, PVelocity);
-	GETSET_DATA_FUNCS_S(MPM_P_BP, PBp);
-	GETSET_DATA_FUNCS_S(MPM_P_F, PF);
-	GETSET_DATA_FUNCS_S(MPM_P_FE, PFe);
-	GETSET_DATA_FUNCS_S(MPM_P_FP, PFp);
-	GETSET_DATA_FUNCS_S(MPM_P_ALPHA, PAlpha);
-	GETSET_DATA_FUNCS_S(MPM_P_Q, PQ);
-*/
+
 const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 {
 	static PRM_Name	prm_gridx(MPM_GRIDX, "Grid Resolution X");
 	static PRM_Name	prm_gridy(MPM_GRIDY, "Grid Resolution Y");
 	static PRM_Name	prm_gridz(MPM_GRIDZ, "Grid Resolution Z");
 	static PRM_Name prm_spacing(MPM_SPACING, "Grid Spacing");
-
-	//static PRM_Name p_mass(MPM_P_MASS, "Particle Mass");
-	//static PRM_Name p_volume(MPM_P_VOLUME, "Particle Volume");
-	//static PRM_Name p_vel(MPM_P_VEL, "Particle Velocity");
-	//static PRM_Name p_Bp(MPM_P_BP, "Particle Bp");
-	//static PRM_Name p_F(MPM_P_F, "Particle F");
-	//static PRM_Name p_Fe(MPM_P_FE, "Particle Fe");
-	//static PRM_Name p_Fp(MPM_P_FP, "Particle Fp");
-	//static PRM_Name p_alpha(MPM_P_ALPHA, "Particle alpha");
-	//static PRM_Name p_q(MPM_P_Q, "Particle q");
 
 	static PRM_Name prm_e(MPM_E, "Young's Modulus");
 	static PRM_Name prm_nu(MPM_NU, "Poisson's Ratio");
@@ -181,142 +167,175 @@ inline Vec3f SIM_MPMSolver::localToWorld(Vec3f p1)
 SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & engine, 
 	SIM_Object & object, SIM_ObjectArray & feedbackToObjects, const SIM_Time & timeStep, bool objectIsNew)
 {	
-	static int i = 0;
-	LOG(INFO) << "Call Solve Times:" << i;
-	i++;
+	try {
+		static int i = 0;
+		LOG(INFO) << "Call Solve Times:" << i;
+		i++;
 
-	// Set Params
-	params.setMaterial(getE(), getNu(), getDensity());
-	params.pType = ParticleType::ELASTIC;
-	params.timeStep = getTimestep();
-	params.spacing = getSpacing();
-	params.gridX = getGridX();
-	params.gridY = getGridY();
-	params.gridZ = getGridZ();
-	// params.setOutput(false, false);
+		// Set Params
+		params.setMaterial(getE(), getNu(), getDensity());
+		params.pType = ParticleType::ELASTIC;
+		params.timeStep = getTimestep();
+		params.spacing = getSpacing();
+		params.gridX = getGridX();
+		params.gridY = getGridY();
+		params.gridZ = getGridZ();
+		// params.setOutput(false, false);
 
-	// Set BouningBox
-	worldMin = UTVecToVec3(getBBoxMin());
-	worldMax = UTVecToVec3(getBBoxMax());
-	worldDiff = worldMax - worldMin;
-	worldDiffInv = Vec3f(1 / worldDiff.x(), 1 / worldDiff.y(), 1 / worldDiff.z());
-	localMin = Vec3f(0, 0, 0);
-	localMax = Vec3f(params.gridX * params.spacing, params.gridY * params.spacing, params.gridZ * params.spacing);
-	localDiff = localMax - localMin;
-	localDiffInv = Vec3f(1 / localDiff.x(), 1 / localDiff.y(), 1 / localDiff.z());
+		// Set BouningBox
+		worldMin = UTVecToVec3(getBBoxMin());
+		worldMax = UTVecToVec3(getBBoxMax());
+		worldDiff = worldMax - worldMin;
+		worldDiffInv = Vec3f(1 / worldDiff.x(), 1 / worldDiff.y(), 1 / worldDiff.z());
+		localMin = Vec3f(0, 0, 0);
+		localMax = Vec3f(params.gridX * params.spacing, params.gridY * params.spacing, params.gridZ * params.spacing);
+		localDiff = localMax - localMin;
+		localDiffInv = Vec3f(1 / localDiff.x(), 1 / localDiff.y(), 1 / localDiff.z());
 
-	// Get the object's last state before this time step
-	const SIM_Geometry* geometry(object.getGeometry());
-	if (!geometry)
-	{
+		// Get the object's last state before this time step
+		const SIM_Geometry* geometry(object.getGeometry());
+		
+		if (!geometry)
+		{
+			return SIM_SOLVER_FAIL;
+		}
+
+		// Init MPMEngine
+		Engine MPMEngine;
+		// MPMEngine.initGrid(getGridX(), getGridY(), getGridZ(), getSpacing());
+		MPMEngine.particleList_.type_ = params.pType;
+
+		MPMEngine.initBoundary();
+
+		// Read Collision Object
+		const SIM_ScalarField *scalarSdf = SIM_DATA_GETCONST(object, "CollisionObject", SIM_ScalarField);
+
+		if (scalarSdf)
+		{
+			LOG(INFO) << "SDF";
+			uPtr<SDF> obstacle = mkU<SDF>(Vec3i(params.gridX, params.gridY, params.gridZ));
+			fpreal scale = (localMax.x() - localMin.x()) / (worldMax.x() - worldMin.x());
+			for (int k = 0; k < params.gridZ; ++k)
+			{
+				for (int j = 0; j < params.gridY; ++j)
+				{
+					for (int i = 0; i < params.gridX; ++i)
+					{
+						
+						fpreal value = scalarSdf->getValue(VecToUTVec3(localToWorld(Vec3f(i, j, k) * params.spacing))) * scale;
+						//LOG(INFO) << i << " " << j << " " << k << " " << value;
+						obstacle->setSdf(Vec3i(i, j, k), static_cast<Float>(value));
+					}
+				}
+			}
+			MPMEngine.addObstacle(std::move(obstacle));
+			MPMEngine.generateLevelset();
+		}
+		
+
+		std::vector<Particle>* particles = MPMEngine.getParticleVecPointer();
+		particles->clear();
+
+		// Extract simulation state from geometry
+		GU_ConstDetailHandle gdh = geometry->getOwnGeometry();
+		const GU_Detail* gdp = gdh.gdp();
+		GA_ROHandleV3 pHnd(gdp->findPointAttribute("P"));
+
+		if (objectIsNew)
+		{
+			LOG(INFO) << "Init Particles";
+			for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
+			{
+				GA_Offset offset = *it;
+				Vec3f pos = worldToLocal(UTVecToVec3(pHnd.get(offset)));
+				Particle particle(pos, params.pMass);
+				particles->push_back(particle);
+			}
+			LOG(INFO) << "Finish Initialization";
+		}
+		else
+		{
+			LOG(INFO) << "READ PARTICLES";
+			GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
+			GA_ROHandleF massHnd(gdp->findPointAttribute("mass"));
+			GA_ROHandleF volumeHnd(gdp->findPointAttribute("volume"));
+			GA_ROHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
+			GA_ROHandleM3 feHnd(gdp->findPointAttribute("Fe"));
+			GA_ROHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
+			GA_ROHandleF alphaHnd(gdp->findPointAttribute("alpha"));
+			GA_ROHandleF qHnd(gdp->findPointAttribute("q"));
+			for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
+			{
+				Particle particle;
+				GA_Offset offset = *it;
+
+				particle.pos = worldToLocal(UTVecToVec3(pHnd.get(offset)));
+				particle.vel = UTVecToVec3(velHnd.get(offset));
+				particle.mass = massHnd.get(offset);
+				particle.volume = volumeHnd.get(offset);
+
+				particle.Bp = UTMatToMat3(bpHnd.get(offset));
+				particle.Fp = UTMatToMat3(fpHnd.get(offset));
+				particle.Fe = UTMatToMat3(feHnd.get(offset));
+				particle.alpha = alphaHnd.get(offset);
+				particle.q = qHnd.get(offset);
+
+				particles->push_back(particle);
+			}
+		}
+
+		// Integrate simulation state forward by time step
+		MPMEngine.execOneStep();
+		LOG(INFO) << "Exec one step";
+		google::FlushLogFiles(google::GLOG_INFO);
+
+		// Write Positions Back
+		SIM_GeometryCopy* geometryCopy(
+			SIM_DATA_CREATE(
+				object, SIM_GEOMETRY_DATANAME, SIM_GeometryCopy,
+				SIM_DATA_RETURN_EXISTING | SIM_DATA_ADOPT_EXISTING_ON_DELETE
+			)
+		);
+
+		GU_DetailHandleAutoWriteLock lock(geometryCopy->getOwnGeometry());
+		if (lock.isValid())
+		{
+			LOG(INFO) << "Write Particles";
+			GU_Detail* gdp = lock.getGdp();
+			GA_RWHandleV3 pHnd(gdp->findPointAttribute("P"));
+			GA_RWHandleV3 velHnd(gdp->findPointAttribute("vel"));
+			GA_RWHandleF massHnd(gdp->findPointAttribute("mass"));
+			GA_RWHandleF volumeHnd(gdp->findPointAttribute("volume"));
+			GA_RWHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
+			GA_RWHandleM3 feHnd(gdp->findPointAttribute("Fe"));
+			GA_RWHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
+			GA_RWHandleF alphaHnd(gdp->findPointAttribute("alpha"));
+			GA_RWHandleF qHnd(gdp->findPointAttribute("q"));
+			int idx = 0;
+			for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
+			{
+				Particle particle = (*particles)[idx];
+				GA_Offset offset = *it;
+				pHnd.set(offset, VecToUTVec3(localToWorld(particle.pos)));
+				velHnd.set(offset, VecToUTVec3(particle.vel));
+				massHnd.set(offset, particle.mass);
+				volumeHnd.set(offset, particle.volume);
+				bpHnd.set(offset, MatToUTMat3(particle.Bp));
+				feHnd.set(offset, MatToUTMat3(particle.Fe));
+				fpHnd.set(offset, MatToUTMat3(particle.Fp));
+				alphaHnd.set(offset, particle.alpha);
+				qHnd.set(offset, particle.q);
+				idx++;
+			}
+			LOG(INFO) << "Finish Write";
+		}
+
+		return SIM_SOLVER_SUCCESS;
+		// return SIM_SOLVER_FAIL;
+	}
+	catch (const std::out_of_range& e) {
 		return SIM_SOLVER_FAIL;
 	}
-
-	// Init MPMEngine
-	Engine MPMEngine;
-	// MPMEngine.initGrid(getGridX(), getGridY(), getGridZ(), getSpacing());
-	MPMEngine.particleList_.type_ = params.pType;
-
-	MPMEngine.initBoundary();
-	std::vector<Particle>* particles = MPMEngine.getParticleVecPointer();
-	particles->clear();
-
-	// Extract simulation state from geometry
-	GU_ConstDetailHandle gdh = geometry->getOwnGeometry();
-	const GU_Detail* gdp = gdh.gdp();
-	GA_ROHandleV3 pHnd(gdp->findPointAttribute("P"));
-
-	if (objectIsNew)
-	{
-		LOG(INFO) << "Init Particles";
-		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
-		{
-			GA_Offset offset = *it;
-			Vec3f pos = worldToLocal(UTVecToVec3(pHnd.get(offset)));
-			Particle particle(pos, params.pMass);
-			particles->push_back(particle);
-		}
-		LOG(INFO) << "Finish Initialization";
-	}
-	else
-	{
-		LOG(INFO) << "READ PARTICLES";
-		GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
-		GA_ROHandleF massHnd(gdp->findPointAttribute("mass"));
-		GA_ROHandleF volumeHnd(gdp->findPointAttribute("volume"));
-		GA_ROHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
-		GA_ROHandleM3 feHnd(gdp->findPointAttribute("Fe"));
-		GA_ROHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
-		GA_ROHandleF alphaHnd(gdp->findPointAttribute("alpha"));
-		GA_ROHandleF qHnd(gdp->findPointAttribute("q"));
-		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
-		{
-			Particle particle;
-			GA_Offset offset = *it;
-
-			particle.pos = worldToLocal(UTVecToVec3(pHnd.get(offset)));
-			particle.vel = UTVecToVec3(velHnd.get(offset));
-			particle.mass = massHnd.get(offset);
-			particle.volume = volumeHnd.get(offset);
-
-			particle.Bp = UTMatToMat3(bpHnd.get(offset));
-			particle.Fp = UTMatToMat3(fpHnd.get(offset));
-			particle.Fe = UTMatToMat3(feHnd.get(offset));
-			particle.alpha = alphaHnd.get(offset);
-			particle.q = qHnd.get(offset);
-
-			particles->push_back(particle);
-		}
-	}
-
-	// Integrate simulation state forward by time step
-	MPMEngine.execOneStep();
-	LOG(INFO) << "Exec one step";		
-	google::FlushLogFiles(google::GLOG_INFO);
-
-	// Write Positions Back
-	SIM_GeometryCopy* geometryCopy(
-		SIM_DATA_CREATE(
-			object, SIM_GEOMETRY_DATANAME, SIM_GeometryCopy,
-			SIM_DATA_RETURN_EXISTING | SIM_DATA_ADOPT_EXISTING_ON_DELETE
-		)
-	);
-
-	GU_DetailHandleAutoWriteLock lock(geometryCopy->getOwnGeometry());
-	if (lock.isValid()) 
-	{
-		LOG(INFO) << "Write Particles";
-		GU_Detail* gdp = lock.getGdp();
-		GA_RWHandleV3 pHnd(gdp->findPointAttribute("P"));
-		GA_RWHandleV3 velHnd(gdp->findPointAttribute("vel"));
-		GA_RWHandleF massHnd(gdp->findPointAttribute("mass"));
-		GA_RWHandleF volumeHnd(gdp->findPointAttribute("volume"));
-		GA_RWHandleM3 bpHnd(gdp->findPointAttribute("Bp"));
-		GA_RWHandleM3 feHnd(gdp->findPointAttribute("Fe"));
-		GA_RWHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
-		GA_RWHandleF alphaHnd(gdp->findPointAttribute("alpha"));
-		GA_RWHandleF qHnd(gdp->findPointAttribute("q"));
-		int idx = 0;
-		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
-		{
-			Particle particle = (*particles)[idx];
-			GA_Offset offset = *it;
-			pHnd.set(offset, VecToUTVec3(localToWorld(particle.pos)));
-			velHnd.set(offset, VecToUTVec3(particle.vel));
-			massHnd.set(offset, particle.mass);
-			volumeHnd.set(offset,particle.volume);
-			bpHnd.set(offset, MatToUTMat3(particle.Bp));
-			feHnd.set(offset, MatToUTMat3(particle.Fe));
-			fpHnd.set(offset, MatToUTMat3(particle.Fp));
-			alphaHnd.set(offset, particle.alpha);
-			qHnd.set(offset, particle.q);
-			idx++;
-		}
-		LOG(INFO) << "Finish Write";
-	}
-
-	return SIM_SOLVER_SUCCESS;
-	// return SIM_SOLVER_FAIL;
 }
 
 

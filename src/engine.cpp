@@ -262,3 +262,13 @@ void Engine::initBoundary(int offset)
 	grid_.parseLevelSets(levelSets);
 }
 
+void Engine::addObstacle(uPtr<SDF> customsdf)
+{
+	levelSets.push_back(std::move(customsdf));
+}
+
+void Engine::generateLevelset()
+{
+	grid_.parseLevelSets(levelSets);
+}
+

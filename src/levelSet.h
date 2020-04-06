@@ -29,3 +29,14 @@ private:
   Vec3f center_;
   Vec3f bound_;
 };
+
+class SDF : public LevelSet {
+public:
+	SDF(const Vec3i &res);
+	~SDF() {}
+	virtual Float sdf(const Vec3f &xi) const;
+	void setSdf(const Vec3i& xi, Float v);
+private:
+	Vec3i res_;
+	std::vector<Float> value_;
+};
