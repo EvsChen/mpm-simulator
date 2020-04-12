@@ -115,6 +115,7 @@ private:
 	// Convert MPMEngine coordinates to Houdini coordinates
 	inline Vec3f localToWorld(Vec3f p1);
 
+	bool checkValidLocalPosition(Vec3f pos, float threshold);
 
 };
 
