@@ -46,6 +46,8 @@
 // Collision
 #define MPM_COLLISION_OBJECT "CollisionObject"
 
+#define MPM_MATERIAL "material"
+
 class SIM_MPMSolver : public SIM_SingleSolver,
 	public SIM_OptionsUser
 {
@@ -77,6 +79,8 @@ public:
 	GETSET_DATA_FUNCS_V3(MPM_BBOXMAX, BBoxMax);
 
 	GETSET_DATA_FUNCS_F(MPM_TIMESTEP, Timestep);
+
+	GETSET_DATA_FUNCS_I(MPM_MATERIAL, Material);
 
 protected:
 	explicit SIM_MPMSolver(const SIM_DataFactory *factory);

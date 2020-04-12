@@ -116,6 +116,7 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 	static PRM_Name prm_bboxMin(MPM_BBOXMIN, "Bounding Box Min");
 	static PRM_Name prm_bboxMax(MPM_BBOXMAX, "Bounding Box Max");
 	static PRM_Name prm_timestep(MPM_TIMESTEP, "Timestep");
+	static PRM_Name prm_material(MPM_MATERIAL, "Material");
 
 	static PRM_Default prm_grid_dft(30);
 	static PRM_Default prm_spacing_dft(1e-2f);
@@ -125,6 +126,7 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 	static PRM_Default prm_bboxMin_dft[] = { PRM_Default(-1), PRM_Default(-1),PRM_Default(-1) };
 	static PRM_Default prm_bboxMax_dft[] = { PRM_Default(1), PRM_Default(1),PRM_Default(1) };
 	static PRM_Default prm_timestep_dft(5e-4f);
+	static PRM_Default prm_material_dft(0);
 
 	static PRM_Template theTemplates[] =
 	{
@@ -138,6 +140,7 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 		PRM_Template(PRM_XYZ_J, 3, &prm_bboxMin, prm_bboxMin_dft),
 		PRM_Template(PRM_XYZ_J, 3, &prm_bboxMax, prm_bboxMax_dft),
 		PRM_Template(PRM_FLT_J, 1, &prm_timestep, &prm_timestep_dft),
+		PRM_Template(PRM_INT_J, 1, &prm_material, &prm_material_dft),
 		PRM_Template()
 	};
 
@@ -174,13 +177,14 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 
 		// Set Params
 		params.setMaterial(getE(), getNu(), getDensity());
-		params.pType = ParticleType::ELASTIC;
+		//params.pType = ParticleType::ELASTIC; 
+		params.pType = static_cast<ParticleType>(getMaterial());
 		params.timeStep = getTimestep();
 		params.spacing = getSpacing();
 		params.gridX = getGridX();
 		params.gridY = getGridY();
 		params.gridZ = getGridZ();
-		// params.setOutput(false, false);
+		params.setOutput(false, false);
 
 		// Set BouningBox
 		worldMin = UTVecToVec3(getBBoxMin());
