@@ -259,7 +259,7 @@ void Engine::initBoundary(int offset)
 	Vec3f center = grid_.size_.cast<Float>() * grid_.spacing_ * 0.5f;
 	Vec3f bound = center - Vec3f::Constant(offset * grid_.spacing_);
 	levelSets.push_back(mkU<Box>(center, bound));
-	grid_.parseLevelSets(levelSets);
+	// grid_.parseLevelSets(levelSets);
 }
 
 void Engine::addObstacle(uPtr<SDF> customsdf)

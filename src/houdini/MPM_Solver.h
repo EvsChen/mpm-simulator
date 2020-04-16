@@ -99,13 +99,7 @@ private:
 	DECLARE_DATAFACTORY(SIM_MPMSolver, SIM_SingleSolver, "MPM Solver", getMyOwnSolverDescription());
 
 	Vec3f worldMin;
-	Vec3f worldMax;
-	Vec3f worldDiff;
-	Vec3f worldDiffInv;	// (1/x, 1/y, 1/z)
-	Vec3f localMin;
 	Vec3f localMax;
-	Vec3f localDiff;
-	Vec3f localDiffInv;		// (1/x, 1/y, 1/z)
 
 	// World: coordinte system in Houdini
 	// Local: coordinate system in MPMEngine

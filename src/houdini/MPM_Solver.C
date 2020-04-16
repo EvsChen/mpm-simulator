@@ -158,18 +158,18 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 
 inline Vec3f SIM_MPMSolver::worldToLocal(Vec3f p0)
 {
-	return (p0 - worldMin).cwiseProduct(worldDiffInv).cwiseProduct(localDiff) + localMin;
+	return p0 - worldMin;
 }
 
 inline Vec3f SIM_MPMSolver::localToWorld(Vec3f p1)
 {
-	return (p1 - localMin).cwiseProduct(localDiffInv).cwiseProduct(worldDiff) + worldMin;
+	return p1 + worldMin;
 }
 
 bool SIM_MPMSolver::checkValidLocalPosition(Vec3f pos, float threshold)
 {
-	if (pos.x() < localMin.x() + threshold || pos.y() < localMin.y() + threshold || pos.z() < localMin.z() + threshold ||
-		pos.x() > localMax.x() - threshold || pos.y() > localMax.y() + threshold || pos.z() > localMax.z() + threshold)
+	if (pos.x() < 0 + threshold || pos.y() < 0 + threshold || pos.z() < 0 + threshold ||
+		pos.x() > localMax.x() - threshold || pos.y() > localMax.y() - threshold || pos.z() > localMax.z() - threshold)
 	{
 		return false;
 	}
@@ -189,17 +189,12 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	params.gridX = getGridX();
 	params.gridY = getGridY();
 	params.gridZ = getGridZ();
-	// params.setOutput(false, false);
+	params.setOutput(false, false);
+	params.collision = CollisionType::SEPARATING;
 
 	// Set BouningBox
 	worldMin = UTVecToVec3(getBBoxMin());
-	worldMax = UTVecToVec3(getBBoxMax());
-	worldDiff = worldMax - worldMin;
-	worldDiffInv = Vec3f(1 / worldDiff.x(), 1 / worldDiff.y(), 1 / worldDiff.z());
-	localMin = Vec3f(0, 0, 0);
-	localMax = Vec3f(params.gridX * params.spacing, params.gridY * params.spacing, params.gridZ * params.spacing);
-	localDiff = localMax - localMin;
-	localDiffInv = Vec3f(1 / localDiff.x(), 1 / localDiff.y(), 1 / localDiff.z());
+	localMax = Vec3f(getGridX(), getGridY(), getGridZ()) * getSpacing();
 
 	// Get the object's last state before this time step
 	const SIM_Geometry* geometry(object.getGeometry());
@@ -214,7 +209,7 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	// MPMEngine.initGrid(getGridX(), getGridY(), getGridZ(), getSpacing());
 	MPMEngine.particleList_.type_ = params.pType;
 
-	MPMEngine.initBoundary();
+	MPMEngine.initBoundary(4);
 
 	// Read Collision Object
 	const SIM_ScalarField *scalarSdf = SIM_DATA_GETCONST(object, "CollisionObject", SIM_ScalarField);
@@ -223,15 +218,13 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	{
 		LOG(INFO) << "SDF";
 		uPtr<SDF> obstacle = mkU<SDF>(Vec3i(params.gridX, params.gridY, params.gridZ));
-		fpreal scale = (localMax.x() - localMin.x()) / (worldMax.x() - worldMin.x());
 		for (int k = 0; k < params.gridZ; ++k)
 		{
 			for (int j = 0; j < params.gridY; ++j)
 			{
 				for (int i = 0; i < params.gridX; ++i)
-				{
-						
-					fpreal value = scalarSdf->getValue(VecToUTVec3(localToWorld(Vec3f(i, j, k) * params.spacing))) * scale;
+				{					
+					fpreal value = scalarSdf->getValue(VecToUTVec3(localToWorld(Vec3f(i, j, k) * params.spacing)));
 					//LOG(INFO) << i << " " << j << " " << k << " " << value;
 					obstacle->setSdf(Vec3i(i, j, k), static_cast<Float>(value));
 				}
