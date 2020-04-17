@@ -106,7 +106,7 @@ public:
   /// Lame's first parameter
   Float lambda;
   /// Particle mass
-  Float pMass = 0.1f;
+  Float pMass = 0.001f;
   /// Particle density
   Float pDensity;
   /// Particle type 
@@ -122,13 +122,13 @@ public:
   /// Collision status 
   CollisionType collision = CollisionType::SLIPPING;
   /// Friction Coefficient
-  Float muB = 0.2f;
+  Float muB = 0.6f;
   /// Whether output simple visualization
   bool visualize = true;
   /// Whether output position and velocity bin file
   bool outputFile = true;
   /// Output folder name
-  std::string outFolder = std::to_string(std::time(0));
+  std::string outFolder = "./" + std::to_string(std::time(0));
 };
 
 extern Params params;
