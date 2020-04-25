@@ -251,22 +251,40 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 			}
 		}
 		MPMEngine.addObstacle(std::move(obstacle));
-		MPMEngine.generateLevelset();
+		
 	}
 		
-
+	MPMEngine.generateLevelset();
 	std::vector<Particle>* particles = MPMEngine.getParticleVecPointer();
 	particles->clear();
-
+	google::FlushLogFiles(google::GLOG_INFO);
 	// Extract simulation state from geometry
 	GU_ConstDetailHandle gdh = geometry->getOwnGeometry();
 	const GU_Detail* gdp = gdh.gdp();
+	if (!gdp)
+	{
+		return SIM_SOLVER_FAIL;
+	}
+	const GA_Attribute* pAttr = gdp->findPointAttribute("P");
+	if (!pAttr)
+	{
+		return SIM_SOLVER_FAIL;
+	}
 	GA_ROHandleV3 pHnd(gdp->findPointAttribute("P"));
+
+	if (!pHnd.isValid() || gdp->getPointRange().isEmpty())
+	{
+		return SIM_SOLVER_FAIL;
+	}
 
 	if (objectIsNew)
 	{
 		LOG(INFO) << "Init Particles";
 		GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
+		if (!velHnd.isValid())
+		{
+			return SIM_SOLVER_FAIL;
+		}
 		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 		{
 			GA_Offset offset = *it;
@@ -293,6 +311,11 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 		GA_ROHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
 		GA_ROHandleF alphaHnd(gdp->findPointAttribute("alpha"));
 		GA_ROHandleF qHnd(gdp->findPointAttribute("q"));
+		if (!(velHnd.isValid() && massHnd.isValid() && volumeHnd.isValid() && bpHnd.isValid() && feHnd.isValid() &&
+			fpHnd.isValid() && alphaHnd.isValid() && qHnd.isValid()))
+		{
+			return SIM_SOLVER_FAIL;
+		}
 		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 		{
 			Particle particle;
