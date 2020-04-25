@@ -66,6 +66,13 @@ public:
         pDensity = 1e3f;
         break;
       }
+      case ParticleType::SNOW: {
+        E = 1.4e4;
+        nu = 0.2;
+        pDensity = 400.f;
+        collision = CollisionType::STICKY;
+        break;
+      }
       default:
         break;
     }
@@ -105,6 +112,10 @@ public:
   Float mu;
   /// Lame's first parameter
   Float lambda;
+  /// Critical compression, used in snow plasticity model
+  Float thetaC = 2.5e-2;
+  /// Critical strech, used in snow plasticity model
+  Float thetaS = 7.5e-3;
   /// Particle mass
   Float pMass = 0.001f;
   /// Particle density

@@ -84,18 +84,28 @@ void Grid::updateGridVel() {
     Float sdf;
     Vec3f normal;
     trilinearInterp(base, frac, &sdf, &normal);
+    // If sdf > 0, phiHat > 0
+    // else if sdf <= 0, phiHat < 0 only if it's "entering" the surface
     Float phiHat = sdf - std::min(block.sdf, 0.f);
     if ((params.collision == CollisionType::SEPARATING && phiHat < 0) ||
+        (params.collision == CollisionType::STICKY && phiHat < 0) ||
         (params.collision == CollisionType::SLIPPING && block.sdf < 0))
     {
       // Collided
       Vec3f delV = -phiHat * normal / params.timeStep;
       Vec3f velHat = block.vel + delV;
       // Tangent component
-      Vec3f vt = velHat - normal * normal.dot(velHat);
-      Vec3f tangent = vt.normalized();
-      // Friction calculation
-      velHat -= std::min(vt.norm(), params.muB * delV.norm()) * tangent;
+      Vec3f vn = normal * normal.dot(velHat);
+      Vec3f vt = velHat - vn;
+      Float vtNorm = vt.norm();
+      if (params.collision == CollisionType::STICKY && vtNorm <= params.muB * vn.norm()) {
+        // Sticky response
+        velHat = Vec3f::Constant(0.f);
+      } else {
+        // Dynamci friction calculation
+        Vec3f tangent = vt.normalized();
+        velHat -= std::min(vtNorm, params.muB * delV.norm()) * tangent;
+      }      
       block.vel = velHat;
     }
   }

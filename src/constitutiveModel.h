@@ -10,6 +10,14 @@
  */
 Mat3f fixedCorotated(const Mat3f &F);
 
+/**
+ * Fixed corotated model for snow with hardening effect, refer to mpm2016course p20
+ * @param Fe Elastic deformation gradient
+ * @param Fp Plastic deformation gradient
+ * @return piola-kirchoff stress
+ */
+Mat3f fixedCorotatedSnow(const Mat3f &Fe, const Mat3f &Fp);
+
 
 /**
  * Calculate sand stress using St.Venant model, refer to drucker2016 tech doc

@@ -3,7 +3,7 @@
 #include <chrono>
 #include <unordered_map>
 #include <iostream>
-#define PROFILE
+// #define PROFILE
 
 enum class ProfType {
   INIT,

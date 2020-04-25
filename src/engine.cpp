@@ -108,10 +108,13 @@ void Engine::G2PTransfer() {
       p.Bp += weight * block.vel * diffPos.transpose();
     });
     // Update deformation gradient
+    // For snow, assume all the deformation is plastic
     p.Fe = updateF * p.Fe;
     // Plasticity hardening
-    if (particleList_.type_ != ParticleType::ELASTIC) {
+    if (particleList_.type_ == ParticleType::SAND) {
       plasticityHardening(&p);
+    } else if (particleList_.type_ == ParticleType::SNOW) {
+      snowHardening(&p);
     }
     // Advect
     p.pos += p.vel * params.timeStep;
@@ -128,17 +131,22 @@ void Engine::computeGridForce() {
   profiler.profStart(ProfType::CALC_GRID_FORCE);
   for (const Particle &p : (*particleList_.particles_)) {
     Mat3f Ap;
+    Float volume = p.mass / params.pDensity;
     switch (particleList_.type_) {
       case ParticleType::SAND: {
         // Only use the elastic part
         Mat3f piola = stVenant(p.Fe, false);
         // Mat3f piola = fixedCorotated(p.Fe);
-        Ap = p.volume * piola * p.Fe.transpose();
+        Ap = volume * piola * p.Fe.transpose();
         break;
+      }
+      case ParticleType::SNOW: {
+        Mat3f piola = fixedCorotatedSnow(p.Fe, p.Fp);
+        Ap = volume * piola * p.Fe.transpose(); 
       }
       case ParticleType::ELASTIC: {
         Mat3f piola = fixedCorotated(p.Fe);
-        Ap = p.volume * piola * p.Fe.transpose();
+        Ap = volume * piola * p.Fe.transpose();
         break;
       }
       default:

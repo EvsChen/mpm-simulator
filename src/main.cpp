@@ -19,14 +19,16 @@ int main(int argc, char *argv[]) {
   FLAGS_log_dir = params.outFolder;
   google::InitGoogleLogging(argv[0]);
   google::InstallFailureSignalHandler();
+  ParticleType pType = ParticleType::SNOW;
   profiler.profStart(ProfType::INIT);
-  params.setMaterial(ParticleType::ELASTIC);
-  params.setOutput(false, true);
+  params.setMaterial(pType);
+  params.setOutput(true, true);
   params.log();
   Engine engine;
-  engine.particleList_.type_ = ParticleType::ELASTIC;
+  engine.particleList_.type_ = pType;
   engine.particleList_.initToSquare();
   engine.initBoundary(3);
+  engine.generateLevelset();
 
   profiler.profEnd(ProfType::INIT);
   
@@ -35,7 +37,8 @@ int main(int argc, char *argv[]) {
     LOG(INFO) << "Start loop " << i;
 #endif
     engine.execOneStep();
-	  engine.writePositions(params.outFolder + "/" + "particles_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
+	  // engine.writePositions(params.outFolder + "/" + "particles_" + paddingStr(std::to_string(i), '0', 4) + ".bin");
+    engine.visualize(i);
     profiler.reportLoop(i);
     google::FlushLogFiles(google::GLOG_INFO);
   }

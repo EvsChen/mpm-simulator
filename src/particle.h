@@ -14,7 +14,7 @@ struct Particle {
   Vec3f originalPos;
   Vec3f pos = Vec3f::Constant(0.f);
   Float mass = 1.0;
-  Float volume = 1.0;
+  [[deprecated]] Float volume = 1.0;
   Vec3f vel = Vec3f::Constant(0.f);
   /// The APIC Bp matrix
   Mat3f Bp = Mat3f::Constant(0.f);

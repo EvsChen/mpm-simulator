@@ -1,11 +1,26 @@
 #include "constitutiveModel.h"
 #include "SVD.h"
 
+/// Hardening coefficient
+const float xi = 10.f;
+
 Mat3f fixedCorotated(const Mat3f &F) {
   SVDResult res = SVDDecompose(F);
   Mat3f R = res.U * res.V.transpose();
   Float J = F.determinant();
   return 2.f * params.mu * (F - R) + params.lambda * (J - 1) * J * F.inverse().transpose();
+}
+
+Mat3f fixedCorotatedSnow(const Mat3f &Fe, const Mat3f &Fp) {
+  SVDResult res = SVDDecompose(Fe);
+  Mat3f Re = res.U * res.V.transpose();
+  Float Je = Fe.determinant(),
+        Jp = Fp.determinant();
+  // Hardening
+  Float hard = std::exp(xi * (1 - Jp));
+  Float mu = params.mu * hard,
+        lambda = params.lambda * hard;
+  return 2.f * mu * (Fe - Re) + lambda * (Je - 1) * Je * Fe.inverse().transpose();
 }
 
 Mat3f stVenant(const Mat3f &Fe, bool needProjected) {

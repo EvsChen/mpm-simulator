@@ -45,3 +45,21 @@ void plasticityHardening(Particle *p) {
   Float sinF = std::sin(phiF * M_PI / 180.f);
   p->alpha = std::sqrt(2.f / 3.f) * 2 * sinF / (3 - sinF);
 }
+
+void snowHardening(Particle *p) {
+  // Notice here the Fe matrix has been updated
+  // assume all the deformation is elastic
+  SVDResult res = SVDDecompose(p->Fe);
+  for (int i = 0; i < 3; i++) {
+    Float s = res.Sigma(i, i);
+    // Clamp the value of singular values
+    res.Sigma(i, i) = std::min(std::max(s, 1.f - params.thetaC), 1.f + params.thetaS);
+  }
+  p->Fe = res.U * res.Sigma * res.V.transpose();
+  // Get the inverse of the Sigma matrix
+  Mat3f invSigma = res.Sigma;
+  for (int i = 0; i < 3; i++) {
+    invSigma(i, i) = 1.f / invSigma(i, i);
+  }
+  p->Fp = res.V * invSigma * res.U.transpose() * p->Fe;
+}
