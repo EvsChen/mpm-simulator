@@ -117,7 +117,7 @@ public:
   /// Critical strech, used in snow plasticity model
   Float thetaS = 7.5e-3;
   /// Particle mass
-  Float pMass = 0.001f;
+  Float pMass = 1.f;
   /// Particle density
   Float pDensity;
   /// Particle type 
@@ -129,7 +129,7 @@ public:
   /// Grid size
   int gridX = 30, gridY = 30, gridZ = 30;
   /// Grid spacing
-  Float spacing = 0.1f;
+  Float spacing = 0.05f;
   /// Collision status 
   CollisionType collision = CollisionType::SLIPPING;
   /// Friction Coefficient

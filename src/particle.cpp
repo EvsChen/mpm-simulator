@@ -7,8 +7,8 @@ ParticleList::~ParticleList() {
 
 void ParticleList::initToSquare() {
   int x0 = 6, y0 = 6, z0 = 6;
-  int density = 10;
-  int cubeLen = 6;
+  int density = 20;
+  int cubeLen = 3;
 
   for (int x = x0; x < x0 + cubeLen; x++) {
     for (int y = y0; y < y0 + cubeLen; y++) {
@@ -32,17 +32,6 @@ Vec3f ParticleList::calcMomentum() const {
     momentum += p.mass * p.vel;
   }
   return momentum;
-}
-
-void ParticleList::hardening() {
-  if (type_ == ParticleType::ELASTIC) {
-    return;
-  }
-  profiler.profStart(ProfType::PLASTICITY_HARDENING);
-  for (Particle &p : (*particles_)) {
-    plasticityHardening(&p);
-  }
-  profiler.profEnd(ProfType::PLASTICITY_HARDENING);
 }
 
 void ParticleList::advection() {

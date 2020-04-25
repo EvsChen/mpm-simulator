@@ -114,6 +114,7 @@ void Engine::G2PTransfer() {
     if (particleList_.type_ == ParticleType::SAND) {
       plasticityHardening(&p);
     } else if (particleList_.type_ == ParticleType::SNOW) {
+      p.Fe *= p.Fp;
       snowHardening(&p);
     }
     // Advect

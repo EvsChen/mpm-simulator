@@ -36,24 +36,11 @@ public:
 	ParticleList() : particles_(new std::vector<Particle>()) {}
   ~ParticleList();
   void initToSquare();
-  
-  /**
-   * Get grid force to transfer to grid
-   * @param idx grid index
-   */
-  Vec3f getGridForce(Vec3i idx) const;
-  /**
-   * Update deformation gradient
-   * @param idx grid index
-   */
-  Vec3f updateDeformGrad(Vec3i idx);
 
   Vec3f calcMomentum() const;
 
   /// Update particle velocity
   void advection();
-
-  void hardening();
   
   /// List of unique pointer to particles 
   std::vector<Particle> *particles_;
