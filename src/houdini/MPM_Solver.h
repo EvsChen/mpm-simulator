@@ -45,8 +45,18 @@
 
 // Collision
 #define MPM_COLLISION_OBJECT "CollisionObject"
+// Collision Type
+#define MPM_COLLISION_TYPE "CollisionType"
+#define MPM_MUB "muB"
+
+// Snow
+#define MPM_THETAC "thetaC"
+#define MPM_THETAS "thetaS"
+
 
 #define MPM_MATERIAL "material"
+
+
 
 class SIM_MPMSolver : public SIM_SingleSolver,
 	public SIM_OptionsUser
@@ -81,6 +91,14 @@ public:
 	GETSET_DATA_FUNCS_F(MPM_TIMESTEP, Timestep);
 
 	GETSET_DATA_FUNCS_I(MPM_MATERIAL, Material);
+
+	GETSET_DATA_FUNCS_I(MPM_COLLISION_TYPE, CollisionType);
+	GETSET_DATA_FUNCS_F(MPM_MUB, MuB);
+
+	GETSET_DATA_FUNCS_F(MPM_THETAC, ThetaC);
+	GETSET_DATA_FUNCS_F(MPM_THETAS, ThetaS);
+
+	
 
 protected:
 	explicit SIM_MPMSolver(const SIM_DataFactory *factory);

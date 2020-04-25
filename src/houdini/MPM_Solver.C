@@ -118,6 +118,12 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 	static PRM_Name prm_timestep(MPM_TIMESTEP, "Timestep");
 	static PRM_Name prm_material(MPM_MATERIAL, "Material");
 
+	static PRM_Name prm_collision(MPM_COLLISION_TYPE, "Collision Type");
+	static PRM_Name prm_muB(MPM_MUB, "Friction Coefficient");
+
+	static PRM_Name prm_thetaC(MPM_THETAC, "Critical Compression");
+	static PRM_Name prm_thetaS(MPM_THETAS, "Critical Stretch");
+
 	static PRM_Default prm_grid_dft(30);
 	static PRM_Default prm_spacing_dft(1e-2f);
 	static PRM_Default prm_e_dft(5e4f);
@@ -127,6 +133,11 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 	static PRM_Default prm_bboxMax_dft[] = { PRM_Default(1), PRM_Default(1),PRM_Default(1) };
 	static PRM_Default prm_timestep_dft(5e-4f);
 	static PRM_Default prm_material_dft(0);
+
+	static PRM_Default prm_collision_dft(0);
+	static PRM_Default prm_muB_dft(0.6f);
+	static PRM_Default prm_thetaC_dft(2.5e-2f);
+	static PRM_Default prm_thetaS_dft(7.5e-3f);
 
 	static PRM_Template theTemplates[] =
 	{
@@ -140,7 +151,11 @@ const SIM_DopDescription * SIM_MPMSolver::getMyOwnSolverDescription()
 		PRM_Template(PRM_XYZ_J, 3, &prm_bboxMin, prm_bboxMin_dft),
 		PRM_Template(PRM_XYZ_J, 3, &prm_bboxMax, prm_bboxMax_dft),
 		PRM_Template(PRM_FLT_J, 1, &prm_timestep, &prm_timestep_dft),
-		PRM_Template(PRM_INT_J, 1, &prm_material, &prm_material_dft),
+		PRM_Template(PRM_INT_J, 1, &prm_material, &prm_material_dft),	
+		PRM_Template(PRM_FLT_J, 1, &prm_muB, &prm_muB_dft),
+		PRM_Template(PRM_FLT_J, 1, &prm_thetaC, &prm_thetaC_dft),
+		PRM_Template(PRM_FLT_J, 1, &prm_thetaS, &prm_thetaS_dft),
+		PRM_Template(PRM_INT_J, 1, &prm_collision, &prm_collision_dft),
 		PRM_Template()
 	};
 
@@ -190,7 +205,12 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	params.gridY = getGridY();
 	params.gridZ = getGridZ();
 	params.setOutput(false, false);
-	params.collision = CollisionType::SEPARATING;
+
+	//params.collision = CollisionType::SEPARATING;
+	params.collision = static_cast<CollisionType>(getCollisionType());
+	params.muB = getMuB();
+	params.thetaC = getThetaC();
+	params.thetaS = getThetaS();
 
 	// Set BouningBox
 	worldMin = UTVecToVec3(getBBoxMin());
@@ -246,6 +266,7 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	if (objectIsNew)
 	{
 		LOG(INFO) << "Init Particles";
+		GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
 		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 		{
 			GA_Offset offset = *it;
@@ -256,6 +277,7 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 				return SIM_SOLVER_FAIL;
 			}
 			Particle particle(pos, params.pMass);
+			particle.vel = UTVecToVec3(velHnd.get(offset));
 			particles->push_back(particle);
 		}
 		LOG(INFO) << "Finish Initialization";
