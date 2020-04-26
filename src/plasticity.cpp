@@ -48,7 +48,8 @@ void plasticityHardening(Particle *p) {
 
 void snowHardening(Particle *p) {
   // Notice here the Fe matrix has been updated
-  // assume all the deformation is elastic
+  // F_(n+1)
+  Mat3f F = p->Fe * p->Fp;
   SVDResult res = SVDDecompose(p->Fe);
   for (int i = 0; i < 3; i++) {
     Float s = res.Sigma(i, i);
@@ -61,5 +62,5 @@ void snowHardening(Particle *p) {
   for (int i = 0; i < 3; i++) {
     invSigma(i, i) = 1.f / invSigma(i, i);
   }
-  p->Fp = res.V * invSigma * res.U.transpose() * p->Fe;
+  p->Fp = res.V * invSigma * res.U.transpose() * F;
 }
