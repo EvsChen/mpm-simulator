@@ -5,15 +5,15 @@
 const float xi = 10.f;
 
 Mat3f fixedCorotated(const Mat3f &F) {
-  SVDResult res = SVDDecompose(F);
-  Mat3f R = res.U * res.V.transpose();
+  PolarResult res = PolarDecompose(F);
+  Mat3f R = res.R;
   Float J = F.determinant();
   return 2.f * params.mu * (F - R) + params.lambda * (J - 1) * J * F.inverse().transpose();
 }
 
 Mat3f fixedCorotatedSnow(const Mat3f &Fe, const Mat3f &Fp) {
-  SVDResult res = SVDDecompose(Fe);
-  Mat3f Re = res.U * res.V.transpose();
+  PolarResult res = PolarDecompose(Fe);
+  Mat3f Re = res.R;
   Float Je = Fe.determinant(),
         Jp = Fp.determinant();
   // Hardening

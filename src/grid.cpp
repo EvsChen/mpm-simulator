@@ -102,7 +102,7 @@ void Grid::updateGridVel() {
         // Sticky response
         velHat = Vec3f::Constant(0.f);
       } else {
-        // Dynamci friction calculation
+        // Dynamic friction calculation
         Vec3f tangent = vt.normalized();
         velHat -= std::min(vtNorm, params.muB * delV.norm()) * tangent;
       }      

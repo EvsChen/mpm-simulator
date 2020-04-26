@@ -69,7 +69,7 @@ public:
         break;
       }
       case ParticleType::SNOW: {
-        E = 1.4e4;
+        E = 1.4e5;
         nu = 0.2;
         pDensity = 400.f;
         collision = CollisionType::STICKY;
