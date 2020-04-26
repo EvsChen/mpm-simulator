@@ -73,8 +73,18 @@ void Grid::updateGridVel() {
     block.f += block.mass * g;
     block.vel += block.f * params.timeStep / block.mass;
     // Set max velocity
-    block.vel = block.vel.cwiseMin(maxSpeed);
-    block.vel = block.vel.cwiseMax(-maxSpeed);
+    // block.vel = block.vel.cwiseMin(maxSpeed);
+    // block.vel = block.vel.cwiseMax(-maxSpeed);
+    for (int i = 0; i < 3; i++) {
+      Float v = block.vel(i);
+      if (std::isnan(v)) {
+        block.vel(i) = 0.f;
+      } else if (block.vel(i) > maxSpeed) {
+        block.vel(i) = maxSpeed;
+      } else if (block.vel(i) < - maxSpeed) {
+        block.vel(i) = -maxSpeed;
+      }
+    }
     // Collision detection
     Vec3i blockIdx = getBlockIndex(idx);
     // Block pos in GRID coordinate!
