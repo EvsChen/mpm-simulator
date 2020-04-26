@@ -281,7 +281,8 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	{
 		LOG(INFO) << "Init Particles";
 		GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
-		if (!velHnd.isValid())
+		GA_ROHandleF massHnd(gdp->findPointAttribute("mass"));
+		if (!velHnd.isValid() || !massHnd.isValid())
 		{
 			return SIM_SOLVER_FAIL;
 		}
@@ -296,6 +297,7 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 			}
 			Particle particle(pos, params.pMass);
 			particle.vel = UTVecToVec3(velHnd.get(offset));
+			particle.mass = massHnd.get(offset);
 			particles->push_back(particle);
 		}
 		LOG(INFO) << "Finish Initialization";
