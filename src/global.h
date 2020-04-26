@@ -18,6 +18,8 @@ typedef Eigen::Vector4f Vec4f;
 typedef Eigen::Matrix3f Mat3f;
 typedef Eigen::Matrix4f Mat4f;
 
+#define MAX_FORCE 5
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264338327950288
 #endif

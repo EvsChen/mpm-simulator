@@ -159,6 +159,16 @@ void Engine::computeGridForce() {
     iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad, Float w) {
       Block &block = grid_.getBlockAt(blockPosIdx);
       block.f += -Ap * weightGrad;
+	  block.f = block.f.cwiseMin(MAX_FORCE);
+	  block.f = block.f.cwiseMax(-MAX_FORCE);
+	  block.f.x() = isnan(block.f.x()) ? 0 : block.f.x();
+	  block.f.y() = isnan(block.f.y()) ? 0 : block.f.y();
+	  block.f.z() = isnan(block.f.z()) ? 0 : block.f.z();
+	  if (isnan(block.f.x()) || isnan(block.f.y()) || isnan(block.f.z()))
+	  {
+		  LOG(FATAL) << "F nan:" << posIdx << std::endl;
+	  }
+
     });
   }
   profiler.profEnd(ProfType::CALC_GRID_FORCE);
