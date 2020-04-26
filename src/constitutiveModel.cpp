@@ -2,7 +2,7 @@
 #include "SVD.h"
 
 /// Hardening coefficient
-const float xi = 10.f;
+const float xi = 15.f;
 
 Mat3f fixedCorotated(const Mat3f &F) {
   PolarResult res = PolarDecompose(F);
