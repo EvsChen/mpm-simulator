@@ -73,8 +73,6 @@ void Grid::updateGridVel() {
     block.f += block.mass * g;
     block.vel += block.f * params.timeStep / block.mass;
     // Set max velocity
-    // block.vel = block.vel.cwiseMin(maxSpeed);
-    // block.vel = block.vel.cwiseMax(-maxSpeed);
     for (int i = 0; i < 3; i++) {
       Float v = block.vel(i);
       if (std::isnan(v)) {

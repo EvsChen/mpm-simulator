@@ -4,14 +4,11 @@
 #include <vector>
 
 
-// TODO: Come up with iterator function?
 struct Particle {
   Particle(const Vec3f &p, Float m) :
-    originalPos(p), pos(p), mass(m), volume(m / params.pDensity) {};
+    pos(p), mass(m), volume(m / params.pDensity) {};
 
   Particle() {}
-  /// Original position
-  Vec3f originalPos;
   Vec3f pos = Vec3f::Constant(0.f);
   Float mass = 1.0;
   [[deprecated]] Float volume = 1.0;

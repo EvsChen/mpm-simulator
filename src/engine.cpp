@@ -22,6 +22,9 @@ void Engine::iterWeight(const Vec3f &posInGrid, F&& updateFunc) {
       for (int k = 0; k < 3; k++) {
         Vec3i t; t << i, j, k;
         Vec3i blockPosIdx = baseIdx + t;
+        if (!grid_.isValidIdx(blockPosIdx)) {
+          continue;
+        }
         Float w = weight(0, i) * weight(1, j) * weight(2, k);
         updateFunc(blockPosIdx, w);
       }
@@ -44,6 +47,9 @@ void Engine::iterWeightGrad(const Vec3f &posInGrid, F&& updateFunc) {
         weightGrad /= grid_.spacing_;
         Vec3i t; t << i, j, k;
         Vec3i blockPosIdx = baseIdx + t;
+        if (!grid_.isValidIdx(blockPosIdx)) {
+          continue;
+        }
         Float w = weight(0, i) * weight(1, j) * weight(2, k);
         updateFunc(blockPosIdx, weightGrad, w);
       }
@@ -143,6 +149,7 @@ void Engine::computeGridForce() {
       case ParticleType::SNOW: {
         Mat3f piola = fixedCorotatedSnow(p.Fe, p.Fp);
         Ap = volume * piola * p.Fe.transpose(); 
+        break;
       }
       case ParticleType::ELASTIC: {
         Mat3f piola = fixedCorotated(p.Fe);
@@ -158,11 +165,6 @@ void Engine::computeGridForce() {
     iterWeightGrad(posIdx, [&](const Vec3i &blockPosIdx, const Vec3f &weightGrad, Float w) {
       Block &block = grid_.getBlockAt(blockPosIdx);
       block.f += -Ap * weightGrad;
-      if (isnan(block.f.x()) || isnan(block.f.y()) || isnan(block.f.z()))
-      {
-        LOG(FATAL) << "F nan:" << posIdx << std::endl;
-      }
-
     });
   }
   profiler.profEnd(ProfType::CALC_GRID_FORCE);
