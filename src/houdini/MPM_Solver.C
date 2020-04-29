@@ -205,6 +205,9 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	params.gridY = getGridY();
 	params.gridZ = getGridZ();
 	params.setOutput(false, false);
+	int frame = engine.getSimulationFrame(engine.getSimulationTime());
+	LOG(INFO) << "Frame" << frame;
+	
 
 	//params.collision = CollisionType::SEPARATING;
 	params.collision = static_cast<CollisionType>(getCollisionType());
@@ -370,20 +373,27 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 		GA_RWHandleM3 fpHnd(gdp->findPointAttribute("Fp"));
 		GA_RWHandleF alphaHnd(gdp->findPointAttribute("alpha"));
 		GA_RWHandleF qHnd(gdp->findPointAttribute("q"));
+
+		GA_ROHandleI startFHnd(gdp->findPointAttribute("startF"));
+
 		int idx = 0;
 		for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); ++it)
 		{
+			
 			Particle particle = (*particles)[idx];
 			GA_Offset offset = *it;
-			pHnd.set(offset, VecToUTVec3(localToWorld(particle.pos)));
-			velHnd.set(offset, VecToUTVec3(particle.vel));
-			massHnd.set(offset, particle.mass);
-			volumeHnd.set(offset, particle.volume);
-			bpHnd.set(offset, MatToUTMat3(particle.Bp));
-			feHnd.set(offset, MatToUTMat3(particle.Fe));
-			fpHnd.set(offset, MatToUTMat3(particle.Fp));
-			alphaHnd.set(offset, particle.alpha);
-			qHnd.set(offset, particle.q);
+			if (objectIsNew || startFHnd.get(offset) <= frame)
+			{
+				pHnd.set(offset, VecToUTVec3(localToWorld(particle.pos)));
+				velHnd.set(offset, VecToUTVec3(particle.vel));
+				massHnd.set(offset, particle.mass);
+				volumeHnd.set(offset, particle.volume);
+				bpHnd.set(offset, MatToUTMat3(particle.Bp));
+				feHnd.set(offset, MatToUTMat3(particle.Fe));
+				fpHnd.set(offset, MatToUTMat3(particle.Fp));
+				alphaHnd.set(offset, particle.alpha);
+				qHnd.set(offset, particle.q);
+			}
 			idx++;
 		}
 		LOG(INFO) << "Finish Write";
