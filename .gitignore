@@ -9,6 +9,8 @@ result-*/*
 .vscode/*
 .clang-format
 
+*.picnc
+
 # Prerequisites
 *.d
 
