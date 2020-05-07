@@ -1,0 +1,29 @@
+Hourglass
+Timestep: 0.0005
+Particle Number: 20024
+Grid: 64*64*64
+Type: Sand
+Young: 353700
+Poisson: 0.3
+Density: 8000
+Collision: Separating 0.2
+
+Elastic ball and cube
+Timestep: 0.0005
+Particle Number: 10270
+Grid: 64*64*64
+Type: Elastic
+Young: 50000
+Poisson: 0.2
+Density: 1000
+Collision: Sticky 0.6
+
+Tetris:
+Timestep: 0.0005
+Particle Number: 47564
+Grid: 80*112*20
+Type: Elastic
+Young: 70000
+Poisson: 0.2
+Density: 1000
+Collision: Sticky 0.6

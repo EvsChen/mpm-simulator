@@ -41,6 +41,8 @@
 #include <sys/stat.h>
 #endif
 
+//#define PLUGIN_LOG
+
 #define PRINT(s) std::cout << s << std::endl;
 
 Params params;
@@ -49,7 +51,7 @@ Profiler profiler;
 void initializeSIM(void *)
 {
 	IMPLEMENT_DATAFACTORY(SIM_MPMSolver);
-	
+#ifdef PLUGIN_LOG
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 		_mkdir(params.outFolder.c_str());
 #else
@@ -59,6 +61,7 @@ void initializeSIM(void *)
 		google::InitGoogleLogging("Plugin");
 		google::InstallFailureSignalHandler();
 		google::FlushLogFiles(google::GLOG_INFO);
+#endif
 
 }
 
@@ -206,7 +209,9 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	params.gridZ = getGridZ();
 	params.setOutput(false, false);
 	int frame = engine.getSimulationFrame(engine.getSimulationTime());
+#ifdef PLUGIN_LOG
 	LOG(INFO) << "Frame" << frame;
+#endif
 	
 
 	//params.collision = CollisionType::SEPARATING;
@@ -239,7 +244,6 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 
 	if (scalarSdf)
 	{
-		LOG(INFO) << "SDF";
 		uPtr<SDF> obstacle = mkU<SDF>(Vec3i(params.gridX, params.gridY, params.gridZ));
 		for (int k = 0; k < params.gridZ; ++k)
 		{
@@ -260,7 +264,7 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	MPMEngine.generateLevelset();
 	std::vector<Particle>* particles = MPMEngine.getParticleVecPointer();
 	particles->clear();
-	google::FlushLogFiles(google::GLOG_INFO);
+
 	// Extract simulation state from geometry
 	GU_ConstDetailHandle gdh = geometry->getOwnGeometry();
 	const GU_Detail* gdp = gdh.gdp();
@@ -282,7 +286,9 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 
 	if (objectIsNew)
 	{
+#ifdef PLUGIN_LOG
 		LOG(INFO) << "Init Particles";
+#endif
 		GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
 		GA_ROHandleF massHnd(gdp->findPointAttribute("mass"));
 		if (!velHnd.isValid() || !massHnd.isValid())
@@ -303,11 +309,15 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 			particle.mass = massHnd.get(offset);
 			particles->push_back(particle);
 		}
+#ifdef PLUGIN_LOG
 		LOG(INFO) << "Finish Initialization";
+#endif
 	}
 	else
 	{
+#ifdef PLUGIN_LOG
 		LOG(INFO) << "READ PARTICLES";
+#endif
 		GA_ROHandleV3 velHnd(gdp->findPointAttribute("vel"));
 		GA_ROHandleF massHnd(gdp->findPointAttribute("mass"));
 		GA_ROHandleF volumeHnd(gdp->findPointAttribute("volume"));
@@ -348,9 +358,9 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 
 	// Integrate simulation state forward by time step
 	MPMEngine.execOneStep();
+#ifdef PLUGIN_LOG
 	LOG(INFO) << "Exec one step";
-	google::FlushLogFiles(google::GLOG_INFO);
-
+#endif
 	// Write Positions Back
 	SIM_GeometryCopy* geometryCopy(
 		SIM_DATA_CREATE(
@@ -362,7 +372,9 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 	GU_DetailHandleAutoWriteLock lock(geometryCopy->getOwnGeometry());
 	if (lock.isValid())
 	{
+#ifdef PLUGIN_LOG
 		LOG(INFO) << "Write Particles";
+#endif
 		GU_Detail* gdp = lock.getGdp();
 		GA_RWHandleV3 pHnd(gdp->findPointAttribute("P"));
 		GA_RWHandleV3 velHnd(gdp->findPointAttribute("vel"));
@@ -396,7 +408,10 @@ SIM_Solver::SIM_Result SIM_MPMSolver::solveSingleObjectSubclass(SIM_Engine & eng
 			}
 			idx++;
 		}
+#ifdef PLUGIN_LOG
 		LOG(INFO) << "Finish Write";
+		google::FlushLogFiles(google::GLOG_INFO);
+#endif
 	}
 
 	return SIM_SOLVER_SUCCESS;

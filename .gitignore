@@ -10,7 +10,8 @@ result-*/*
 .clang-format
 
 *.picnc
-
+*.exr
+*.mp4
 # Prerequisites
 *.d
 
