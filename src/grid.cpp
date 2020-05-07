@@ -96,7 +96,7 @@ void Grid::updateGridVel() {
     // else if sdf <= 0, phiHat < 0 only if it's "entering" the surface
     Float phiHat = sdf - std::min(block.sdf, 0.f);
     if ((params.collision == CollisionType::SEPARATING && phiHat < 0) ||
-        (params.collision == CollisionType::STICKY && phiHat < 0) ||
+        (params.collision == CollisionType::STICKY && block.sdf < 0) ||
         (params.collision == CollisionType::SLIPPING && block.sdf < 0))
     {
       // Collided
